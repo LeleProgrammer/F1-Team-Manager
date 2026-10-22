@@ -319,18 +319,18 @@ dialog::backdrop { background: #04070bcc; backdrop-filter: blur(3px); }
 
 /* Readable timing wall: explicit column widths and uncompressed driver names. */
 :root{--live-mono:Consolas,"Liberation Mono",Menlo,monospace}
-.broadcast-grid{grid-template-columns:minmax(285px,.82fr) minmax(390px,1.38fr) minmax(245px,.8fr)}
+.broadcast-grid{grid-template-columns:minmax(320px,.82fr) minmax(390px,1.38fr) minmax(245px,.8fr)}
 .broadcast-timing{table-layout:fixed;font-size:14px;width:100%;min-width:0}
 .broadcast-timing td,.broadcast-timing th{padding:10px 8px;overflow:visible;line-height:1.35;vertical-align:middle}
 .broadcast-timing th{font-size:11px}.broadcast-timing td:first-child{width:auto}
 .broadcast-timing td:last-child,.broadcast-timing th:last-child{text-align:center;padding-right:4px}
-.driver-code{display:inline-block;min-width:3.8em;width:auto;flex-shrink:0;font-family:var(--live-mono);font-size:21px;line-height:1.25;font-weight:800;font-stretch:normal;letter-spacing:1px;white-space:nowrap;padding:3px 4px 3px 9px;text-align:left;word-spacing:normal}
-.tower-gap{display:inline-block;font-family:var(--live-mono);font-size:17px;font-weight:650;line-height:1.4;letter-spacing:0;white-space:nowrap}
+.driver-code{display:inline-block;min-width:0;width:auto;flex-shrink:0;font-family:var(--live-mono);font-size:21px;line-height:1.25;font-weight:800;font-stretch:normal;letter-spacing:1px;white-space:nowrap;padding:3px 0 3px 6px;text-align:left;word-spacing:normal}
+.tower-gap{display:inline-block;font-family:var(--live-mono);font-size:16px;font-weight:650;line-height:1.4;letter-spacing:0;white-space:nowrap}
 .broadcast-timing .tyre{width:29px;height:29px;font-size:13px;border-width:2px}
 .broadcast-timing tbody tr{cursor:pointer;min-height:46px}.broadcast-timing tbody tr:hover{background:#2c41576b}
 .broadcast-timing .phase-label{font-size:10px;line-height:1.5;margin:3px 0 0 12px}
-.qualifying-timing .driver-code{font-size:17px;min-width:3.7em;padding-left:7px}
-.qualifying-timing .tower-gap{font-size:12px}.qualifying-timing .lap-value{font-family:var(--live-mono);font-size:12px;gap:3px}
+.qualifying-timing .driver-code{font-size:17px;min-width:0;padding-left:7px}
+.qualifying-timing .tower-gap{font-size:11px}.qualifying-timing .lap-value{font-family:var(--live-mono);font-size:12px;gap:3px}
 .qualifying-timing .lap-value .icon{display:none}.qualifying-timing td{padding:10px 5px}
 .qualifying-timing .tyre{width:25px;height:25px;font-size:11px}
 .gap-controls{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}.gap-controls .btn{min-height:29px;font-size:10px;padding:4px 7px;letter-spacing:.25px}
@@ -342,9 +342,22 @@ dialog::backdrop { background: #04070bcc; backdrop-filter: blur(3px); }
 .telemetry-title>strong{font-size:30px;letter-spacing:1px;min-width:3.5em;font-family:var(--live-mono)}.telemetry-title b{font-size:15px;line-height:1.5;overflow-wrap:anywhere}.telemetry-title small{font-size:12px;line-height:1.5}.telemetry-title>div{min-width:0}.live-numbers b{font-family:var(--live-mono);font-size:clamp(24px,2.3vw,34px);letter-spacing:-.6px;white-space:nowrap}.live-numbers small{font-size:12px}.live-numbers em{font-size:12px}.sector-box>b{font-family:var(--live-mono);font-size:clamp(15px,1.4vw,21px);letter-spacing:-.3px;white-space:nowrap}.sector-box>small{font-size:12px;flex-wrap:wrap;gap:3px}.sector-box>small span{font-size:9px}.sector-box>span{font-size:10px;line-height:1.6;display:block;white-space:normal}.telemetry-foot{font-size:11px;flex-wrap:wrap;line-height:1.8}
 .live-commands>h2{font-size:15px}.live-command h3{font-size:12px;line-height:1.5;overflow-wrap:anywhere}.driver-chip{font-size:19px;font-family:var(--live-mono);letter-spacing:1px}.live-command .badge{font-size:10px}.live-command .split{align-items:flex-start;flex-wrap:wrap}.car-health{font-size:11px;flex-wrap:wrap}.car-health b{font-size:14px}.live-command .field>span{font-size:11px}.live-command select,.live-command .btn{font-size:11px;line-height:1.5}.command-intent{font-size:11px;line-height:1.65}.live-command .tyre-choice{padding:0}.map-caption{font-size:10px;line-height:1.7;flex-wrap:wrap}.map-label-toggle{font-size:10px;padding:4px 6px}
 .live-race-details{margin-top:22px}.live-race-details .panel-heading{flex-wrap:wrap}.race-detail-table{min-width:1200px;font-family:var(--live-mono);font-size:14px;table-layout:auto}.race-detail-table th{font-family:var(--font);font-size:12px}.race-detail-table td{padding:13px 12px}.detail-driver{display:flex;align-items:center;gap:12px;border:0;border-left:3px solid var(--team);background:transparent;color:#e9f2fc;padding:4px 8px;text-align:left}.detail-driver b{font-family:var(--live-mono);font-size:18px;letter-spacing:1px;min-width:3ch}.detail-driver>span{font-family:var(--font);font-size:12px}.race-detail-table .lap-value{font-size:14px}.detail-sectors{display:flex;gap:15px;font-size:12px}.detail-sectors small{font-size:10px;line-height:1.5}.race-detail-table .focused-row{background:#26394b60}.pit-history-heading{display:flex;align-items:center;gap:9px;font-size:17px;margin-top:26px;margin-bottom:12px}.pit-history-table{font-size:14px;min-width:610px}.pit-history-table th{font-size:12px}.pit-history-table td{font-family:var(--live-mono);font-size:15px}.pit-history-table small{font-family:var(--font);font-size:11px}.pit-tyre-change{display:flex;align-items:center;gap:10px}.empty-pit-log{padding:20px;color:var(--muted);font-size:13px}.fastest-summary strong{font-size:29px}.top-metrics strong{font-size:14px}.stat>strong{font-size:30px}
-@media(max-width:1360px){.broadcast-grid{grid-template-columns:minmax(285px,.85fr) minmax(360px,1.15fr)}.live-commands{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:14px}.live-commands>h2{grid-column:1/-1}.live-command .tyre-cards{max-width:380px}}
-@media(max-width:900px){.broadcast-grid{grid-template-columns:minmax(250px,.8fr) minmax(330px,1.2fr)}.live-weather{padding:4px 10px;min-width:190px}.live-numbers{gap:10px}.live-numbers b{font-size:24px}.live-numbers em{font-size:10px}.sector-box{padding:8px 5px}.sector-box>b{font-size:15px}}
+@media(max-width:1360px){.broadcast-grid{grid-template-columns:minmax(320px,.85fr) minmax(360px,1.15fr)}.live-commands{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:14px}.live-commands>h2{grid-column:1/-1}.live-command .tyre-cards{max-width:380px}}
+@media(max-width:900px){.broadcast-grid{grid-template-columns:minmax(300px,.8fr) minmax(330px,1.2fr)}.live-weather{padding:4px 10px;min-width:190px}.live-numbers{gap:10px}.live-numbers b{font-size:24px}.live-numbers em{font-size:10px}.sector-box{padding:8px 5px}.sector-box>b{font-size:15px}}
 @media(max-width:760px){.broadcast-grid{display:flex;flex-direction:column}.live-tower{max-height:none;overflow:visible}.track-panel{order:0}.live-commands{display:block}.broadcast-grid>section,.broadcast-grid>aside{width:100%}.session-clock strong{font-size:30px}.live-weather{border-left:0;padding:0;min-width:180px}.live-numbers b{font-size:clamp(23px,6.5vw,31px)}.sector-box>b{font-size:clamp(15px,4vw,20px)}.live-toolbar .speed-controls{flex-wrap:wrap}.track-panel svg#track-map{max-height:none}.telemetry-title b{font-size:14px}.live-command .tyre-cards{max-width:none}.live-race-details{padding:15px}.gap-controls .btn{font-size:11px}}
+
+/* Rank and abbreviation share the first column; each keeps its own space. */
+.tower-driver{display:flex;align-items:center;gap:6px;white-space:nowrap}
+.tower-position{flex:0 0 1.7em;text-align:right;color:#a7b7cc;font:600 14px/1.4 var(--live-mono);font-variant-numeric:tabular-nums}
+.qualifying-timing .tower-driver{gap:4px}.qualifying-timing .tower-position{font-size:12px}
+
+.broadcast-timing td{padding-left:5px;padding-right:5px}
+
+/* Own team and inspected driver remain distinct, including on the same row. */
+.broadcast-timing tr.player-row,.race-detail-table tr.player-row{background:#26463785}
+.broadcast-timing tr.player-row:hover,.race-detail-table tr.player-row:hover{background:#315a479e}
+.broadcast-timing tr.focused-row,.race-detail-table tr.focused-row{box-shadow:inset -3px 0 0 #e8f2ff}
+.broadcast-timing tr.player-row.focused-row,.race-detail-table tr.player-row.focused-row{background:#315a47aa}
 ```
 
 ## css/race.css
@@ -566,6 +579,12 @@ dialog::backdrop { background: #04070bcc; backdrop-filter: blur(3px); }
   .fastest-summary { gap: 8px; padding: 11px; }
   .fastest-summary strong { font-size: 17px; }
 }
+
+/* Own-team emphasis travels with each row when tables are sorted. */
+table tbody tr.player-row{background:#26463785}
+table tbody tr.player-row:hover{background:#315a479e}
+table tbody tr.player-row>td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
+table tbody tr.player-row>td{border-bottom-color:#47735b80}
 ```
 
 ## js/data/drivers-data.js
@@ -3580,10 +3599,10 @@ export function timingGap(s,c,baseTime){
   if(c.retired)return 'OUT';
   if(r.qualifying)return c.stageBest>=9999?'NO TIME':r.fastest.time===c.stageBest?'LEADER':'+'+(c.stageBest-r.fastest.time).toFixed(3);
   const active=r.cars.filter(x=>!x.retired).slice().sort((a,b)=>a.position-b.position),index=active.findIndex(x=>x.driverId===c.driverId);
-  if(index<=0)return 'LEADER';
+  if(index<=0)return s.settings.timingGap==='interval'?'INTERVAL':'LEADER';
   const reference=s.settings.timingGap==='interval'?active[index-1]:active[0];
   const distance=Math.max(0,reference.totalDistance-c.totalDistance),laps=Math.floor(distance+1e-8);
-  return laps>0?'+'+laps+' LAP':'+'+(distance*baseTime).toFixed(1);
+  return laps>0?'+'+laps+' LAP':'+'+(distance*baseTime).toFixed(3);
 }
 const intersects=(a,b,gap=5)=>a.x<b.x+b.width+gap&&a.x+a.width+gap>b.x&&a.y<b.y+b.height+gap&&a.y+a.height+gap>b.y;
 export function layoutMapLabels(markers,previous={},reserved=[]){
@@ -3633,7 +3652,7 @@ function sectorValue(c,i){return c.sectors[i]||c.lastSectors[i]||0;}
 function sectorSpeed(c,i){return c.sectorSpeeds[i]||c.lastSectorSpeeds[i]||0;}
 function timingCells(s,c){
   const r=s.race,d=driverOf(s,c.driverId),t=teamOf(s,c.teamId);
-  const code=`<button class="driver-code" data-action="focusDriver" data-payload="${h(JSON.stringify({id:c.driverId}))}" style="--team:${h(t.color)}" title="${h(d.name)}" aria-label="聚焦 ${h(d.code+' '+d.name)}">${h(d.code)}</button>`;
+  const code=`<div class="tower-driver"><span class="tower-position" aria-label="第 ${c.position} 名">${c.position}</span><button class="driver-code" data-action="focusDriver" data-payload="${h(JSON.stringify({id:c.driverId}))}" style="--team:${h(t.color)}" title="${h(d.name)}" aria-label="聚焦 ${h(d.code+' '+d.name)}">${h(d.code)}</button></div>`;
   if(!r.qualifying)return {driver:code,gap:`<span class="tower-gap ${c.retired?'tone-danger':''}">${timingGap(s,c,currentTrack(s).baseTime)}</span>`,tyre:tyre(c.compound)};
   return {driver:code+`<small class="phase-label tone-${phaseTone(c)}">${h(phase(c))}</small>`,best:lapDisplay(c.stageBest,{fastest:r.fastest.driverId===c.driverId}),gap:`<span class="tower-gap">${timingGap(s,c,currentTrack(s).baseTime)}</span>`,tyre:tyre(c.compound)};
 }
@@ -3672,7 +3691,7 @@ export function liveView(s){
   const r=s.race,track=currentTrack(s),q=r.qualifying,c=focused(s);
   return `${header('LIVE TIMING / 比赛指挥',track.name+' · '+SESSION_NAMES[r.kind],q?'出场圈 → 飞行圈 → 回场圈。倒计时结束后，只能完成已开始的飞行圈。':'连续比赛时钟 · 车手独立计时 · 默认 1× 为现实时间',`<span class="live-indicator">LIVE</span>`)}
     <div class="live-toolbar"><div class="session-clock"><small>${q?r.kind+r.q.stage+' · '+(r.q.status==='BREAK'?'节间休息':'剩余时间'):'已用时间'}</small><strong data-live-clock>${clock(q?r.q.remaining:r.time,q)}</strong></div><div class="live-lap"><strong data-live-lap>${q?r.kind+r.q.stage:'LAP '+Math.min(r.lap+1,r.totalLaps)}</strong><small>${q?(r.kind==='SQ'?'12 / 10 / 8 MIN':'18 / 15 / 12 MIN'):' / '+r.totalLaps}</small></div>${flagState(r)}<div id="toolbar-weather">${weatherSummary(s)}</div><div class="speed-controls">${[1,2,4,8,16,32,64].map(v=>button(v+'×','speed',{value:v},{class:s.settings.speed===v?'selected':''})).join('')}</div><div class="actions">${button(r.running?'暂停':'继续','pause',{}, {class:'small'})}${button('快进一圈','tick',{}, {class:'small'})}${q?button('跳过节间休息','skipQualBreak',{}, {class:'small',disabled:r.q.status!=='BREAK'}):''}${button('自动完成','finishRace',{}, {class:'small',confirm:'按当前策略自动完成本场次；排位期间由 AI 安排本队出场。确认？'})}${button('红旗后恢复','resume',{}, {class:'small',disabled:!r.red})}</div></div>
-    <div class="broadcast-grid"><section class="panel live-tower"><div id="tower-race-control">${controlBanner(s)}</div><div class="panel-heading"><h2>${icon('stopwatch')}实时排名</h2>${q?'<span class="muted">排位成绩</span>':gapControls(s)}</div><div class="table-scroll"><table class="broadcast-timing ${q?'qualifying-timing':'race-timing'}"><colgroup>${q?'<col style="width:27%"><col style="width:31%"><col style="width:28%"><col style="width:14%">':'<col style="width:36%"><col style="width:45%"><col style="width:19%">'}</colgroup><thead><tr>${q?'<th>车手</th><th>最佳圈</th><th>差距</th><th>轮胎</th>':`<th>车手</th><th data-gap-heading>${s.settings.timingGap==='interval'?'INTERVAL':'LEADER'}</th><th>轮胎</th>`}</tr></thead><tbody id="timing-body">${r.cars.map(x=>timingRow(s,x)).join('')}</tbody></table></div><p class="tower-note">${q?'点击车手查看遥测':'时间差 / 秒 · 点击任意一行聚焦车手'}</p></section>
+    <div class="broadcast-grid"><section class="panel live-tower"><div id="tower-race-control">${controlBanner(s)}</div><div class="panel-heading"><h2>${icon('stopwatch')}实时排名</h2>${q?'<span class="muted">排位成绩</span>':gapControls(s)}</div><div class="table-scroll"><table class="broadcast-timing ${q?'qualifying-timing':'race-timing'}"><colgroup>${q?'<col style="width:32%"><col style="width:30%"><col style="width:24%"><col style="width:14%">':'<col style="width:41%"><col style="width:43%"><col style="width:16%">'}</colgroup><thead><tr>${q?'<th>车手</th><th>最佳圈</th><th>差距</th><th>轮胎</th>':`<th>车手</th><th data-gap-heading>${s.settings.timingGap==='interval'?'INTERVAL':'LEADER'}</th><th>轮胎</th>`}</tr></thead><tbody id="timing-body">${r.cars.map(x=>timingRow(s,x)).join('')}</tbody></table></div><p class="tower-note">${q?'点击车手查看遥测':'时间差 / 秒 · 点击任意一行聚焦车手'}</p></section>
     <section class="panel track-panel"><div class="map-heading"><div><p class="eyebrow">CIRCUIT TRACKER</p><h2>${h(track.city)}</h2></div><span>${track.length.toFixed(3)} KM · ${track.corners} TURNS</span></div>${trackSvg(s)}<div class="map-caption"><span>● 实心 / 空心：同队两台赛车</span><span>计时线示意 ${button('标注：'+(s.settings.mapLabels==='team'?'本队':'全场'),'mapLabels',{}, {class:'small map-label-toggle'})}</span></div>${telemetry(s,c)}</section>
     <aside class="live-commands"><h2>${icon('radio')}车队无线电</h2>${r.cars.filter(x=>x.teamId===s.player.teamId).sort((a,b)=>a.slot-b.slot).map(x=>command(s,x)).join('')}</aside></div>
     <div class="grid-2">${panel('赛事消息',`<div id="race-events" class="race-events">${r.events.slice(0,10).map(eventItem).join('')}</div>`)}${panel(q?'排位规则与状态':'比赛策略',q?`<p>${s.teams.length*2} 台赛车，前两段各淘汰 ${s.teams.length===11?6:5} 台，最后 10 台争夺杆位。无有效圈显示 NO TIME。</p><p>${r.kind==='SQ'?'干地 SQ1 / SQ2 每段只允许一套新中性胎，SQ3 一套软胎。':'成绩相同时，先做出该成绩者排名靠前。Q1 / Q2 之间休息 7 分钟，Q2 / Q3 之间休息 8 分钟。'}</p><p class="muted">${r.kind==='SQ'?'冲刺排位各段之间休息 7 分钟。':'107% 超时将标记为待裁判审查，游戏默认允许发车。'}飞行圈默认完成后回场；可提前选择连续推进。${r.q.status==='BREAK'?'本段已结束，可等待倒计时或跳过休息。':''}</p><details><summary>已完成各段成绩</summary>${r.q.stages.map((rows,i)=>`<h3>${r.kind}${i+1}</h3>${table(['名次','车手','时间'],rows.map((x,j)=>[j+1,h(driverOf(s,x.id).code),time(x.time)]))}`).join('')||'暂无'}</details>`:`<p>正赛干地须实际使用两种干胎；使用过雨胎可豁免。${track.id==='monaco'&&s.season.year>=2025?'摩纳哥至少两次停站。':''}</p><p class="muted">绿色旗帜下可使用 DRS；雨地、安全车与虚拟安全车期间禁用。出站损失计入连续比赛时间。离开此页面、切换到后台或打开对话框时暂停推进。</p>`)}</div>${raceDetails(s)}`;
@@ -3751,10 +3770,10 @@ function detailCells(s,c){
 function pitHistory(s){
   const records=s.race.cars.flatMap(c=>(c.pitLog||[]).map((entry,i)=>({...entry,id:c.driverId,sequence:i+1}))).sort((a,b)=>(b.at??b.lap)-(a.at??a.lap)||a.id.localeCompare(b.id));
   if(!records.length)return '<p class="empty-pit-log">尚无进站换胎记录。</p>';
-  return `<div class="table-scroll"><table class="pit-history-table"><thead><tr><th>比赛时间</th><th>车手</th><th>圈数</th><th>换胎</th><th>停站用时</th><th>总损失</th></tr></thead><tbody>${records.map(entry=>`<tr><td>${entry.at===undefined?'—':clock(entry.at,false)}</td><td><b>${h(driverOf(s,entry.id).code)}</b><small>${h(driverOf(s,entry.id).name)} · 第 ${entry.sequence} 停</small></td><td>L${entry.lap}</td><td><span class="pit-tyre-change">${entry.from?tyre(entry.from)+'<span>→</span>':''}${tyre(entry.compound)}</span></td><td>${Number(entry.stop).toFixed(2)} s</td><td>+${Number(entry.loss).toFixed(2)} s</td></tr>`).join('')}</tbody></table></div>`;
+  return `<div class="table-scroll"><table class="pit-history-table"><thead><tr><th>比赛时间</th><th>车手</th><th>圈数</th><th>换胎</th><th>停站用时</th><th>总损失</th></tr></thead><tbody>${records.map(entry=>`<tr class="${s.race.cars.find(c=>c.driverId===entry.id)?.teamId===s.player.teamId?'player-row':''}"><td>${entry.at===undefined?'—':clock(entry.at,false)}</td><td><b>${h(driverOf(s,entry.id).code)}</b><small>${h(driverOf(s,entry.id).name)} · 第 ${entry.sequence} 停</small></td><td>L${entry.lap}</td><td><span class="pit-tyre-change">${entry.from?tyre(entry.from)+'<span>→</span>':''}${tyre(entry.compound)}</span></td><td>${Number(entry.stop).toFixed(2)} s</td><td>+${Number(entry.loss).toFixed(2)} s</td></tr>`).join('')}</tbody></table></div>`;
 }
 export function raceDetails(s){
-  return `<section class="panel live-race-details" id="race-details"><div class="panel-heading"><h2>${icon('chart')}圈速与进站数据</h2><span class="muted">全部车手 · 实时更新</span></div><div id="live-fastest">${fastestSummary(s,s.race.fastest)}</div><div class="table-scroll"><table class="race-detail-table"><thead><tr>${['车手','当前圈计时','上一圈','最佳圈','Sector 计时','胎龄','磨损','燃油','停站','状态'].map(label=>`<th>${label}</th>`).join('')}</tr></thead><tbody id="detail-timing-body">${s.race.cars.map(c=>`<tr data-detail-car="${h(c.driverId)}">${Object.entries(detailCells(s,c)).map(([key,value])=>`<td data-detail-cell="${key}">${value}</td>`).join('')}</tr>`).join('')}</tbody></table></div><h3 class="pit-history-heading">${icon('pit')}进站换胎记录</h3><div id="pit-history">${pitHistory(s)}</div></section>`;
+  return `<section class="panel live-race-details" id="race-details"><div class="panel-heading"><h2>${icon('chart')}圈速与进站数据</h2><span class="muted">全部车手 · 实时更新</span></div><div id="live-fastest">${fastestSummary(s,s.race.fastest)}</div><div class="table-scroll"><table class="race-detail-table"><thead><tr>${['车手','当前圈计时','上一圈','最佳圈','Sector 计时','胎龄','磨损','燃油','停站','状态'].map(label=>`<th>${label}</th>`).join('')}</tr></thead><tbody id="detail-timing-body">${s.race.cars.map(c=>`<tr data-detail-car="${h(c.driverId)}" class="${c.teamId===s.player.teamId?'player-row':''}">${Object.entries(detailCells(s,c)).map(([key,value])=>`<td data-detail-cell="${key}">${value}</td>`).join('')}</tr>`).join('')}</tbody></table></div><h3 class="pit-history-heading">${icon('pit')}进站换胎记录</h3><div id="pit-history">${pitHistory(s)}</div></section>`;
 }
 function patchDetails(s){
   const body=document.querySelector('#detail-timing-body');if(!body)return;
@@ -3797,7 +3816,7 @@ function resultTable(s,result) {
     `<span class="pit-count">${icon('pit')}${r.stops}</span>`,
     r.penalty?badge('+'+r.penalty+'s','danger','warning'):'—',
     `<strong class="points-value ${r.points>0?'tone-success':''}">${r.points}</strong>`
-  ]),'race-result');
+  ]),'race-result','',result.rows.map(row=>row.teamId===s.player.teamId?'player-row':''));
 }
 function sessionControls(s) {
   const w=s.calendar.weekend,current=w.sessions[w.index];
@@ -3850,7 +3869,7 @@ function renderRaceView(s) {
   const w=s.calendar.weekend,track=currentTrack(s),r=s.race;
   if(r?.realtime&&!r.finished)return liveView(s);
   if(!w)return `${header('比赛指挥','维修墙待命','先进入比赛周末，再执行练习、排位与比赛。')}${panel('下一站准备',`${empty(s.season.offseason?'当前处于转会窗。':'本站赛车尚未登记。')}${link('前往赛历','calendar','primary')}`)}`;
-  if(!r||r.finished)return `${header('比赛指挥',track.name+' · '+(SESSION_NAMES[w.sessions[w.index]]||'周末结束'),'按对应年份的周末流程推进。')}${sessionControls(s)}${r?.qualifying&&r.finished?panel('排位赛各段成绩',r.q.stages.map((rows,i)=>`<details ${i===2?'open':''}><summary>${r.kind}${i+1}</summary>${table(['名次','车手','配方','成绩'],rows.map((x,j)=>[rankBadge(j+1),h(s.drivers.find(d=>d.id===x.id)?.code)+' · '+h(x.name),tyre(x.compound),lapDisplay(x.time,{fastest:j===0})]))}</details>`).join('')):''}${r?.result?panel((r.sprint?'冲刺赛':'正赛')+'赛后报告',`${fastestSummary(s,r.fastest)}${timingLegend()}${resultTable(s,r.result)}<p class="muted">${s.season.rules.fastestLap?'正赛前十中的全场最快圈可获 1 分。':'本赛季最快圈不加分。'}</p><details><summary>罚则与事件记录</summary>${r.events.map(eventItem).join('')}</details><details><summary>分段成绩与位置轨迹</summary>${table(['圈数','领跑车手','累计时间'],r.segments.map(x=>[x.lap,h(s.drivers.find(d=>d.id===x.leader)?.name),time(x.time)]))}<canvas data-chart="positions" aria-label="本队位置变化图"></canvas></details>`):''}`;
+  if(!r||r.finished)return `${header('比赛指挥',track.name+' · '+(SESSION_NAMES[w.sessions[w.index]]||'周末结束'),'按对应年份的周末流程推进。')}${sessionControls(s)}${r?.qualifying&&r.finished?panel('排位赛各段成绩',r.q.stages.map((rows,i)=>`<details ${i===2?'open':''}><summary>${r.kind}${i+1}</summary>${table(['名次','车手','配方','成绩'],rows.map((x,j)=>[rankBadge(j+1),h(s.drivers.find(d=>d.id===x.id)?.code)+' · '+h(x.name),tyre(x.compound),lapDisplay(x.time,{fastest:j===0})]),'','',rows.map(x=>s.drivers.find(d=>d.id===x.id)?.teamId===s.player.teamId?'player-row':''))}</details>`).join('')):''}${r?.result?panel((r.sprint?'冲刺赛':'正赛')+'赛后报告',`${fastestSummary(s,r.fastest)}${timingLegend()}${resultTable(s,r.result)}<p class="muted">${s.season.rules.fastestLap?'正赛前十中的全场最快圈可获 1 分。':'本赛季最快圈不加分。'}</p><details><summary>罚则与事件记录</summary>${r.events.map(eventItem).join('')}</details><details><summary>分段成绩与位置轨迹</summary>${table(['圈数','领跑车手','累计时间'],r.segments.map(x=>[x.lap,h(s.drivers.find(d=>d.id===x.leader)?.name),time(x.time)]))}<canvas data-chart="positions" aria-label="本队位置变化图"></canvas></details>`):''}`;
   return `${header('比赛指挥 / 实时计时',track.name+' · '+SESSION_NAMES[r.kind],track.city+' · '+r.totalLaps+' 圈',`<span class="live-indicator">实时模拟</span>`)}
     <div class="race-toolbar"><div class="lap-count"><span data-race="lap">${r.lap}</span><small> / ${r.totalLaps} 圈</small></div>${flagState(r)}<div class="speed-controls">${[1,2,4,10].map(v=>button(v+'×','speed',{value:v},{class:s.settings.speed===v?'selected':''})).join('')}</div><div class="actions">${button(r.running?'暂停':'继续','pause',{}, {class:'small'})}${button('下一圈','tick',{count:1},{class:'small'})}${button('下一事件','tick',{count:1000,untilEvent:true},{class:'small'})}${button('模拟到底','finishRace',{}, {class:'small',confirm:'自动执行当前指令和策略直到终点，确认？'})}${button('红旗后恢复','resume',{}, {class:'small',disabled:!r.red})}</div></div>
     <div id="live-fastest">${fastestSummary(s,r.fastest)}</div>${timingLegend()}
@@ -4041,9 +4060,9 @@ export function standingsView(s) {
   const teams=teamStandings(s),drivers=driverStandings(s),current=s.history.races.filter(r=>r.kind==='RACE'&&s.calendar.events.some(e=>e.result?.rows[0]?.driverId===r.rows[0]?.driverId&&e.result?.track===r.track));
   return `${header('锦标赛档案',s.season.year+' 赛季积分榜','同分按正赛最高名次次数逐级比较；同样成绩时按既有种子顺序排列。')}
  ${progress(s.calendar.round,s.calendar.events.length,'赛季进度 '+s.calendar.round+' / '+s.calendar.events.length)}
- <div class="grid-2">${panel('制造商积分',table(['名次','车队','积分','正赛冠军'],teams.map((t,i)=>[rankBadge(i+1)+(t.id===s.player.teamId?' '+badge('本队','info'):''),`<span class="team-line" style="--row-color:${h(t.color)}"></span>${h(t.name)}`,'<strong>'+t.points+'</strong>',t.wins]),'constructors'))}${panel('车手积分',table(['名次','车手','车队','积分','冠军','最快圈'],drivers.map((d,i)=>[rankBadge(i+1),h(d.name),h(s.teams.find(t=>t.id===d.teamId)?.abbr||'自由车手'),'<strong>'+d.points+'</strong>',d.wins,`<span class="metric tone-fastest">${icon('stopwatch')}${d.fastest}</span>`]),'drivers-standings'))}</div>
+ <div class="grid-2">${panel('制造商积分',table(['名次','车队','积分','正赛冠军'],teams.map((t,i)=>[rankBadge(i+1)+(t.id===s.player.teamId?' '+badge('本队','info'):''),`<span class="team-line" style="--row-color:${h(t.color)}"></span>${h(t.name)}`,'<strong>'+t.points+'</strong>',t.wins]),'constructors','',teams.map(t=>t.id===s.player.teamId?'player-row':'')))}${panel('车手积分',table(['名次','车手','车队','积分','冠军','最快圈'],drivers.map((d,i)=>[rankBadge(i+1),h(d.name),h(s.teams.find(t=>t.id===d.teamId)?.abbr||'自由车手'),'<strong>'+d.points+'</strong>',d.wins,`<span class="metric tone-fastest">${icon('stopwatch')}${d.fastest}</span>`]),'drivers-standings','',drivers.map(d=>d.teamId===s.player.teamId?'player-row':'')))}</div>
  ${panel('车队积分走势',`<canvas data-chart="points" data-type="line" data-height="220" aria-label="本队积分走势"></canvas>`)}
- ${panel('每站积分明细',table(['车队',...s.calendar.events.map((e,i)=>'R'+(i+1))],teams.map(t=>[h(t.name),...s.calendar.events.map((e,i)=>t.results.filter(r=>r.round===i+1).reduce((a,r)=>a+r.points,0)||'—')]),'round-points'))}
+ ${panel('每站积分明细',table(['车队',...s.calendar.events.map((e,i)=>'R'+(i+1))],teams.map(t=>[h(t.name),...s.calendar.events.map((e,i)=>t.results.filter(r=>r.round===i+1).reduce((a,r)=>a+r.points,0)||'—')]),'round-points','',teams.map(t=>t.id===s.player.teamId?'player-row':'')))}
  ${panel('分站档案',s.history.races.length?table(['站次','赛道','场次','冠军','最快圈','报告'],s.history.races.map((r,i)=>[r.round,h(r.track),r.kind==='SPRINT'?'冲刺':'正赛',h(r.rows[0]?.name||'无'),lapDisplay(r.fastest.time,{fastest:true}),`<button class="btn small" data-report="${i}">查看成绩</button>`]),'race-archive'):empty('比赛结束后，这里将保存分站冠军、最快圈与完整报告。'))}
  ${panel('荣誉室与历年记录',s.history.seasons.length?table(['赛季','制造商冠军','车手冠军','本队名次'],s.history.seasons.map(x=>[x.year,h(x.teams[0]?.name),h(x.drivers[0]?.name),'P'+x.playerRank])):empty('完成首个赛季后，年度排名与冠军将进入荣誉室。'))}`;
 }
@@ -4109,8 +4128,8 @@ export function tyre(c) {
 export function empty(text) {
   return `<div class="empty">${icon('flag')}<p>${h(text)}</p></div>`;
 }
-export function table(headers,rows,id='',cls='') {
-  return `<div class="table-scroll"><table ${id?`id="${h(id)}"`:''} class="${h(cls)}"><thead><tr>${headers.map((x,i)=>`<th><button class="sort" data-sort="${i}" aria-label="按${h(x)}排序">${h(x)} <span>↕</span></button></th>`).join('')}</tr></thead><tbody>${rows.map(row=>`<tr>${row.map(cell=>`<td>${cell}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+export function table(headers,rows,id='',cls='',rowClasses=[]) {
+  return `<div class="table-scroll"><table ${id?`id="${h(id)}"`:''} class="${h(cls)}"><thead><tr>${headers.map((x,i)=>`<th><button class="sort" data-sort="${i}" aria-label="按${h(x)}排序">${h(x)} <span>↕</span></button></th>`).join('')}</tr></thead><tbody>${rows.map((row,i)=>`<tr${rowClasses[i]?` class="${h(rowClasses[i])}"`:""}>${row.map(cell=>`<td>${cell}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
 }
 export function field(label,control,note='') {
   return `<label class="field"><span>${h(label)}</span>${control}${note?`<small>${h(note)}</small>`:''}</label>`;
@@ -7639,8 +7658,8 @@ function tyre(c) {
 function empty(text) {
   return `<div class="empty">${icon('flag')}<p>${h(text)}</p></div>`;
 }
-function table(headers,rows,id='',cls='') {
-  return `<div class="table-scroll"><table ${id?`id="${h(id)}"`:''} class="${h(cls)}"><thead><tr>${headers.map((x,i)=>`<th><button class="sort" data-sort="${i}" aria-label="按${h(x)}排序">${h(x)} <span>↕</span></button></th>`).join('')}</tr></thead><tbody>${rows.map(row=>`<tr>${row.map(cell=>`<td>${cell}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+function table(headers,rows,id='',cls='',rowClasses=[]) {
+  return `<div class="table-scroll"><table ${id?`id="${h(id)}"`:''} class="${h(cls)}"><thead><tr>${headers.map((x,i)=>`<th><button class="sort" data-sort="${i}" aria-label="按${h(x)}排序">${h(x)} <span>↕</span></button></th>`).join('')}</tr></thead><tbody>${rows.map((row,i)=>`<tr${rowClasses[i]?` class="${h(rowClasses[i])}"`:""}>${row.map(cell=>`<td>${cell}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
 }
 function field(label,control,note='') {
   return `<label class="field"><span>${h(label)}</span>${control}${note?`<small>${h(note)}</small>`:''}</label>`;
@@ -8070,10 +8089,10 @@ function timingGap(s,c,baseTime){
   if(c.retired)return 'OUT';
   if(r.qualifying)return c.stageBest>=9999?'NO TIME':r.fastest.time===c.stageBest?'LEADER':'+'+(c.stageBest-r.fastest.time).toFixed(3);
   const active=r.cars.filter(x=>!x.retired).slice().sort((a,b)=>a.position-b.position),index=active.findIndex(x=>x.driverId===c.driverId);
-  if(index<=0)return 'LEADER';
+  if(index<=0)return s.settings.timingGap==='interval'?'INTERVAL':'LEADER';
   const reference=s.settings.timingGap==='interval'?active[index-1]:active[0];
   const distance=Math.max(0,reference.totalDistance-c.totalDistance),laps=Math.floor(distance+1e-8);
-  return laps>0?'+'+laps+' LAP':'+'+(distance*baseTime).toFixed(1);
+  return laps>0?'+'+laps+' LAP':'+'+(distance*baseTime).toFixed(3);
 }
 const intersects=(a,b,gap=5)=>a.x<b.x+b.width+gap&&a.x+a.width+gap>b.x&&a.y<b.y+b.height+gap&&a.y+a.height+gap>b.y;
 function layoutMapLabels(markers,previous={},reserved=[]){
@@ -8123,7 +8142,7 @@ function sectorValue(c,i){return c.sectors[i]||c.lastSectors[i]||0;}
 function sectorSpeed(c,i){return c.sectorSpeeds[i]||c.lastSectorSpeeds[i]||0;}
 function timingCells(s,c){
   const r=s.race,d=driverOf(s,c.driverId),t=teamOf(s,c.teamId);
-  const code=`<button class="driver-code" data-action="focusDriver" data-payload="${h(JSON.stringify({id:c.driverId}))}" style="--team:${h(t.color)}" title="${h(d.name)}" aria-label="聚焦 ${h(d.code+' '+d.name)}">${h(d.code)}</button>`;
+  const code=`<div class="tower-driver"><span class="tower-position" aria-label="第 ${c.position} 名">${c.position}</span><button class="driver-code" data-action="focusDriver" data-payload="${h(JSON.stringify({id:c.driverId}))}" style="--team:${h(t.color)}" title="${h(d.name)}" aria-label="聚焦 ${h(d.code+' '+d.name)}">${h(d.code)}</button></div>`;
   if(!r.qualifying)return {driver:code,gap:`<span class="tower-gap ${c.retired?'tone-danger':''}">${timingGap(s,c,currentTrack(s).baseTime)}</span>`,tyre:tyre(c.compound)};
   return {driver:code+`<small class="phase-label tone-${phaseTone(c)}">${h(phase(c))}</small>`,best:lapDisplay(c.stageBest,{fastest:r.fastest.driverId===c.driverId}),gap:`<span class="tower-gap">${timingGap(s,c,currentTrack(s).baseTime)}</span>`,tyre:tyre(c.compound)};
 }
@@ -8162,7 +8181,7 @@ function liveView(s){
   const r=s.race,track=currentTrack(s),q=r.qualifying,c=focused(s);
   return `${header('LIVE TIMING / 比赛指挥',track.name+' · '+SESSION_NAMES[r.kind],q?'出场圈 → 飞行圈 → 回场圈。倒计时结束后，只能完成已开始的飞行圈。':'连续比赛时钟 · 车手独立计时 · 默认 1× 为现实时间',`<span class="live-indicator">LIVE</span>`)}
     <div class="live-toolbar"><div class="session-clock"><small>${q?r.kind+r.q.stage+' · '+(r.q.status==='BREAK'?'节间休息':'剩余时间'):'已用时间'}</small><strong data-live-clock>${clock(q?r.q.remaining:r.time,q)}</strong></div><div class="live-lap"><strong data-live-lap>${q?r.kind+r.q.stage:'LAP '+Math.min(r.lap+1,r.totalLaps)}</strong><small>${q?(r.kind==='SQ'?'12 / 10 / 8 MIN':'18 / 15 / 12 MIN'):' / '+r.totalLaps}</small></div>${flagState(r)}<div id="toolbar-weather">${weatherSummary(s)}</div><div class="speed-controls">${[1,2,4,8,16,32,64].map(v=>button(v+'×','speed',{value:v},{class:s.settings.speed===v?'selected':''})).join('')}</div><div class="actions">${button(r.running?'暂停':'继续','pause',{}, {class:'small'})}${button('快进一圈','tick',{}, {class:'small'})}${q?button('跳过节间休息','skipQualBreak',{}, {class:'small',disabled:r.q.status!=='BREAK'}):''}${button('自动完成','finishRace',{}, {class:'small',confirm:'按当前策略自动完成本场次；排位期间由 AI 安排本队出场。确认？'})}${button('红旗后恢复','resume',{}, {class:'small',disabled:!r.red})}</div></div>
-    <div class="broadcast-grid"><section class="panel live-tower"><div id="tower-race-control">${controlBanner(s)}</div><div class="panel-heading"><h2>${icon('stopwatch')}实时排名</h2>${q?'<span class="muted">排位成绩</span>':gapControls(s)}</div><div class="table-scroll"><table class="broadcast-timing ${q?'qualifying-timing':'race-timing'}"><colgroup>${q?'<col style="width:27%"><col style="width:31%"><col style="width:28%"><col style="width:14%">':'<col style="width:36%"><col style="width:45%"><col style="width:19%">'}</colgroup><thead><tr>${q?'<th>车手</th><th>最佳圈</th><th>差距</th><th>轮胎</th>':`<th>车手</th><th data-gap-heading>${s.settings.timingGap==='interval'?'INTERVAL':'LEADER'}</th><th>轮胎</th>`}</tr></thead><tbody id="timing-body">${r.cars.map(x=>timingRow(s,x)).join('')}</tbody></table></div><p class="tower-note">${q?'点击车手查看遥测':'时间差 / 秒 · 点击任意一行聚焦车手'}</p></section>
+    <div class="broadcast-grid"><section class="panel live-tower"><div id="tower-race-control">${controlBanner(s)}</div><div class="panel-heading"><h2>${icon('stopwatch')}实时排名</h2>${q?'<span class="muted">排位成绩</span>':gapControls(s)}</div><div class="table-scroll"><table class="broadcast-timing ${q?'qualifying-timing':'race-timing'}"><colgroup>${q?'<col style="width:32%"><col style="width:30%"><col style="width:24%"><col style="width:14%">':'<col style="width:41%"><col style="width:43%"><col style="width:16%">'}</colgroup><thead><tr>${q?'<th>车手</th><th>最佳圈</th><th>差距</th><th>轮胎</th>':`<th>车手</th><th data-gap-heading>${s.settings.timingGap==='interval'?'INTERVAL':'LEADER'}</th><th>轮胎</th>`}</tr></thead><tbody id="timing-body">${r.cars.map(x=>timingRow(s,x)).join('')}</tbody></table></div><p class="tower-note">${q?'点击车手查看遥测':'时间差 / 秒 · 点击任意一行聚焦车手'}</p></section>
     <section class="panel track-panel"><div class="map-heading"><div><p class="eyebrow">CIRCUIT TRACKER</p><h2>${h(track.city)}</h2></div><span>${track.length.toFixed(3)} KM · ${track.corners} TURNS</span></div>${trackSvg(s)}<div class="map-caption"><span>● 实心 / 空心：同队两台赛车</span><span>计时线示意 ${button('标注：'+(s.settings.mapLabels==='team'?'本队':'全场'),'mapLabels',{}, {class:'small map-label-toggle'})}</span></div>${telemetry(s,c)}</section>
     <aside class="live-commands"><h2>${icon('radio')}车队无线电</h2>${r.cars.filter(x=>x.teamId===s.player.teamId).sort((a,b)=>a.slot-b.slot).map(x=>command(s,x)).join('')}</aside></div>
     <div class="grid-2">${panel('赛事消息',`<div id="race-events" class="race-events">${r.events.slice(0,10).map(eventItem).join('')}</div>`)}${panel(q?'排位规则与状态':'比赛策略',q?`<p>${s.teams.length*2} 台赛车，前两段各淘汰 ${s.teams.length===11?6:5} 台，最后 10 台争夺杆位。无有效圈显示 NO TIME。</p><p>${r.kind==='SQ'?'干地 SQ1 / SQ2 每段只允许一套新中性胎，SQ3 一套软胎。':'成绩相同时，先做出该成绩者排名靠前。Q1 / Q2 之间休息 7 分钟，Q2 / Q3 之间休息 8 分钟。'}</p><p class="muted">${r.kind==='SQ'?'冲刺排位各段之间休息 7 分钟。':'107% 超时将标记为待裁判审查，游戏默认允许发车。'}飞行圈默认完成后回场；可提前选择连续推进。${r.q.status==='BREAK'?'本段已结束，可等待倒计时或跳过休息。':''}</p><details><summary>已完成各段成绩</summary>${r.q.stages.map((rows,i)=>`<h3>${r.kind}${i+1}</h3>${table(['名次','车手','时间'],rows.map((x,j)=>[j+1,h(driverOf(s,x.id).code),time(x.time)]))}`).join('')||'暂无'}</details>`:`<p>正赛干地须实际使用两种干胎；使用过雨胎可豁免。${track.id==='monaco'&&s.season.year>=2025?'摩纳哥至少两次停站。':''}</p><p class="muted">绿色旗帜下可使用 DRS；雨地、安全车与虚拟安全车期间禁用。出站损失计入连续比赛时间。离开此页面、切换到后台或打开对话框时暂停推进。</p>`)}</div>${raceDetails(s)}`;
@@ -8241,10 +8260,10 @@ function detailCells(s,c){
 function pitHistory(s){
   const records=s.race.cars.flatMap(c=>(c.pitLog||[]).map((entry,i)=>({...entry,id:c.driverId,sequence:i+1}))).sort((a,b)=>(b.at??b.lap)-(a.at??a.lap)||a.id.localeCompare(b.id));
   if(!records.length)return '<p class="empty-pit-log">尚无进站换胎记录。</p>';
-  return `<div class="table-scroll"><table class="pit-history-table"><thead><tr><th>比赛时间</th><th>车手</th><th>圈数</th><th>换胎</th><th>停站用时</th><th>总损失</th></tr></thead><tbody>${records.map(entry=>`<tr><td>${entry.at===undefined?'—':clock(entry.at,false)}</td><td><b>${h(driverOf(s,entry.id).code)}</b><small>${h(driverOf(s,entry.id).name)} · 第 ${entry.sequence} 停</small></td><td>L${entry.lap}</td><td><span class="pit-tyre-change">${entry.from?tyre(entry.from)+'<span>→</span>':''}${tyre(entry.compound)}</span></td><td>${Number(entry.stop).toFixed(2)} s</td><td>+${Number(entry.loss).toFixed(2)} s</td></tr>`).join('')}</tbody></table></div>`;
+  return `<div class="table-scroll"><table class="pit-history-table"><thead><tr><th>比赛时间</th><th>车手</th><th>圈数</th><th>换胎</th><th>停站用时</th><th>总损失</th></tr></thead><tbody>${records.map(entry=>`<tr class="${s.race.cars.find(c=>c.driverId===entry.id)?.teamId===s.player.teamId?'player-row':''}"><td>${entry.at===undefined?'—':clock(entry.at,false)}</td><td><b>${h(driverOf(s,entry.id).code)}</b><small>${h(driverOf(s,entry.id).name)} · 第 ${entry.sequence} 停</small></td><td>L${entry.lap}</td><td><span class="pit-tyre-change">${entry.from?tyre(entry.from)+'<span>→</span>':''}${tyre(entry.compound)}</span></td><td>${Number(entry.stop).toFixed(2)} s</td><td>+${Number(entry.loss).toFixed(2)} s</td></tr>`).join('')}</tbody></table></div>`;
 }
 function raceDetails(s){
-  return `<section class="panel live-race-details" id="race-details"><div class="panel-heading"><h2>${icon('chart')}圈速与进站数据</h2><span class="muted">全部车手 · 实时更新</span></div><div id="live-fastest">${fastestSummary(s,s.race.fastest)}</div><div class="table-scroll"><table class="race-detail-table"><thead><tr>${['车手','当前圈计时','上一圈','最佳圈','Sector 计时','胎龄','磨损','燃油','停站','状态'].map(label=>`<th>${label}</th>`).join('')}</tr></thead><tbody id="detail-timing-body">${s.race.cars.map(c=>`<tr data-detail-car="${h(c.driverId)}">${Object.entries(detailCells(s,c)).map(([key,value])=>`<td data-detail-cell="${key}">${value}</td>`).join('')}</tr>`).join('')}</tbody></table></div><h3 class="pit-history-heading">${icon('pit')}进站换胎记录</h3><div id="pit-history">${pitHistory(s)}</div></section>`;
+  return `<section class="panel live-race-details" id="race-details"><div class="panel-heading"><h2>${icon('chart')}圈速与进站数据</h2><span class="muted">全部车手 · 实时更新</span></div><div id="live-fastest">${fastestSummary(s,s.race.fastest)}</div><div class="table-scroll"><table class="race-detail-table"><thead><tr>${['车手','当前圈计时','上一圈','最佳圈','Sector 计时','胎龄','磨损','燃油','停站','状态'].map(label=>`<th>${label}</th>`).join('')}</tr></thead><tbody id="detail-timing-body">${s.race.cars.map(c=>`<tr data-detail-car="${h(c.driverId)}" class="${c.teamId===s.player.teamId?'player-row':''}">${Object.entries(detailCells(s,c)).map(([key,value])=>`<td data-detail-cell="${key}">${value}</td>`).join('')}</tr>`).join('')}</tbody></table></div><h3 class="pit-history-heading">${icon('pit')}进站换胎记录</h3><div id="pit-history">${pitHistory(s)}</div></section>`;
 }
 function patchDetails(s){
   const body=document.querySelector('#detail-timing-body');if(!body)return;
@@ -8287,7 +8306,7 @@ function resultTable(s,result) {
     `<span class="pit-count">${icon('pit')}${r.stops}</span>`,
     r.penalty?badge('+'+r.penalty+'s','danger','warning'):'—',
     `<strong class="points-value ${r.points>0?'tone-success':''}">${r.points}</strong>`
-  ]),'race-result');
+  ]),'race-result','',result.rows.map(row=>row.teamId===s.player.teamId?'player-row':''));
 }
 function sessionControls(s) {
   const w=s.calendar.weekend,current=w.sessions[w.index];
@@ -8340,7 +8359,7 @@ function renderRaceView(s) {
   const w=s.calendar.weekend,track=currentTrack(s),r=s.race;
   if(r?.realtime&&!r.finished)return liveView(s);
   if(!w)return `${header('比赛指挥','维修墙待命','先进入比赛周末，再执行练习、排位与比赛。')}${panel('下一站准备',`${empty(s.season.offseason?'当前处于转会窗。':'本站赛车尚未登记。')}${link('前往赛历','calendar','primary')}`)}`;
-  if(!r||r.finished)return `${header('比赛指挥',track.name+' · '+(SESSION_NAMES[w.sessions[w.index]]||'周末结束'),'按对应年份的周末流程推进。')}${sessionControls(s)}${r?.qualifying&&r.finished?panel('排位赛各段成绩',r.q.stages.map((rows,i)=>`<details ${i===2?'open':''}><summary>${r.kind}${i+1}</summary>${table(['名次','车手','配方','成绩'],rows.map((x,j)=>[rankBadge(j+1),h(s.drivers.find(d=>d.id===x.id)?.code)+' · '+h(x.name),tyre(x.compound),lapDisplay(x.time,{fastest:j===0})]))}</details>`).join('')):''}${r?.result?panel((r.sprint?'冲刺赛':'正赛')+'赛后报告',`${fastestSummary(s,r.fastest)}${timingLegend()}${resultTable(s,r.result)}<p class="muted">${s.season.rules.fastestLap?'正赛前十中的全场最快圈可获 1 分。':'本赛季最快圈不加分。'}</p><details><summary>罚则与事件记录</summary>${r.events.map(eventItem).join('')}</details><details><summary>分段成绩与位置轨迹</summary>${table(['圈数','领跑车手','累计时间'],r.segments.map(x=>[x.lap,h(s.drivers.find(d=>d.id===x.leader)?.name),time(x.time)]))}<canvas data-chart="positions" aria-label="本队位置变化图"></canvas></details>`):''}`;
+  if(!r||r.finished)return `${header('比赛指挥',track.name+' · '+(SESSION_NAMES[w.sessions[w.index]]||'周末结束'),'按对应年份的周末流程推进。')}${sessionControls(s)}${r?.qualifying&&r.finished?panel('排位赛各段成绩',r.q.stages.map((rows,i)=>`<details ${i===2?'open':''}><summary>${r.kind}${i+1}</summary>${table(['名次','车手','配方','成绩'],rows.map((x,j)=>[rankBadge(j+1),h(s.drivers.find(d=>d.id===x.id)?.code)+' · '+h(x.name),tyre(x.compound),lapDisplay(x.time,{fastest:j===0})]),'','',rows.map(x=>s.drivers.find(d=>d.id===x.id)?.teamId===s.player.teamId?'player-row':''))}</details>`).join('')):''}${r?.result?panel((r.sprint?'冲刺赛':'正赛')+'赛后报告',`${fastestSummary(s,r.fastest)}${timingLegend()}${resultTable(s,r.result)}<p class="muted">${s.season.rules.fastestLap?'正赛前十中的全场最快圈可获 1 分。':'本赛季最快圈不加分。'}</p><details><summary>罚则与事件记录</summary>${r.events.map(eventItem).join('')}</details><details><summary>分段成绩与位置轨迹</summary>${table(['圈数','领跑车手','累计时间'],r.segments.map(x=>[x.lap,h(s.drivers.find(d=>d.id===x.leader)?.name),time(x.time)]))}<canvas data-chart="positions" aria-label="本队位置变化图"></canvas></details>`):''}`;
   return `${header('比赛指挥 / 实时计时',track.name+' · '+SESSION_NAMES[r.kind],track.city+' · '+r.totalLaps+' 圈',`<span class="live-indicator">实时模拟</span>`)}
     <div class="race-toolbar"><div class="lap-count"><span data-race="lap">${r.lap}</span><small> / ${r.totalLaps} 圈</small></div>${flagState(r)}<div class="speed-controls">${[1,2,4,10].map(v=>button(v+'×','speed',{value:v},{class:s.settings.speed===v?'selected':''})).join('')}</div><div class="actions">${button(r.running?'暂停':'继续','pause',{}, {class:'small'})}${button('下一圈','tick',{count:1},{class:'small'})}${button('下一事件','tick',{count:1000,untilEvent:true},{class:'small'})}${button('模拟到底','finishRace',{}, {class:'small',confirm:'自动执行当前指令和策略直到终点，确认？'})}${button('红旗后恢复','resume',{}, {class:'small',disabled:!r.red})}</div></div>
     <div id="live-fastest">${fastestSummary(s,r.fastest)}</div>${timingLegend()}
@@ -8415,9 +8434,9 @@ function standingsView(s) {
   const teams=teamStandings(s),drivers=driverStandings(s),current=s.history.races.filter(r=>r.kind==='RACE'&&s.calendar.events.some(e=>e.result?.rows[0]?.driverId===r.rows[0]?.driverId&&e.result?.track===r.track));
   return `${header('锦标赛档案',s.season.year+' 赛季积分榜','同分按正赛最高名次次数逐级比较；同样成绩时按既有种子顺序排列。')}
  ${progress(s.calendar.round,s.calendar.events.length,'赛季进度 '+s.calendar.round+' / '+s.calendar.events.length)}
- <div class="grid-2">${panel('制造商积分',table(['名次','车队','积分','正赛冠军'],teams.map((t,i)=>[rankBadge(i+1)+(t.id===s.player.teamId?' '+badge('本队','info'):''),`<span class="team-line" style="--row-color:${h(t.color)}"></span>${h(t.name)}`,'<strong>'+t.points+'</strong>',t.wins]),'constructors'))}${panel('车手积分',table(['名次','车手','车队','积分','冠军','最快圈'],drivers.map((d,i)=>[rankBadge(i+1),h(d.name),h(s.teams.find(t=>t.id===d.teamId)?.abbr||'自由车手'),'<strong>'+d.points+'</strong>',d.wins,`<span class="metric tone-fastest">${icon('stopwatch')}${d.fastest}</span>`]),'drivers-standings'))}</div>
+ <div class="grid-2">${panel('制造商积分',table(['名次','车队','积分','正赛冠军'],teams.map((t,i)=>[rankBadge(i+1)+(t.id===s.player.teamId?' '+badge('本队','info'):''),`<span class="team-line" style="--row-color:${h(t.color)}"></span>${h(t.name)}`,'<strong>'+t.points+'</strong>',t.wins]),'constructors','',teams.map(t=>t.id===s.player.teamId?'player-row':'')))}${panel('车手积分',table(['名次','车手','车队','积分','冠军','最快圈'],drivers.map((d,i)=>[rankBadge(i+1),h(d.name),h(s.teams.find(t=>t.id===d.teamId)?.abbr||'自由车手'),'<strong>'+d.points+'</strong>',d.wins,`<span class="metric tone-fastest">${icon('stopwatch')}${d.fastest}</span>`]),'drivers-standings','',drivers.map(d=>d.teamId===s.player.teamId?'player-row':'')))}</div>
  ${panel('车队积分走势',`<canvas data-chart="points" data-type="line" data-height="220" aria-label="本队积分走势"></canvas>`)}
- ${panel('每站积分明细',table(['车队',...s.calendar.events.map((e,i)=>'R'+(i+1))],teams.map(t=>[h(t.name),...s.calendar.events.map((e,i)=>t.results.filter(r=>r.round===i+1).reduce((a,r)=>a+r.points,0)||'—')]),'round-points'))}
+ ${panel('每站积分明细',table(['车队',...s.calendar.events.map((e,i)=>'R'+(i+1))],teams.map(t=>[h(t.name),...s.calendar.events.map((e,i)=>t.results.filter(r=>r.round===i+1).reduce((a,r)=>a+r.points,0)||'—')]),'round-points','',teams.map(t=>t.id===s.player.teamId?'player-row':'')))}
  ${panel('分站档案',s.history.races.length?table(['站次','赛道','场次','冠军','最快圈','报告'],s.history.races.map((r,i)=>[r.round,h(r.track),r.kind==='SPRINT'?'冲刺':'正赛',h(r.rows[0]?.name||'无'),lapDisplay(r.fastest.time,{fastest:true}),`<button class="btn small" data-report="${i}">查看成绩</button>`]),'race-archive'):empty('比赛结束后，这里将保存分站冠军、最快圈与完整报告。'))}
  ${panel('荣誉室与历年记录',s.history.seasons.length?table(['赛季','制造商冠军','车手冠军','本队名次'],s.history.seasons.map(x=>[x.year,h(x.teams[0]?.name),h(x.drivers[0]?.name),'P'+x.playerRank])):empty('完成首个赛季后，年度排名与冠军将进入荣誉室。'))}`;
 }
@@ -8961,7 +8980,7 @@ return {};
 // ===== 文件: package.json =====
 {
   "name": "pitwall-f1-manager",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "private": true,
   "type": "module",
   "description": "纯静态、零依赖 F1 车队经营模拟",
@@ -9020,6 +9039,13 @@ python -m http.server 8000
 `.nojekyll` 禁用 Jekyll 处理。本项目的资源路径全部相对，不需要配置仓库名、域名或 base URL，支持 `/<仓库名>/` 子路径。
 
 没有服务器、API Key、数据库、账号系统、统计脚本或外部 CDN。游戏源文件加载后，模拟与存档都在本地完成。
+
+## 排名与显示
+
+- 实时排名第一列在三字母缩写左侧显示名次；正赛 / 冲刺仍为车手、时间差、轮胎三列。
+- 时间差按秒保留三位小数，例如 `+1.237`。LEADER 对比领跑者，INTERVAL 对比前车；榜首显示当前模式名称，退赛显示 OUT，套圈显示圈数。
+- 本队车手以浅绿色行背景和左侧色条高亮，覆盖赛时 / 赛后排名、底部详细数据与进站记录、积分榜；切换排序不会丢失高亮。当前聚焦车手另有右侧浅色标记。
+- 字体保留原版系统字体，不需要安装或下载字体。
 
 ## 核心玩法
 
@@ -9404,13 +9430,22 @@ node tests/live-display.test.js
 - 浏览器实测：手动预约进站后取消，指令确实清除；再次预约并过线后，底部正确显示 L2、M → H、停站 2.24 秒及总损失 24.24 秒。
 - 本次桌面布局检查无应用来源脚本错误。手机和用户本机 Win10 浏览器未逐一实测；保留响应式断点与明确的字母宽度。
 
+## 2.2.0 排名显示验证
+
+- 浏览器实测普通字体仍为 Consolas / Liberation Mono / Menlo 系统等宽字体，无附加字体资源。
+- 冲刺排位显示排名数字；本队两名车手的背景高亮与其他车手区分，排名与缩写包围框不相交。
+- 冲刺赛实测 LEADER / INTERVAL 切换、榜首模式名称、其余车手三位小数；所有行的名次、缩写和时间差无相交。
+- 积分榜两名本队车手、制造商本队和分站积分明细高亮；按积分重新排序后仍正确绑定车手。
+- 增加本队高亮在多处排名中绑定所属车队的自动回归，并补充排名数字与毫秒格式检查。
+- 经典脚本入口 offline.html 实测恢复 INTERVAL 模式，榜首显示 INTERVAL，本队两行高亮与原版等宽字体保持正确。
+
 ## 自动回归结果
 
 - `node tests/engine.test.js`：原有 19 项经营 / 兼容引擎测试通过。
 - `node tests/realtime.test.js`：新增 25 项实时引擎测试通过。
 - 新版 action 入口全程完成 2025：24 个周末、30 场比赛，每六站序列化 / 恢复一次并完成季末。
-- `node tests/live-display.test.js`：7 项显示 / 进站修复检查通过。
-- 合计 51 项回归测试，再加静态资源检查；完整输出保存于 `tests/last-run.txt`，结构化结果保存于 `tests/last-run.json`。
+- `node tests/live-display.test.js`：8 项显示 / 进站修复检查通过。
+- 回归测试与静态资源检查均通过；完整输出保存于 `tests/last-run.txt`，结构化结果保存于 `tests/last-run.json`。
 - 其中包含 40 个真实车队开局、四季两模式完整周末与全部年度冲刺流程。
 - 实际测试输出：`tests/last-run.txt`；结构化结果：`tests/last-run.json`。
 - 500 圈性能采用**十场各 50 圈**，断言每场确实完成 50 圈，避免全部退赛提前结束造成虚假基准。最终耗时见日志，低于 1 秒目标。该基准验证保留的旧版兼容引擎，**不作为新实时引擎或界面帧率的基准**。该数字不含 DOM 渲染、JSON 序列化或存储，且取决于测试机器。
@@ -9440,6 +9475,15 @@ node tests/live-display.test.js
 
 ```md
 <!-- ===== 文件: CHANGELOG.md ===== -->
+# 2.2.0 · 排名辨识优化
+
+- 排位赛、冲刺与正赛的车手缩写左侧加入实时排名数字，仍保留原有列数。
+- LEADER / INTERVAL 的秒数差距显示三位小数；INTERVAL 模式下榜首显示 INTERVAL，LEADER 模式下显示 LEADER。退赛 OUT 与套圈提示保留。
+- 调整排名列宽与独立的数字 / 缩写间距，防止三位小数和两位数排名挤压文字。
+- 本队车手采用浅绿色背景与左侧色条，覆盖实时排名、详细数据、进站历史、赛后报告、排位分段与积分榜；表格排序后高亮继续跟随对应行。
+- 聚焦车手使用右侧浅色条，兼容本队高亮。
+- 按用户最终要求保留原版字体，不附带或加载其他字体。
+
 # 2.1.0 · 赛事显示与进站修复
 
 - 修复“二停 = 0”被误判为第 0 圈停站，造成首圈自动换胎。计划首停按该车实际完成圈数执行；修复旧存档中尚未执行的误请求，保留手动指令。
@@ -10344,7 +10388,7 @@ console.log(JSON.stringify({tests:results},null,2));
     },
     {
       "name": "500圈实测",
-      "milliseconds": 128.13851099999988,
+      "milliseconds": 109.51736700000015,
       "totalLaps": 500
     },
     {
@@ -10456,7 +10500,7 @@ console.log(JSON.stringify({tests:results},null,2));
       "status": "PASS"
     },
     {
-      "name": "LEADER / INTERVAL 使用不同参照，领先车为 LEADER，退赛车为 OUT，套圈差距正常",
+      "name": "LEADER / INTERVAL 使用不同参照，领先车随模式显示 LEADER / INTERVAL，退赛车为 OUT，套圈差距正常",
       "status": "PASS"
     },
     {
@@ -10478,10 +10522,12 @@ console.log(JSON.stringify({tests:results},null,2));
     {
       "name": "排名模式与聚焦选择经过保存后仍保留，界面计算不消耗RNG",
       "status": "PASS"
+    },
+    {
+      "name": "本队高亮绑定车手所属车队，覆盖实时排名、详细表、积分榜与车队分站明细",
+      "status": "PASS"
     }
-  ],
-  "static": "PASS",
-  "javascriptSyntax": "PASS"
+  ]
 }
 ```
 
@@ -10489,6 +10535,8 @@ console.log(JSON.stringify({tests:results},null,2));
 
 ```text
 // ===== 文件: tests/last-run.txt =====
+Verified 2026-10-22
+
 $ node tests/engine.test.js
 PASS 四个赛季真实开季阵容与 22/24 站赛历
 PASS 40 个历史车队开局分别完成首个周末
@@ -10508,7 +10556,7 @@ PASS 车手签入、续约、解约与员工合同
 PASS 完整 2025 → 2026 赛季结算、转会窗与新规
 PASS SC、雨地、红旗恢复、进站、赛道限制与 DRS 距离
 PASS 预算帽升级处罚保持积分明细与总积分一致
-  benchmark: 128.14 ms / 500 laps
+  benchmark: 109.52 ms / 500 laps
 PASS 500 圈模拟性能：十场 50 圈总计少于 1000 ms（不含 DOM 与存档）
 {
   "tests": [
@@ -10586,7 +10634,7 @@ PASS 500 圈模拟性能：十场 50 圈总计少于 1000 ms（不含 DOM 与存
     },
     {
       "name": "500圈实测",
-      "milliseconds": 128.13851099999988,
+      "milliseconds": 109.51736700000015,
       "totalLaps": 500
     },
     {
@@ -10729,12 +10777,13 @@ PASS 新版 action 全程推进 2025：24 站、30 场比赛、中途存档恢�
 
 $ node tests/live-display.test.js
 PASS 首停第26圈、二停关闭：两台赛车第一圈和第25圈均不提前进站，第26圈才执行
-PASS LEADER / INTERVAL 使用不同参照，领先车为 LEADER，退赛车为 OUT，套圈差距正常
+PASS LEADER / INTERVAL 使用不同参照，领先车随模式显示 LEADER / INTERVAL，退赛车为 OUT，套圈差距正常
 PASS 22辆赛车聚集在同一点或边缘：标签不相交、完整位于地图内
 PASS 正赛排名恰好三列，天气和赛事状态位于上方，完整详细数据位于最后
 PASS 聚焦身份取明确车手ID，排序变化后仍保留选择；红旗与SC横幅对应当前状态
 PASS 修复旧存档中的第0圈二停误请求，同时保留手动进站指令
 PASS 排名模式与聚焦选择经过保存后仍保留，界面计算不消耗RNG
+PASS 本队高亮绑定车手所属车队，覆盖实时排名、详细表、积分榜与车队分站明细
 {
   "tests": [
     {
@@ -10742,7 +10791,7 @@ PASS 排名模式与聚焦选择经过保存后仍保留，界面计算不消耗
       "status": "PASS"
     },
     {
-      "name": "LEADER / INTERVAL 使用不同参照，领先车为 LEADER，退赛车为 OUT，套圈差距正常",
+      "name": "LEADER / INTERVAL 使用不同参照，领先车随模式显示 LEADER / INTERVAL，退赛车为 OUT，套圈差距正常",
       "status": "PASS"
     },
     {
@@ -10764,6 +10813,10 @@ PASS 排名模式与聚焦选择经过保存后仍保留，界面计算不消耗
     {
       "name": "排名模式与聚焦选择经过保存后仍保留，界面计算不消耗RNG",
       "status": "PASS"
+    },
+    {
+      "name": "本队高亮绑定车手所属车队，覆盖实时排名、详细表、积分榜与车队分站明细",
+      "status": "PASS"
     }
   ]
 }
@@ -10782,6 +10835,7 @@ import { currentTrack } from '../js/core/calendar.js';
 import { qualifying, practice } from '../js/core/race.js';
 import { startRealtimeRace, advanceRealtime, fastForwardLap, resumeRealtime } from '../js/core/realtime.js';
 import { timingGap, layoutMapLabels } from '../js/ui/liveData.js';
+import { standingsView } from '../js/ui/standingsView.js';
 import { liveView } from '../js/ui/liveView.js';
 import { importText, exportText } from '../js/core/save.js';
 import { teamOf } from '../js/core/helpers.js';
@@ -10797,22 +10851,29 @@ test('首停第26圈、二停关闭：两台赛车第一圈和第25圈均不提�
  let guard=0;while(cars.some(c=>c.lap<26)&&guard++<4000){for(const c of cars){c.tyreWear=0;c.tyreAge=0;for(const p of Object.values(s.parts[c.teamId].cars[c.slot]))p.wear=0;}if(s.race.red)resumeRealtime(s);advanceRealtime(s,1,true);for(const c of cars)if(c.lap<26)assert.equal(c.stops,0);}
  for(const c of cars){assert.equal(c.retired,false);assert.equal(c.stops,1);assert.equal(c.pitLog[0].lap,26);assert.equal(c.pitLog[0].from,'M');assert.equal(c.pitLog[0].compound,'H');assert.ok(c.pitLog[0].at>0);assert.deepEqual(c.planUsed,[0]);}
 });
-test('LEADER / INTERVAL 使用不同参照，领先车为 LEADER，退赛车为 OUT，套圈差距正常',()=>{
+test('LEADER / INTERVAL 使用不同参照，领先车随模式显示 LEADER / INTERVAL，退赛车为 OUT，套圈差距正常',()=>{
  const s=race(),[a,b,c]=s.race.cars;s.race.cars=[a,b,c];[a,b,c].forEach((x,i)=>{x.position=i+1;x.totalDistance=5-i*.1;});const base=currentTrack(s).baseTime;
- assert.equal(timingGap(s,a,base),'LEADER');const leader=timingGap(s,c,base);reduce(s,'timingGap',{value:'interval'});const interval=timingGap(s,c,base);assert.equal(leader,'+'+(.2*base).toFixed(1));assert.equal(interval,'+'+(.1*base).toFixed(1));c.retired=true;assert.equal(timingGap(s,c,base),'OUT');c.retired=false;c.totalDistance=3.4;assert.equal(timingGap(s,c,base),'+1 LAP');assert.throws(()=>reduce(s,'timingGap',{value:'bad'}));
+ assert.equal(timingGap(s,a,base),'LEADER');const leader=timingGap(s,c,base);reduce(s,'timingGap',{value:'interval'});const interval=timingGap(s,c,base);assert.equal(timingGap(s,a,base),'INTERVAL');assert.equal(leader,'+'+(.2*base).toFixed(3));assert.equal(interval,'+'+(.1*base).toFixed(3));c.totalDistance=b.totalDistance-.000001;assert.match(timingGap(s,c,base),/^\+\d+\.\d{3}$/);c.retired=true;assert.equal(timingGap(s,c,base),'OUT');c.retired=false;c.totalDistance=3.4;assert.equal(timingGap(s,c,base),'+1 LAP');assert.throws(()=>reduce(s,'timingGap',{value:'bad'}));
 });
 test('22辆赛车聚集在同一点或边缘：标签不相交、完整位于地图内',()=>{
  for(const [x,y]of [[400,370],[8,8],[792,732]]){const markers=Array.from({length:22},(_,i)=>({id:'driver'+i,x,y}));const labels=layoutMapLabels(markers);assert.equal(labels.length,22);for(let i=0;i<labels.length;i++){const a=labels[i];assert.ok(a.x>=0&&a.y>=0&&a.x+a.width<=800&&a.y+a.height<=740);for(const b of labels.slice(i+1))assert.ok(a.x+a.width<=b.x||b.x+b.width<=a.x||a.y+a.height<=b.y||b.y+b.height<=a.y,'overlapping labels');}}
 });
 test('正赛排名恰好三列，天气和赛事状态位于上方，完整详细数据位于最后',()=>{
  const s=race(),markup=liveView(s),tower=markup.slice(markup.indexOf('<table class="broadcast-timing'),markup.indexOf('</table>'));
- assert.equal((tower.match(/<th[ >]/g)||[]).length,3);assert.equal((tower.match(/<td /g)||[]).length,s.race.cars.length*3);assert.ok(!tower.includes('data-cell="best"'));assert.ok(markup.indexOf('id="toolbar-weather"')<markup.indexOf('id="timing-body"'));assert.ok(markup.indexOf('id="tower-race-control"')<markup.indexOf('id="timing-body"'));assert.ok(markup.indexOf('id="race-details"')>markup.indexOf('id="race-events"'));assert.ok(markup.includes('id="pit-history"'));assert.ok(markup.includes('data-detail-cell="current"'));assert.ok(markup.includes('data-detail-cell="best"'));
+ assert.equal((tower.match(/class="tower-position"/g)||[]).length,s.race.cars.length);for(const c of s.race.cars)assert.ok(tower.includes('aria-label="第 '+c.position+' 名">'+c.position+'</span>'));assert.equal((tower.match(/<th[ >]/g)||[]).length,3);assert.equal((tower.match(/<td /g)||[]).length,s.race.cars.length*3);assert.ok(!tower.includes('data-cell="best"'));assert.ok(markup.indexOf('id="toolbar-weather"')<markup.indexOf('id="timing-body"'));assert.ok(markup.indexOf('id="tower-race-control"')<markup.indexOf('id="timing-body"'));assert.ok(markup.indexOf('id="race-details"')>markup.indexOf('id="race-events"'));assert.ok(markup.includes('id="pit-history"'));assert.ok(markup.includes('data-detail-cell="current"'));assert.ok(markup.includes('data-detail-cell="best"'));
 });
 test('聚焦身份取明确车手ID，排序变化后仍保留选择；红旗与SC横幅对应当前状态',()=>{
  const s=race(),id=s.race.cars.at(-1).driverId;reduce(s,'focusDriver',{id});s.race.cars.reverse();const markup=liveView(s);assert.ok(markup.includes('data-focused-driver="'+id+'"'));assert.throws(()=>reduce(s,'focusDriver',{id:'missing'}));s.race.control='SC';assert.ok(liveView(s).includes('SAFETY CAR'));s.race.red=true;assert.ok(liveView(s).includes('RED FLAG'));
 });
 test('修复旧存档中的第0圈二停误请求，同时保留手动进站指令',()=>{for(const manual of [false,true]){const s=race(),c=s.race.cars.find(c=>c.teamId===s.player.teamId);c.planUsed=[1];c.pitRequest=c.plan.next;if(manual)s.race.events.push({lap:0,type:'radio',text:c.name+'：收到进站指令，本圈末换 H 胎'});const loaded=importText(exportText(s)),car=loaded.race.cars.find(x=>x.driverId===c.driverId);assert.deepEqual(car.planUsed,[]);assert.equal(car.pitRequest,manual?'H':null);}});
 test('排名模式与聚焦选择经过保存后仍保留，界面计算不消耗RNG',()=>{const s=race(),id=s.race.cars.at(-1).driverId;reduce(s,'timingGap',{value:'interval'});reduce(s,'focusDriver',{id});const before=s.rng;liveView(s);assert.equal(s.rng,before);const saved=importText(exportText(s));assert.equal(saved.settings.timingGap,'interval');assert.equal(saved.settings.focusDriver,id);});
+test('本队高亮绑定车手所属车队，覆盖实时排名、详细表、积分榜与车队分站明细',()=>{
+ const s=race(),own=teamOf(s).drivers,markup=liveView(s);
+ for(const id of own){assert.ok(markup.includes('data-car="'+id+'" data-action="focusDriver"'));assert.ok(markup.includes('data-detail-car="'+id+'" class="player-row"'));}
+ const tower=markup.slice(markup.indexOf('id="timing-body"'),markup.indexOf('</tbody>'));assert.equal((tower.match(/class="player-row"/g)||[]).length,2);
+ const standings=standingsView(s);for(const [id,count]of [['constructors',1],['drivers-standings',2],['round-points',1]]){const section=standings.slice(standings.indexOf('id="'+id+'"'));assert.equal((section.slice(0,section.indexOf('</table>')).match(/class="player-row"/g)||[]).length,count);}
+ const original=s.race.cars[0];s.race.cars.reverse();assert.ok(liveView(s).includes('aria-label="第 '+original.position+' 名">'+original.position+'</span>'));
+});
 console.log(JSON.stringify({tests},null,2));
 ```
 

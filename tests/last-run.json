@@ -75,7 +75,7 @@
     },
     {
       "name": "500圈实测",
-      "milliseconds": 128.13851099999988,
+      "milliseconds": 109.51736700000015,
       "totalLaps": 500
     },
     {
@@ -187,7 +187,7 @@
       "status": "PASS"
     },
     {
-      "name": "LEADER / INTERVAL 使用不同参照，领先车为 LEADER，退赛车为 OUT，套圈差距正常",
+      "name": "LEADER / INTERVAL 使用不同参照，领先车随模式显示 LEADER / INTERVAL，退赛车为 OUT，套圈差距正常",
       "status": "PASS"
     },
     {
@@ -209,8 +209,10 @@
     {
       "name": "排名模式与聚焦选择经过保存后仍保留，界面计算不消耗RNG",
       "status": "PASS"
+    },
+    {
+      "name": "本队高亮绑定车手所属车队，覆盖实时排名、详细表、积分榜与车队分站明细",
+      "status": "PASS"
     }
-  ],
-  "static": "PASS",
-  "javascriptSyntax": "PASS"
+  ]
 }

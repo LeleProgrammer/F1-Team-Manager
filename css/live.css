@@ -14,18 +14,18 @@
 
 /* Readable timing wall: explicit column widths and uncompressed driver names. */
 :root{--live-mono:Consolas,"Liberation Mono",Menlo,monospace}
-.broadcast-grid{grid-template-columns:minmax(285px,.82fr) minmax(390px,1.38fr) minmax(245px,.8fr)}
+.broadcast-grid{grid-template-columns:minmax(320px,.82fr) minmax(390px,1.38fr) minmax(245px,.8fr)}
 .broadcast-timing{table-layout:fixed;font-size:14px;width:100%;min-width:0}
 .broadcast-timing td,.broadcast-timing th{padding:10px 8px;overflow:visible;line-height:1.35;vertical-align:middle}
 .broadcast-timing th{font-size:11px}.broadcast-timing td:first-child{width:auto}
 .broadcast-timing td:last-child,.broadcast-timing th:last-child{text-align:center;padding-right:4px}
-.driver-code{display:inline-block;min-width:3.8em;width:auto;flex-shrink:0;font-family:var(--live-mono);font-size:21px;line-height:1.25;font-weight:800;font-stretch:normal;letter-spacing:1px;white-space:nowrap;padding:3px 4px 3px 9px;text-align:left;word-spacing:normal}
-.tower-gap{display:inline-block;font-family:var(--live-mono);font-size:17px;font-weight:650;line-height:1.4;letter-spacing:0;white-space:nowrap}
+.driver-code{display:inline-block;min-width:0;width:auto;flex-shrink:0;font-family:var(--live-mono);font-size:21px;line-height:1.25;font-weight:800;font-stretch:normal;letter-spacing:1px;white-space:nowrap;padding:3px 0 3px 6px;text-align:left;word-spacing:normal}
+.tower-gap{display:inline-block;font-family:var(--live-mono);font-size:16px;font-weight:650;line-height:1.4;letter-spacing:0;white-space:nowrap}
 .broadcast-timing .tyre{width:29px;height:29px;font-size:13px;border-width:2px}
 .broadcast-timing tbody tr{cursor:pointer;min-height:46px}.broadcast-timing tbody tr:hover{background:#2c41576b}
 .broadcast-timing .phase-label{font-size:10px;line-height:1.5;margin:3px 0 0 12px}
-.qualifying-timing .driver-code{font-size:17px;min-width:3.7em;padding-left:7px}
-.qualifying-timing .tower-gap{font-size:12px}.qualifying-timing .lap-value{font-family:var(--live-mono);font-size:12px;gap:3px}
+.qualifying-timing .driver-code{font-size:17px;min-width:0;padding-left:7px}
+.qualifying-timing .tower-gap{font-size:11px}.qualifying-timing .lap-value{font-family:var(--live-mono);font-size:12px;gap:3px}
 .qualifying-timing .lap-value .icon{display:none}.qualifying-timing td{padding:10px 5px}
 .qualifying-timing .tyre{width:25px;height:25px;font-size:11px}
 .gap-controls{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}.gap-controls .btn{min-height:29px;font-size:10px;padding:4px 7px;letter-spacing:.25px}
@@ -37,6 +37,19 @@
 .telemetry-title>strong{font-size:30px;letter-spacing:1px;min-width:3.5em;font-family:var(--live-mono)}.telemetry-title b{font-size:15px;line-height:1.5;overflow-wrap:anywhere}.telemetry-title small{font-size:12px;line-height:1.5}.telemetry-title>div{min-width:0}.live-numbers b{font-family:var(--live-mono);font-size:clamp(24px,2.3vw,34px);letter-spacing:-.6px;white-space:nowrap}.live-numbers small{font-size:12px}.live-numbers em{font-size:12px}.sector-box>b{font-family:var(--live-mono);font-size:clamp(15px,1.4vw,21px);letter-spacing:-.3px;white-space:nowrap}.sector-box>small{font-size:12px;flex-wrap:wrap;gap:3px}.sector-box>small span{font-size:9px}.sector-box>span{font-size:10px;line-height:1.6;display:block;white-space:normal}.telemetry-foot{font-size:11px;flex-wrap:wrap;line-height:1.8}
 .live-commands>h2{font-size:15px}.live-command h3{font-size:12px;line-height:1.5;overflow-wrap:anywhere}.driver-chip{font-size:19px;font-family:var(--live-mono);letter-spacing:1px}.live-command .badge{font-size:10px}.live-command .split{align-items:flex-start;flex-wrap:wrap}.car-health{font-size:11px;flex-wrap:wrap}.car-health b{font-size:14px}.live-command .field>span{font-size:11px}.live-command select,.live-command .btn{font-size:11px;line-height:1.5}.command-intent{font-size:11px;line-height:1.65}.live-command .tyre-choice{padding:0}.map-caption{font-size:10px;line-height:1.7;flex-wrap:wrap}.map-label-toggle{font-size:10px;padding:4px 6px}
 .live-race-details{margin-top:22px}.live-race-details .panel-heading{flex-wrap:wrap}.race-detail-table{min-width:1200px;font-family:var(--live-mono);font-size:14px;table-layout:auto}.race-detail-table th{font-family:var(--font);font-size:12px}.race-detail-table td{padding:13px 12px}.detail-driver{display:flex;align-items:center;gap:12px;border:0;border-left:3px solid var(--team);background:transparent;color:#e9f2fc;padding:4px 8px;text-align:left}.detail-driver b{font-family:var(--live-mono);font-size:18px;letter-spacing:1px;min-width:3ch}.detail-driver>span{font-family:var(--font);font-size:12px}.race-detail-table .lap-value{font-size:14px}.detail-sectors{display:flex;gap:15px;font-size:12px}.detail-sectors small{font-size:10px;line-height:1.5}.race-detail-table .focused-row{background:#26394b60}.pit-history-heading{display:flex;align-items:center;gap:9px;font-size:17px;margin-top:26px;margin-bottom:12px}.pit-history-table{font-size:14px;min-width:610px}.pit-history-table th{font-size:12px}.pit-history-table td{font-family:var(--live-mono);font-size:15px}.pit-history-table small{font-family:var(--font);font-size:11px}.pit-tyre-change{display:flex;align-items:center;gap:10px}.empty-pit-log{padding:20px;color:var(--muted);font-size:13px}.fastest-summary strong{font-size:29px}.top-metrics strong{font-size:14px}.stat>strong{font-size:30px}
-@media(max-width:1360px){.broadcast-grid{grid-template-columns:minmax(285px,.85fr) minmax(360px,1.15fr)}.live-commands{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:14px}.live-commands>h2{grid-column:1/-1}.live-command .tyre-cards{max-width:380px}}
-@media(max-width:900px){.broadcast-grid{grid-template-columns:minmax(250px,.8fr) minmax(330px,1.2fr)}.live-weather{padding:4px 10px;min-width:190px}.live-numbers{gap:10px}.live-numbers b{font-size:24px}.live-numbers em{font-size:10px}.sector-box{padding:8px 5px}.sector-box>b{font-size:15px}}
+@media(max-width:1360px){.broadcast-grid{grid-template-columns:minmax(320px,.85fr) minmax(360px,1.15fr)}.live-commands{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:14px}.live-commands>h2{grid-column:1/-1}.live-command .tyre-cards{max-width:380px}}
+@media(max-width:900px){.broadcast-grid{grid-template-columns:minmax(300px,.8fr) minmax(330px,1.2fr)}.live-weather{padding:4px 10px;min-width:190px}.live-numbers{gap:10px}.live-numbers b{font-size:24px}.live-numbers em{font-size:10px}.sector-box{padding:8px 5px}.sector-box>b{font-size:15px}}
 @media(max-width:760px){.broadcast-grid{display:flex;flex-direction:column}.live-tower{max-height:none;overflow:visible}.track-panel{order:0}.live-commands{display:block}.broadcast-grid>section,.broadcast-grid>aside{width:100%}.session-clock strong{font-size:30px}.live-weather{border-left:0;padding:0;min-width:180px}.live-numbers b{font-size:clamp(23px,6.5vw,31px)}.sector-box>b{font-size:clamp(15px,4vw,20px)}.live-toolbar .speed-controls{flex-wrap:wrap}.track-panel svg#track-map{max-height:none}.telemetry-title b{font-size:14px}.live-command .tyre-cards{max-width:none}.live-race-details{padding:15px}.gap-controls .btn{font-size:11px}}
+
+/* Rank and abbreviation share the first column; each keeps its own space. */
+.tower-driver{display:flex;align-items:center;gap:6px;white-space:nowrap}
+.tower-position{flex:0 0 1.7em;text-align:right;color:#a7b7cc;font:600 14px/1.4 var(--live-mono);font-variant-numeric:tabular-nums}
+.qualifying-timing .tower-driver{gap:4px}.qualifying-timing .tower-position{font-size:12px}
+
+.broadcast-timing td{padding-left:5px;padding-right:5px}
+
+/* Own team and inspected driver remain distinct, including on the same row. */
+.broadcast-timing tr.player-row,.race-detail-table tr.player-row{background:#26463785}
+.broadcast-timing tr.player-row:hover,.race-detail-table tr.player-row:hover{background:#315a479e}
+.broadcast-timing tr.focused-row,.race-detail-table tr.focused-row{box-shadow:inset -3px 0 0 #e8f2ff}
+.broadcast-timing tr.player-row.focused-row,.race-detail-table tr.player-row.focused-row{background:#315a47aa}

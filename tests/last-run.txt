@@ -1,3 +1,5 @@
+Verified 2026-10-22
+
 $ node tests/engine.test.js
 PASS 四个赛季真实开季阵容与 22/24 站赛历
 PASS 40 个历史车队开局分别完成首个周末
@@ -17,7 +19,7 @@ PASS 车手签入、续约、解约与员工合同
 PASS 完整 2025 → 2026 赛季结算、转会窗与新规
 PASS SC、雨地、红旗恢复、进站、赛道限制与 DRS 距离
 PASS 预算帽升级处罚保持积分明细与总积分一致
-  benchmark: 128.14 ms / 500 laps
+  benchmark: 109.52 ms / 500 laps
 PASS 500 圈模拟性能：十场 50 圈总计少于 1000 ms（不含 DOM 与存档）
 {
   "tests": [
@@ -95,7 +97,7 @@ PASS 500 圈模拟性能：十场 50 圈总计少于 1000 ms（不含 DOM 与存
     },
     {
       "name": "500圈实测",
-      "milliseconds": 128.13851099999988,
+      "milliseconds": 109.51736700000015,
       "totalLaps": 500
     },
     {
@@ -238,12 +240,13 @@ PASS 新版 action 全程推进 2025：24 站、30 场比赛、中途存档恢�
 
 $ node tests/live-display.test.js
 PASS 首停第26圈、二停关闭：两台赛车第一圈和第25圈均不提前进站，第26圈才执行
-PASS LEADER / INTERVAL 使用不同参照，领先车为 LEADER，退赛车为 OUT，套圈差距正常
+PASS LEADER / INTERVAL 使用不同参照，领先车随模式显示 LEADER / INTERVAL，退赛车为 OUT，套圈差距正常
 PASS 22辆赛车聚集在同一点或边缘：标签不相交、完整位于地图内
 PASS 正赛排名恰好三列，天气和赛事状态位于上方，完整详细数据位于最后
 PASS 聚焦身份取明确车手ID，排序变化后仍保留选择；红旗与SC横幅对应当前状态
 PASS 修复旧存档中的第0圈二停误请求，同时保留手动进站指令
 PASS 排名模式与聚焦选择经过保存后仍保留，界面计算不消耗RNG
+PASS 本队高亮绑定车手所属车队，覆盖实时排名、详细表、积分榜与车队分站明细
 {
   "tests": [
     {
@@ -251,7 +254,7 @@ PASS 排名模式与聚焦选择经过保存后仍保留，界面计算不消耗
       "status": "PASS"
     },
     {
-      "name": "LEADER / INTERVAL 使用不同参照，领先车为 LEADER，退赛车为 OUT，套圈差距正常",
+      "name": "LEADER / INTERVAL 使用不同参照，领先车随模式显示 LEADER / INTERVAL，退赛车为 OUT，套圈差距正常",
       "status": "PASS"
     },
     {
@@ -272,6 +275,10 @@ PASS 排名模式与聚焦选择经过保存后仍保留，界面计算不消耗
     },
     {
       "name": "排名模式与聚焦选择经过保存后仍保留，界面计算不消耗RNG",
+      "status": "PASS"
+    },
+    {
+      "name": "本队高亮绑定车手所属车队，覆盖实时排名、详细表、积分榜与车队分站明细",
       "status": "PASS"
     }
   ]

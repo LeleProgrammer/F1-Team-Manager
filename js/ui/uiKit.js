@@ -55,8 +55,8 @@ export function tyre(c) {
 export function empty(text) {
   return `<div class="empty">${icon('flag')}<p>${h(text)}</p></div>`;
 }
-export function table(headers,rows,id='',cls='') {
-  return `<div class="table-scroll"><table ${id?`id="${h(id)}"`:''} class="${h(cls)}"><thead><tr>${headers.map((x,i)=>`<th><button class="sort" data-sort="${i}" aria-label="按${h(x)}排序">${h(x)} <span>↕</span></button></th>`).join('')}</tr></thead><tbody>${rows.map(row=>`<tr>${row.map(cell=>`<td>${cell}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+export function table(headers,rows,id='',cls='',rowClasses=[]) {
+  return `<div class="table-scroll"><table ${id?`id="${h(id)}"`:''} class="${h(cls)}"><thead><tr>${headers.map((x,i)=>`<th><button class="sort" data-sort="${i}" aria-label="按${h(x)}排序">${h(x)} <span>↕</span></button></th>`).join('')}</tr></thead><tbody>${rows.map((row,i)=>`<tr${rowClasses[i]?` class="${h(rowClasses[i])}"`:""}>${row.map(cell=>`<td>${cell}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
 }
 export function field(label,control,note='') {
   return `<label class="field"><span>${h(label)}</span>${control}${note?`<small>${h(note)}</small>`:''}</label>`;

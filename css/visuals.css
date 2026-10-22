@@ -158,3 +158,9 @@
   .fastest-summary { gap: 8px; padding: 11px; }
   .fastest-summary strong { font-size: 17px; }
 }
+
+/* Own-team emphasis travels with each row when tables are sorted. */
+table tbody tr.player-row{background:#26463785}
+table tbody tr.player-row:hover{background:#315a479e}
+table tbody tr.player-row>td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
+table tbody tr.player-row>td{border-bottom-color:#47735b80}

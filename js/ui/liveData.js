@@ -4,10 +4,10 @@ export function timingGap(s,c,baseTime){
   if(c.retired)return 'OUT';
   if(r.qualifying)return c.stageBest>=9999?'NO TIME':r.fastest.time===c.stageBest?'LEADER':'+'+(c.stageBest-r.fastest.time).toFixed(3);
   const active=r.cars.filter(x=>!x.retired).slice().sort((a,b)=>a.position-b.position),index=active.findIndex(x=>x.driverId===c.driverId);
-  if(index<=0)return 'LEADER';
+  if(index<=0)return s.settings.timingGap==='interval'?'INTERVAL':'LEADER';
   const reference=s.settings.timingGap==='interval'?active[index-1]:active[0];
   const distance=Math.max(0,reference.totalDistance-c.totalDistance),laps=Math.floor(distance+1e-8);
-  return laps>0?'+'+laps+' LAP':'+'+(distance*baseTime).toFixed(1);
+  return laps>0?'+'+laps+' LAP':'+'+(distance*baseTime).toFixed(3);
 }
 const intersects=(a,b,gap=5)=>a.x<b.x+b.width+gap&&a.x+a.width+gap>b.x&&a.y<b.y+b.height+gap&&a.y+a.height+gap>b.y;
 export function layoutMapLabels(markers,previous={},reserved=[]){
