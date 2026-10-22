@@ -316,6 +316,35 @@ dialog::backdrop { background: #04070bcc; backdrop-filter: blur(3px); }
 .page-heading:has(.live-indicator){margin-bottom:16px}.page-heading:has(.live-indicator) h1{font-size:28px}.page-heading:has(.live-indicator) .muted{font-size:10px;margin-top:7px}.live-toolbar{gap:13px;padding:12px 16px}.live-toolbar>.actions{padding-top:8px}.live-toolbar .btn{padding:6px 9px}
 
 .hide-label .dot-label,.hide-label .dot-label-bg{display:none}.map-label-toggle{font-size:8px;padding:3px 5px;margin-left:5px}.map-caption>span{display:flex;align-items:center;gap:3px}
+
+/* Readable timing wall: explicit column widths and uncompressed driver names. */
+:root{--live-mono:Consolas,"Liberation Mono",Menlo,monospace}
+.broadcast-grid{grid-template-columns:minmax(285px,.82fr) minmax(390px,1.38fr) minmax(245px,.8fr)}
+.broadcast-timing{table-layout:fixed;font-size:14px;width:100%;min-width:0}
+.broadcast-timing td,.broadcast-timing th{padding:10px 8px;overflow:visible;line-height:1.35;vertical-align:middle}
+.broadcast-timing th{font-size:11px}.broadcast-timing td:first-child{width:auto}
+.broadcast-timing td:last-child,.broadcast-timing th:last-child{text-align:center;padding-right:4px}
+.driver-code{display:inline-block;min-width:3.8em;width:auto;flex-shrink:0;font-family:var(--live-mono);font-size:21px;line-height:1.25;font-weight:800;font-stretch:normal;letter-spacing:1px;white-space:nowrap;padding:3px 4px 3px 9px;text-align:left;word-spacing:normal}
+.tower-gap{display:inline-block;font-family:var(--live-mono);font-size:17px;font-weight:650;line-height:1.4;letter-spacing:0;white-space:nowrap}
+.broadcast-timing .tyre{width:29px;height:29px;font-size:13px;border-width:2px}
+.broadcast-timing tbody tr{cursor:pointer;min-height:46px}.broadcast-timing tbody tr:hover{background:#2c41576b}
+.broadcast-timing .phase-label{font-size:10px;line-height:1.5;margin:3px 0 0 12px}
+.qualifying-timing .driver-code{font-size:17px;min-width:3.7em;padding-left:7px}
+.qualifying-timing .tower-gap{font-size:12px}.qualifying-timing .lap-value{font-family:var(--live-mono);font-size:12px;gap:3px}
+.qualifying-timing .lap-value .icon{display:none}.qualifying-timing td{padding:10px 5px}
+.qualifying-timing .tyre{width:25px;height:25px;font-size:11px}
+.gap-controls{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}.gap-controls .btn{min-height:29px;font-size:10px;padding:4px 7px;letter-spacing:.25px}
+.live-tower .panel-heading{align-items:center;gap:7px;flex-wrap:wrap}.live-tower .panel-heading h2{font-size:15px}.tower-note{font-size:11px;line-height:1.6;color:var(--muted);margin-top:12px;white-space:normal}
+.live-toolbar{gap:15px}.session-clock strong{font-size:34px;letter-spacing:0;font-family:var(--live-mono)}.session-clock small,.live-lap small{font-size:11px}.live-lap strong{font-size:24px}.live-toolbar .btn{font-size:12px}
+.live-weather{padding:4px 16px;border-left:1px solid #34465e;min-width:210px}.weather-current{display:flex;align-items:center;gap:8px}.weather-current .icon{color:#79baff;width:22px;height:22px}.weather-current strong{font-size:17px;line-height:1.4}.weather-facts{display:flex;gap:15px;flex-wrap:wrap;margin-top:5px;color:#9aabc1;font-size:11px}.weather-facts b{color:#e6edf9;font-size:13px}
+#tower-race-control{margin:-14px -14px 15px}.tower-control{display:flex;align-items:center;gap:10px;padding:13px 14px;border-radius:12px 12px 0 0;background:#18352d;color:#9af4c7;border-bottom:1px solid #356a53}.tower-control strong{display:block;font-family:var(--live-mono);font-size:17px;letter-spacing:.6px;line-height:1.35}.tower-control span:not(.control-symbol){display:block;font-size:12px;margin-top:3px;white-space:normal}.control-symbol{display:flex;align-items:center;flex:0 0 auto}.control-symbol .icon{width:25px;height:25px}.control-SC,.control-VSC,.control-YELLOW{background:repeating-linear-gradient(135deg,#f8d94e,#f8d94e 18px,#edd04c 18px,#edd04c 36px);color:#201d0d;border-color:#ffe983}.control-RED{background:#9e2438;color:#fff;border-color:#f77587}.control-CHEQUERED{background:#dae3ed;color:#111f2f;border-color:#fff}
+.dot-label{font-family:var(--live-mono);font-size:24px;font-weight:800;letter-spacing:1px;font-kerning:none;font-stretch:normal;pointer-events:none}.dot-label-bg{fill:#0b1420;stroke:#637b94;opacity:.98}.dot-connector{stroke-width:1.5;opacity:.6;pointer-events:none}.hide-label .dot-label-wrap,.hide-label .dot-connector{display:none}.dot-hit{pointer-events:all}.dot-label-wrap{cursor:pointer}
+.telemetry-title>strong{font-size:30px;letter-spacing:1px;min-width:3.5em;font-family:var(--live-mono)}.telemetry-title b{font-size:15px;line-height:1.5;overflow-wrap:anywhere}.telemetry-title small{font-size:12px;line-height:1.5}.telemetry-title>div{min-width:0}.live-numbers b{font-family:var(--live-mono);font-size:clamp(24px,2.3vw,34px);letter-spacing:-.6px;white-space:nowrap}.live-numbers small{font-size:12px}.live-numbers em{font-size:12px}.sector-box>b{font-family:var(--live-mono);font-size:clamp(15px,1.4vw,21px);letter-spacing:-.3px;white-space:nowrap}.sector-box>small{font-size:12px;flex-wrap:wrap;gap:3px}.sector-box>small span{font-size:9px}.sector-box>span{font-size:10px;line-height:1.6;display:block;white-space:normal}.telemetry-foot{font-size:11px;flex-wrap:wrap;line-height:1.8}
+.live-commands>h2{font-size:15px}.live-command h3{font-size:12px;line-height:1.5;overflow-wrap:anywhere}.driver-chip{font-size:19px;font-family:var(--live-mono);letter-spacing:1px}.live-command .badge{font-size:10px}.live-command .split{align-items:flex-start;flex-wrap:wrap}.car-health{font-size:11px;flex-wrap:wrap}.car-health b{font-size:14px}.live-command .field>span{font-size:11px}.live-command select,.live-command .btn{font-size:11px;line-height:1.5}.command-intent{font-size:11px;line-height:1.65}.live-command .tyre-choice{padding:0}.map-caption{font-size:10px;line-height:1.7;flex-wrap:wrap}.map-label-toggle{font-size:10px;padding:4px 6px}
+.live-race-details{margin-top:22px}.live-race-details .panel-heading{flex-wrap:wrap}.race-detail-table{min-width:1200px;font-family:var(--live-mono);font-size:14px;table-layout:auto}.race-detail-table th{font-family:var(--font);font-size:12px}.race-detail-table td{padding:13px 12px}.detail-driver{display:flex;align-items:center;gap:12px;border:0;border-left:3px solid var(--team);background:transparent;color:#e9f2fc;padding:4px 8px;text-align:left}.detail-driver b{font-family:var(--live-mono);font-size:18px;letter-spacing:1px;min-width:3ch}.detail-driver>span{font-family:var(--font);font-size:12px}.race-detail-table .lap-value{font-size:14px}.detail-sectors{display:flex;gap:15px;font-size:12px}.detail-sectors small{font-size:10px;line-height:1.5}.race-detail-table .focused-row{background:#26394b60}.pit-history-heading{display:flex;align-items:center;gap:9px;font-size:17px;margin-top:26px;margin-bottom:12px}.pit-history-table{font-size:14px;min-width:610px}.pit-history-table th{font-size:12px}.pit-history-table td{font-family:var(--live-mono);font-size:15px}.pit-history-table small{font-family:var(--font);font-size:11px}.pit-tyre-change{display:flex;align-items:center;gap:10px}.empty-pit-log{padding:20px;color:var(--muted);font-size:13px}.fastest-summary strong{font-size:29px}.top-metrics strong{font-size:14px}.stat>strong{font-size:30px}
+@media(max-width:1360px){.broadcast-grid{grid-template-columns:minmax(285px,.85fr) minmax(360px,1.15fr)}.live-commands{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:14px}.live-commands>h2{grid-column:1/-1}.live-command .tyre-cards{max-width:380px}}
+@media(max-width:900px){.broadcast-grid{grid-template-columns:minmax(250px,.8fr) minmax(330px,1.2fr)}.live-weather{padding:4px 10px;min-width:190px}.live-numbers{gap:10px}.live-numbers b{font-size:24px}.live-numbers em{font-size:10px}.sector-box{padding:8px 5px}.sector-box>b{font-size:15px}}
+@media(max-width:760px){.broadcast-grid{display:flex;flex-direction:column}.live-tower{max-height:none;overflow:visible}.track-panel{order:0}.live-commands{display:block}.broadcast-grid>section,.broadcast-grid>aside{width:100%}.session-clock strong{font-size:30px}.live-weather{border-left:0;padding:0;min-width:180px}.live-numbers b{font-size:clamp(23px,6.5vw,31px)}.sector-box>b{font-size:clamp(15px,4vw,20px)}.live-toolbar .speed-controls{flex-wrap:wrap}.track-panel svg#track-map{max-height:none}.telemetry-title b{font-size:14px}.live-command .tyre-cards{max-width:none}.live-race-details{padding:15px}.gap-controls .btn{font-size:11px}}
 ```
 
 ## css/race.css
@@ -1879,6 +1908,7 @@ export function pit(s,car,track) {
   const target=car.pitRequest;
   if(!target)return;
   car.pitRequest=null;
+  const previousCompound=car.compound;
   if(!useTyre(s,car,target)) {
     event(s,`${car.name}：请求配方已用尽，取消进站`,'warning');
     return;
@@ -1895,7 +1925,7 @@ export function pit(s,car,track) {
   car.stops++;
   car.pitThisLap=true;
   car.pitLog.push({
-    lap:s.race.lap,compound:target,stop,loss
+    lap:s.race.realtime?car.lap:s.race.lap,compound:target,stop,loss,...(s.race.realtime?{at:s.race.time}:{}),from:previousCompound
   });
   event(s,`${car.name} 进站：${target} 胎，停站 ${stop.toFixed(2)} 秒`,'pit');
   if(chance(s,.003)) {
@@ -2192,7 +2222,7 @@ function prepareRaceLap(s,c){
   const r=s.race,track=currentTrack(s);c.pitThisLap=false;
   if(c.teamId!==s.player.teamId||c.plan.auto)aiRaceDecision(s,c,track);
   else{
-    [c.plan.pitLap,c.plan.secondLap].forEach((lap,i)=>{if(lap===c.lap&&!c.planUsed.includes(i)){c.pitRequest=c.plan.next;c.planUsed.push(i);}});
+    [c.plan.pitLap,c.plan.secondLap].forEach((lap,i)=>{if(Number.isInteger(lap)&&lap>0&&lap===c.lap&&!c.planUsed.includes(i)){c.pitRequest=c.plan.next;c.planUsed.push(i);}});
     if(r.control!=='GREEN'&&c.plan.backup==='B'&&c.tyreAge>12&&r.totalLaps-c.lap>8)c.pitRequest=r.wetness>.23?c.plan.rain:'H';
     if(c.plan.backup==='C'&&r.wetness>.25&&!['I','W'].includes(c.compound))c.pitRequest=r.wetness>.7?'W':c.plan.rain;
   }
@@ -2732,6 +2762,14 @@ export function migrate(raw) {
   }
   if(s.schemaVersion===2){s.schemaVersion=3;assignDriverCodes(s);if(s.race&&!s.race.finished)attachRealtimeRace(s);}
   requireCondition(s.schemaVersion===3,'存档版本不受支持（本版本为 3）');
+  // Repair the 2.0.0 disabled-second-stop request in saves made before lap one.
+  if(s.race?.realtime&&!s.race.qualifying&&!s.race.finished&&Array.isArray(s.race.cars))for(const c of s.race.cars){
+    if(c.lap===0&&c.plan?.secondLap===0&&Array.isArray(c.planUsed)&&c.planUsed.includes(1)){
+      c.planUsed=c.planUsed.filter(i=>i!==1);
+      const manual=Array.isArray(s.race.events)&&s.race.events.some(e=>e.type==='radio'&&e.text?.startsWith(c.name+'：收到进站指令'));
+      if(!manual&&c.pitRequest===c.plan.next)c.pitRequest=null;
+    }
+  }
   return s;
 }
 export function validate(raw) {
@@ -3272,7 +3310,8 @@ export function reduce(s,action,p={
     case'qualCommand':return qualCommand(s,p.id,p.command,p.value);
     case'skipQualBreak':return skipQualBreak(s);
     case'mapLabels':s.settings.mapLabels=s.settings.mapLabels==='team'?'all':'team';return '地图标注已切换';
-    case'focusDriver':s.settings.focusDriver=p.id;return '已切换遥测车手';
+    case'timingGap':requireCondition(['leader','interval'].includes(p.value),'时间差模式无效');s.settings.timingGap=p.value;return '时间差模式已切换';
+    case'focusDriver':requireCondition(s.race?.cars.some(c=>c.driverId===p.id),'当前场次没有该车手');s.settings.focusDriver=p.id;return '已切换遥测车手';
     case'driverCode':return setDriverCode(s,p.id,p.value);
     case'startRace':return startRealtimeRace(s);
     case'tick':return s.race?.realtime?fastForwardLap(s):tick(s,p.count||1,!!p.untilEvent);
@@ -3531,10 +3570,53 @@ export function financeView(s) {
 }
 ```
 
+## js/ui/liveData.js
+
+```js
+// ===== 文件: js/ui/liveData.js =====
+// Pure display calculations. These never advance the simulation or consume RNG.
+export function timingGap(s,c,baseTime){
+  const r=s.race;
+  if(c.retired)return 'OUT';
+  if(r.qualifying)return c.stageBest>=9999?'NO TIME':r.fastest.time===c.stageBest?'LEADER':'+'+(c.stageBest-r.fastest.time).toFixed(3);
+  const active=r.cars.filter(x=>!x.retired).slice().sort((a,b)=>a.position-b.position),index=active.findIndex(x=>x.driverId===c.driverId);
+  if(index<=0)return 'LEADER';
+  const reference=s.settings.timingGap==='interval'?active[index-1]:active[0];
+  const distance=Math.max(0,reference.totalDistance-c.totalDistance),laps=Math.floor(distance+1e-8);
+  return laps>0?'+'+laps+' LAP':'+'+(distance*baseTime).toFixed(1);
+}
+const intersects=(a,b,gap=5)=>a.x<b.x+b.width+gap&&a.x+a.width+gap>b.x&&a.y<b.y+b.height+gap&&a.y+a.height+gap>b.y;
+export function layoutMapLabels(markers,previous={},reserved=[]){
+  const width=76,height=36,placed=reserved.slice(),result=[];
+  for(const marker of markers){
+    const {id,x,y}=marker,candidates=[];
+    if(previous[id])candidates.push(previous[id]);
+    for(let ring=0;ring<8;ring++){
+      const dx=14+ring*42,dy=12+ring*40;
+      candidates.push([dx,-height/2],[-width-dx,-height/2],[-width/2,-height-dy],[-width/2,dy],
+        [dx,-height-dy],[-width-dx,-height-dy],[dx,dy],[-width-dx,dy]);
+    }
+    // A bounded grid guarantees a place even when the whole field shares one point.
+    for(let yy=10;yy<=740-height-10;yy+=height+8)for(let xx=10;xx<=800-width-10;xx+=width+8)candidates.push([xx-x,yy-y]);
+    let best=null;
+    for(const [dx,dy]of candidates){
+      const box={x:Math.max(8,Math.min(800-width-8,x+dx)),y:Math.max(8,Math.min(740-height-8,y+dy)),width,height};
+      if(placed.some(p=>intersects(box,p)))continue;
+      if(markers.some(p=>p.x>=box.x-9&&p.x<=box.x+width+9&&p.y>=box.y-9&&p.y<=box.y+height+9))continue;
+      best=box;break;
+    }
+    if(!best)best={x:8,y:8,width,height};
+    placed.push(best);result.push({id,...best,dx:best.x-x,dy:best.y-y});
+  }
+  return result;
+}
+```
+
 ## js/ui/liveView.js
 
 ```js
 // ===== 文件: js/ui/liveView.js =====
+import { timingGap, layoutMapLabels } from './liveData.js';
 import { teamOf, driverOf } from '../core/helpers.js';
 import { currentTrack } from '../core/calendar.js';
 import { PHASE_NAMES, allowedQualTyres } from '../core/realtime.js';
@@ -3549,27 +3631,35 @@ function focused(s){return s.race.cars.find(c=>c.driverId===(s.settings.focusDri
 function sectorTone(c,i){return c.phase==='ABORT'?'neutral':c.sectorTones[i]||c.lastSectorTones?.[i]||'neutral';}
 function sectorValue(c,i){return c.sectors[i]||c.lastSectors[i]||0;}
 function sectorSpeed(c,i){return c.sectorSpeeds[i]||c.lastSectorSpeeds[i]||0;}
-function delta(s,c){
-  const r=s.race;if(c.retired)return 'OUT';if(r.qualifying)return c.stageBest>=9999?'NO TIME':r.fastest.time===c.stageBest?'LEADER':'+'+(c.stageBest-r.fastest.time).toFixed(3);
-  const lead=r.cars.find(x=>!x.retired)||c;if(c===lead)return 'LEADER';
-  const laps=lead.lap-c.lap;if(laps>0&&lead.progress>=c.progress)return '+'+laps+' LAP';
-  return '~+'+Math.max(0,(lead.totalDistance-c.totalDistance)*currentTrack(s).baseTime).toFixed(1);
-}
 function timingCells(s,c){
   const r=s.race,d=driverOf(s,c.driverId),t=teamOf(s,c.teamId);
-  return {pos:`<b>${c.position}</b>`,driver:`<button class="driver-code" data-action="focusDriver" data-payload="${h(JSON.stringify({id:c.driverId}))}" style="--team:${h(t.color)}" title="${h(d.name)}">${h(d.code)}</button><span class="tiny-sector-strip">${[0,1,2].map(i=>`<i class="tone-${sectorTone(c,i)}"></i>`).join('')}</span>`,gap:`<span class="tower-gap">${delta(s,c)}</span>`,best:lapDisplay(r.qualifying?c.stageBest:c.best,{fastest:r.fastest.driverId===c.driverId}),status:`<span class="phase-label tone-${phaseTone(c)}">${h(phase(c))}</span>`,tyre:tyre(c.compound)};
+  const code=`<button class="driver-code" data-action="focusDriver" data-payload="${h(JSON.stringify({id:c.driverId}))}" style="--team:${h(t.color)}" title="${h(d.name)}" aria-label="聚焦 ${h(d.code+' '+d.name)}">${h(d.code)}</button>`;
+  if(!r.qualifying)return {driver:code,gap:`<span class="tower-gap ${c.retired?'tone-danger':''}">${timingGap(s,c,currentTrack(s).baseTime)}</span>`,tyre:tyre(c.compound)};
+  return {driver:code+`<small class="phase-label tone-${phaseTone(c)}">${h(phase(c))}</small>`,best:lapDisplay(c.stageBest,{fastest:r.fastest.driverId===c.driverId}),gap:`<span class="tower-gap">${timingGap(s,c,currentTrack(s).baseTime)}</span>`,tyre:tyre(c.compound)};
 }
-function timingRow(s,c){return `<tr data-car="${h(c.driverId)}" class="${c.teamId===s.player.teamId?'player-row':''}">${Object.entries(timingCells(s,c)).map(([k,v])=>`<td data-cell="${k}">${v}</td>`).join('')}</tr>`;}
+function timingRow(s,c){return `<tr data-car="${h(c.driverId)}" data-action="focusDriver" data-payload="${h(JSON.stringify({id:c.driverId}))}" class="${c.teamId===s.player.teamId?'player-row':''}">${Object.entries(timingCells(s,c)).map(([k,v])=>`<td data-cell="${k}">${v}</td>`).join('')}</tr>`;}
+function gapControls(s){return `<div class="gap-controls" role="group" aria-label="时间差显示模式">${['leader','interval'].map(value=>`<button class="btn small ${((s.settings.timingGap||'leader')===value)?'selected':''}" data-action="timingGap" data-payload="${h(JSON.stringify({value}))}" aria-pressed="${(s.settings.timingGap||'leader')===value}" title="${value==='leader'?'相对第一名的差距':'相对前一名的差距'}">${value.toUpperCase()}</button>`).join('')}</div>`;}
+function weatherSummary(s){
+  const r=s.race,track=currentTrack(s),rain=r.rain||0;
+  const name=rain>.65?'大雨':rain>.2?'降雨':rain>.05?'小雨':r.wetness>.15?'雨停 · 路面湿滑':'晴朗 / 干燥';
+  return `<div class="live-weather" aria-label="实时天气"><div class="weather-current">${icon(rain>.05?'rain':'thermometer')}<strong>${name}</strong></div><div class="weather-facts"><span>路面积水 <b>${number(r.wetness*100)}%</b></span><span>路温 <b>${track.temp}°C</b></span></div></div>`;
+}
+function controlBanner(s){
+  const r=s.race,code=r.red?'RED':r.chequered?'CHEQUERED':r.control==='YELLOW'||r.yellow?'YELLOW':r.control;
+  const labels={GREEN:['TRACK CLEAR','赛道开放'],YELLOW:['YELLOW FLAG','黄旗 · 注意减速，禁止超车'],SC:['SAFETY CAR','安全车出动 · 禁止超车'],VSC:['VIRTUAL SAFETY CAR','虚拟安全车 · 减速行驶'],RED:['RED FLAG','红旗暂停 · 等待恢复'],CHEQUERED:['CHEQUERED FLAG','方格旗 · 等待其余车手冲线']};
+  const [title,description]=labels[code]||labels.GREEN;
+  return `<div class="tower-control control-${h(code)}" role="status" aria-live="polite"><span class="control-symbol">${icon('flag')}</span><div><strong>${title}</strong><span>${description}</span></div></div>`;
+}
 function trackSvg(s){
   const track=currentTrack(s),g=geometry(track.id),start=trackPoint(track.id,0),end=trackPoint(track.id,.98),out=trackPoint(track.id,.02);
   return `<svg id="track-map" viewBox="0 0 800 740" aria-label="${h(track.name)}赛道实时位置，点击三字母缩写查看车手" role="group"><defs><pattern id="map-grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#91a7bb" stroke-opacity=".035"/></pattern></defs><rect width="800" height="740" fill="url(#map-grid)"/><polyline points="${g.points.map(p=>p.join(',')).join(' ')}" class="circuit-shadow"/><polyline points="${g.points.map(p=>p.join(',')).join(' ')}" class="circuit-line"/>
     <path class="pit-lane" d="M${end.join(',')} Q${start[0]+40},${start[1]+40} ${out.join(',')}"/><text x="${start[0]+27}" y="${start[1]+48}" class="map-small">PIT</text><g transform="translate(${start.join(',')})"><rect x="-7" y="-9" width="14" height="18" fill="#e8eef6"/><path d="M-7-9H0V0H7V9H0V0H-7Z" fill="#121a25"/><text x="12" y="-13" class="map-small">START / FINISH</text></g>
     ${[.32,.68].map((f,i)=>{const p=trackPoint(track.id,f);return `<g transform="translate(${p.join(',')})"><circle r="7" fill="${i?'#67b9ff':'#d1a0ff'}"/><text x="12" y="-12" class="sector-label">S${i+1} / S${i+2}</text></g>`;}).join('')}
-    ${s.race.cars.map(c=>{const d=driverOf(s,c.driverId),t=teamOf(s,c.teamId);return `<a data-dot="${h(c.driverId)}" data-action="focusDriver" data-payload="${h(JSON.stringify({id:c.driverId}))}" tabindex="0" role="button" aria-label="${h(d.code+' '+d.name)}"><title>${h(d.name+' · '+t.name)}</title><circle class="dot-halo" r="16"/><circle class="driver-dot" r="8" fill="${c.slot?'#101925':t.color}" stroke="${t.color}" stroke-width="${c.slot?4:2}"/><rect class="dot-label-bg" x="11" y="${c.slot?-27:7}" width="41" height="22" rx="4"/><text class="dot-label" x="15" y="${c.slot?-11:23}" fill="${t.color}">${h(d.code)}</text></a>`;}).join('')}</svg>`;
+    ${s.race.cars.map(c=>{const d=driverOf(s,c.driverId),t=teamOf(s,c.teamId);return `<a data-dot="${h(c.driverId)}" data-action="focusDriver" data-payload="${h(JSON.stringify({id:c.driverId}))}" tabindex="0" role="button" aria-label="${h(d.code+' '+d.name)}"><title>${h(d.name+' · '+t.name)}</title><circle class="dot-hit" r="18" fill="transparent"/><circle class="dot-halo" r="16"/><circle class="driver-dot" r="8" fill="${c.slot?'#101925':t.color}" stroke="${t.color}" stroke-width="${c.slot?4:2}"/><line class="dot-connector" stroke="${t.color}"/><g class="dot-label-wrap"><rect class="dot-label-bg" width="76" height="36" rx="5"/><text class="dot-label" x="38" y="18" text-anchor="middle" dominant-baseline="central" fill="${t.color}">${h(d.code)}</text></g></a>`;}).join('')}</svg>`;
 }
 function telemetry(s,c){
   const d=driverOf(s,c.driverId),t=teamOf(s,c.teamId);
-  return `<div class="map-telemetry" id="map-telemetry" style="--team:${t.color}"><div class="telemetry-title"><strong>${h(d.code)}</strong><div><b>${h(d.name)}</b><small>${h(t.name)} · <span data-focus="phase">${phase(c)}</span></small></div><span data-focus="tyre">${tyre(c.compound)}</span></div><div class="live-numbers"><div><small>当前圈计时</small><b data-focus="lap">${time(c.currentLap)}</b></div><div><small>模拟实时速度</small><b><span data-focus="speed">${number(c.speed)}</span><em> km/h</em></b></div></div><div class="sector-grid">${[0,1,2].map(i=>`<div data-sector="${i}" class="sector-box tone-${sectorTone(c,i)}"><small>S${i+1}<span data-sector-current="${i}"></span></small><b data-sector-time="${i}">${sectorValue(c,i)>0?time(sectorValue(c,i)):'—'}</b><span><strong data-sector-speed="${i}">${number(sectorSpeed(c,i))}</strong> km/h 均速</span></div>`).join('')}</div><div class="telemetry-foot"><span>上圈 <b data-focus="last">${time(c.lastLap)}</b></span><span>最佳 <b data-focus="best">${time(c.best)}</b></span><span>已完成 <b data-focus="completed">${c.lap}</b> 圈</span></div></div>`;
+  return `<div class="map-telemetry" id="map-telemetry" data-focused-driver="${h(c.driverId)}" style="--team:${t.color}"><div class="telemetry-title"><strong data-focus="code">${h(d.code)}</strong><div><b data-focus="name">${h(d.name)}</b><small><span data-focus="team">${h(t.name)}</span> · <span data-focus="phase">${phase(c)}</span></small></div><span data-focus="tyre">${tyre(c.compound)}</span></div><div class="live-numbers"><div><small>当前圈计时</small><b data-focus="lap">${time(c.currentLap)}</b></div><div><small>模拟实时速度</small><b><span data-focus="speed">${number(c.speed)}</span><em> km/h</em></b></div></div><div class="sector-grid">${[0,1,2].map(i=>`<div data-sector="${i}" class="sector-box tone-${sectorTone(c,i)}"><small>S${i+1}<span data-sector-current="${i}"></span></small><b data-sector-time="${i}">${sectorValue(c,i)>0?time(sectorValue(c,i)):'—'}</b><span><strong data-sector-speed="${i}">${number(sectorSpeed(c,i))}</strong> km/h 均速</span></div>`).join('')}</div><div class="telemetry-foot"><span>上圈 <b data-focus="last">${time(c.lastLap)}</b></span><span>最佳 <b data-focus="best">${time(c.best)}</b></span><span>已完成 <b data-focus="completed">${c.lap}</b> 圈</span></div></div>`;
 }
 function command(s,c){
   const r=s.race,d=driverOf(s,c.driverId),q=r.qualifying,id=c.driverId;
@@ -3581,30 +3671,35 @@ function command(s,c){
 export function liveView(s){
   const r=s.race,track=currentTrack(s),q=r.qualifying,c=focused(s);
   return `${header('LIVE TIMING / 比赛指挥',track.name+' · '+SESSION_NAMES[r.kind],q?'出场圈 → 飞行圈 → 回场圈。倒计时结束后，只能完成已开始的飞行圈。':'连续比赛时钟 · 车手独立计时 · 默认 1× 为现实时间',`<span class="live-indicator">LIVE</span>`)}
-    <div class="live-toolbar"><div class="session-clock"><small>${q?r.kind+r.q.stage+' · '+(r.q.status==='BREAK'?'节间休息':'剩余时间'):'已用时间'}</small><strong data-live-clock>${clock(q?r.q.remaining:r.time,q)}</strong></div><div class="live-lap"><strong data-live-lap>${q?r.kind+r.q.stage:'LAP '+Math.min(r.lap+1,r.totalLaps)}</strong><small>${q?(r.kind==='SQ'?'12 / 10 / 8 MIN':'18 / 15 / 12 MIN'):' / '+r.totalLaps}</small></div>${flagState(r)}<div class="speed-controls">${[1,2,4,8,16,32,64].map(v=>button(v+'×','speed',{value:v},{class:s.settings.speed===v?'selected':''})).join('')}</div><div class="actions">${button(r.running?'暂停':'继续','pause',{}, {class:'small'})}${button('快进一圈','tick',{}, {class:'small'})}${q?button('跳过节间休息','skipQualBreak',{}, {class:'small',disabled:r.q.status!=='BREAK'}):''}${button('自动完成','finishRace',{}, {class:'small',confirm:'按当前策略自动完成本场次；排位期间由 AI 安排本队出场。确认？'})}${button('红旗后恢复','resume',{}, {class:'small',disabled:!r.red})}</div></div>
-    <div class="broadcast-grid"><section class="panel live-tower"><div class="panel-heading"><h2>${icon('stopwatch')}实时排名</h2><span class="muted">${q?'最佳圈差距':'~ 估算差距'}</span></div><div class="table-scroll"><table class="broadcast-timing"><thead><tr><th>P</th><th>车手</th><th>差距</th><th>最佳圈</th><th>状态</th><th>胎</th></tr></thead><tbody id="timing-body">${r.cars.map(x=>timingRow(s,x)).join('')}</tbody></table></div><div class="timing-legend compact"><span class="tone-fastest">● 全场最快</span><span class="tone-success">● 个人最快</span><span class="tone-warning">● 较慢</span></div></section>
+    <div class="live-toolbar"><div class="session-clock"><small>${q?r.kind+r.q.stage+' · '+(r.q.status==='BREAK'?'节间休息':'剩余时间'):'已用时间'}</small><strong data-live-clock>${clock(q?r.q.remaining:r.time,q)}</strong></div><div class="live-lap"><strong data-live-lap>${q?r.kind+r.q.stage:'LAP '+Math.min(r.lap+1,r.totalLaps)}</strong><small>${q?(r.kind==='SQ'?'12 / 10 / 8 MIN':'18 / 15 / 12 MIN'):' / '+r.totalLaps}</small></div>${flagState(r)}<div id="toolbar-weather">${weatherSummary(s)}</div><div class="speed-controls">${[1,2,4,8,16,32,64].map(v=>button(v+'×','speed',{value:v},{class:s.settings.speed===v?'selected':''})).join('')}</div><div class="actions">${button(r.running?'暂停':'继续','pause',{}, {class:'small'})}${button('快进一圈','tick',{}, {class:'small'})}${q?button('跳过节间休息','skipQualBreak',{}, {class:'small',disabled:r.q.status!=='BREAK'}):''}${button('自动完成','finishRace',{}, {class:'small',confirm:'按当前策略自动完成本场次；排位期间由 AI 安排本队出场。确认？'})}${button('红旗后恢复','resume',{}, {class:'small',disabled:!r.red})}</div></div>
+    <div class="broadcast-grid"><section class="panel live-tower"><div id="tower-race-control">${controlBanner(s)}</div><div class="panel-heading"><h2>${icon('stopwatch')}实时排名</h2>${q?'<span class="muted">排位成绩</span>':gapControls(s)}</div><div class="table-scroll"><table class="broadcast-timing ${q?'qualifying-timing':'race-timing'}"><colgroup>${q?'<col style="width:27%"><col style="width:31%"><col style="width:28%"><col style="width:14%">':'<col style="width:36%"><col style="width:45%"><col style="width:19%">'}</colgroup><thead><tr>${q?'<th>车手</th><th>最佳圈</th><th>差距</th><th>轮胎</th>':`<th>车手</th><th data-gap-heading>${s.settings.timingGap==='interval'?'INTERVAL':'LEADER'}</th><th>轮胎</th>`}</tr></thead><tbody id="timing-body">${r.cars.map(x=>timingRow(s,x)).join('')}</tbody></table></div><p class="tower-note">${q?'点击车手查看遥测':'时间差 / 秒 · 点击任意一行聚焦车手'}</p></section>
     <section class="panel track-panel"><div class="map-heading"><div><p class="eyebrow">CIRCUIT TRACKER</p><h2>${h(track.city)}</h2></div><span>${track.length.toFixed(3)} KM · ${track.corners} TURNS</span></div>${trackSvg(s)}<div class="map-caption"><span>● 实心 / 空心：同队两台赛车</span><span>计时线示意 ${button('标注：'+(s.settings.mapLabels==='team'?'本队':'全场'),'mapLabels',{}, {class:'small map-label-toggle'})}</span></div>${telemetry(s,c)}</section>
     <aside class="live-commands"><h2>${icon('radio')}车队无线电</h2>${r.cars.filter(x=>x.teamId===s.player.teamId).sort((a,b)=>a.slot-b.slot).map(x=>command(s,x)).join('')}</aside></div>
-    <div id="live-fastest">${fastestSummary(s,r.fastest)}</div><div class="grid-2">${panel('赛事消息',`<div id="race-events" class="race-events">${r.events.slice(0,10).map(eventItem).join('')}</div>`)}${panel(q?'排位规则与状态':'天气与比赛策略',q?`<p>${s.teams.length*2} 台赛车，前两段各淘汰 ${s.teams.length===11?6:5} 台，最后 10 台争夺杆位。无有效圈显示 NO TIME。</p><p>${r.kind==='SQ'?'干地 SQ1 / SQ2 每段只允许一套新中性胎，SQ3 一套软胎。':'成绩相同时，先做出该成绩者排名靠前。Q1 / Q2 之间休息 7 分钟，Q2 / Q3 之间休息 8 分钟。'}</p><p class="muted">${r.kind==='SQ'?'冲刺排位各段之间休息 7 分钟。':'107% 超时将标记为待裁判审查，游戏默认允许发车。'}飞行圈默认完成后回场；可提前选择连续推进。${r.q.status==='BREAK'?'本段已结束，可等待倒计时或跳过休息。':''}</p><details><summary>已完成各段成绩</summary>${r.q.stages.map((rows,i)=>`<h3>${r.kind}${i+1}</h3>${table(['名次','车手','时间'],rows.map((x,j)=>[j+1,h(driverOf(s,x.id).code),time(x.time)]))}`).join('')||'暂无'}</details>`:`<p>${icon('rain')} 路面积水 <strong data-live-wet>${number(r.wetness*100)}%</strong> · 基准路温 ${track.temp}°C</p><p>正赛干地须实际使用两种干胎；使用过雨胎可豁免。${track.id==='monaco'&&s.season.year>=2025?'摩纳哥至少两次停站。':''}</p><p class="muted">绿色旗帜下可使用 DRS；雨地、安全车与虚拟安全车期间禁用。出站损失计入连续比赛时间。离开此页面、切换到后台或打开对话框时暂停推进。</p>`)}</div>`;
+    <div class="grid-2">${panel('赛事消息',`<div id="race-events" class="race-events">${r.events.slice(0,10).map(eventItem).join('')}</div>`)}${panel(q?'排位规则与状态':'比赛策略',q?`<p>${s.teams.length*2} 台赛车，前两段各淘汰 ${s.teams.length===11?6:5} 台，最后 10 台争夺杆位。无有效圈显示 NO TIME。</p><p>${r.kind==='SQ'?'干地 SQ1 / SQ2 每段只允许一套新中性胎，SQ3 一套软胎。':'成绩相同时，先做出该成绩者排名靠前。Q1 / Q2 之间休息 7 分钟，Q2 / Q3 之间休息 8 分钟。'}</p><p class="muted">${r.kind==='SQ'?'冲刺排位各段之间休息 7 分钟。':'107% 超时将标记为待裁判审查，游戏默认允许发车。'}飞行圈默认完成后回场；可提前选择连续推进。${r.q.status==='BREAK'?'本段已结束，可等待倒计时或跳过休息。':''}</p><details><summary>已完成各段成绩</summary>${r.q.stages.map((rows,i)=>`<h3>${r.kind}${i+1}</h3>${table(['名次','车手','时间'],rows.map((x,j)=>[j+1,h(driverOf(s,x.id).code),time(x.time)]))}`).join('')||'暂无'}</details>`:`<p>正赛干地须实际使用两种干胎；使用过雨胎可豁免。${track.id==='monaco'&&s.season.year>=2025?'摩纳哥至少两次停站。':''}</p><p class="muted">绿色旗帜下可使用 DRS；雨地、安全车与虚拟安全车期间禁用。出站损失计入连续比赛时间。离开此页面、切换到后台或打开对话框时暂停推进。</p>`)}</div>${raceDetails(s)}`;
 }
 const setText=(el,value)=>{if(el&&el.textContent!==String(value))el.textContent=value;};
 const setHtml=(el,value)=>{if(el&&el._liveHTML!==value){el.innerHTML=value;el._liveHTML=value;}};
 export function patchLive(s){
   const r=s.race,track=currentTrack(s),body=document.querySelector('#timing-body');if(!body)return;
+  setHtml(document.querySelector('#toolbar-weather'),weatherSummary(s));setHtml(document.querySelector('#tower-race-control'),controlBanner(s));
   setText(document.querySelector('[data-live-clock]'),clock(r.qualifying?r.q.remaining:r.time,r.qualifying));
   setText(document.querySelector('[data-live-lap]'),r.qualifying?r.kind+r.q.stage:'LAP '+Math.min(r.lap+1,r.totalLaps));
   const flag=document.querySelector('[data-race="control"]'),code=r.red?'RED':r.control;
   if(flag){flag.className='flag-state flag-'+code;setHtml(flag,`${icon('flag')}<span>${h({GREEN:'绿旗',SC:'安全车',VSC:'虚拟安全车',RED:'红旗暂停'}[code]||code)}</span>`);}
-  const cells=new Map([...body.children].map(el=>[el.dataset.car,el]));
+  const cells=new Map([...body.children].map(el=>[el.dataset.car,el])),markers=[];
+  setText(document.querySelector('[data-gap-heading]'),s.settings.timingGap==='interval'?'INTERVAL':'LEADER');
+  for(const btn of document.querySelectorAll('.gap-controls button')){const selected=JSON.parse(btn.dataset.payload).value===(s.settings.timingGap||'leader');btn.classList.toggle('selected',selected);btn.setAttribute('aria-pressed',String(selected));}
   for(const c of r.cars){
     const row=cells.get(c.driverId);for(const [k,v]of Object.entries(timingCells(s,c)))setHtml(row?.querySelector(`[data-cell="${k}"]`),v);
-    if(row){row.classList.toggle('retired-row',c.retired);row.classList.toggle('focused-row',c.driverId===focused(s).driverId);body.appendChild(row);}
+    if(row){row.classList.toggle('retired-row',c.retired);row.classList.toggle('focused-row',c.driverId===focused(s).driverId);const expected=body.children[c.position-1];if(expected!==row)body.insertBefore(row,expected||null);}
     const dot=document.querySelector(`[data-dot="${c.driverId}"]`);if(dot){
       const hidden=['GARAGE','ELIMINATED','GRID'].includes(c.phase)||c.retired;
       dot.style.display=hidden?'none':'';
       const p=trackPoint(track.id,c.progress);if(c.phase==='PIT'){p[0]+=25;p[1]+=25;}
       dot.setAttribute('transform',`translate(${p[0].toFixed(2)} ${p[1].toFixed(2)})`);
-      dot.classList.toggle('hide-label',s.settings.mapLabels==='team'&&c.teamId!==s.player.teamId&&c.driverId!==focused(s).driverId);
+      const showLabel=!hidden&&(s.settings.mapLabels!=='team'||c.teamId===s.player.teamId||c.driverId===focused(s).driverId);
+      dot.classList.toggle('hide-label',!showLabel);if(showLabel)markers.push({id:c.driverId,x:p[0],y:p[1]});
+      dot.setAttribute('aria-pressed',String(c.driverId===focused(s).driverId));
       dot.classList.toggle('selected-dot',c.driverId===focused(s).driverId);dot.classList.toggle('slow-dot',['OUT','IN','ABORT','PIT'].includes(c.phase));
       setText(dot.querySelector('.dot-label'),driverOf(s,c.driverId).code);
     }
@@ -3624,7 +3719,13 @@ export function patchLive(s){
       }else setText(ctrl.querySelector('[data-live="intent"]'),c.pitRequest?'已预约：本圈末进站换 '+c.pitRequest+' 胎':c.phase==='PIT'?'正在维修区，出站后恢复比赛':'按当前策略行驶 · 停站 '+c.stops+' 次');
     }
   }
-  const c=focused(s),focus=document.querySelector('#map-telemetry');if(focus){
+  const svg=document.querySelector('#track-map');
+  if(svg){const previous=svg._labelOffsets||{};const priority=markers.sort((a,b)=>Number(b.id===focused(s).driverId)-Number(a.id===focused(s).driverId)||a.id.localeCompare(b.id));
+    const offsets={};for(const label of layoutMapLabels(priority,previous)){const dot=svg.querySelector(`[data-dot="${label.id}"]`);dot.querySelector('.dot-label-wrap').setAttribute('transform',`translate(${label.dx} ${label.dy})`);const line=dot.querySelector('.dot-connector');line.setAttribute('x2',label.dx+38);line.setAttribute('y2',label.dy+18);offsets[label.id]=[label.dx,label.dy];}svg._labelOffsets=offsets;
+  }
+  const c=focused(s),d=driverOf(s,c.driverId),t=teamOf(s,c.teamId),focus=document.querySelector('#map-telemetry');if(focus){
+    focus.dataset.focusedDriver=c.driverId;focus.style.setProperty('--team',t.color);
+    for(const [key,value]of Object.entries({code:d.code,name:d.name,team:t.name}))setText(focus.querySelector(`[data-focus="${key}"]`),value);
     for(const [k,v]of Object.entries({phase:phase(c),lap:time(c.currentLap),speed:number(c.speed),last:time(c.lastLap),best:time(r.qualifying?c.stageBest:c.best),completed:c.lap}))setText(focus.querySelector(`[data-focus="${k}"]`),v);
     setHtml(focus.querySelector('[data-focus="tyre"]'),tyre(c.compound));
     for(let i=0;i<3;i++){
@@ -3632,7 +3733,38 @@ export function patchLive(s){
       setText(focus.querySelector(`[data-sector-current="${i}"]`),active?'进行中':'');setText(focus.querySelector(`[data-sector-time="${i}"]`),active?time(Math.max(0,r.time-c.sectorStart)):sectorValue(c,i)>0?time(sectorValue(c,i)):'—');setText(focus.querySelector(`[data-sector-speed="${i}"]`),number(sectorSpeed(c,i)));
     }
   }
+  patchDetails(s);
   setHtml(document.querySelector('#live-fastest'),fastestSummary(s,r.fastest));setHtml(document.querySelector('#race-events'),r.events.slice(0,10).map(eventItem).join(''));setText(document.querySelector('[data-live-wet]'),number(r.wetness*100)+'%');
+}
+
+function detailCells(s,c){
+  const d=driverOf(s,c.driverId),t=teamOf(s,c.teamId),best=s.race.qualifying?c.stageBest:c.best;
+  return {
+    driver:`<button class="detail-driver" data-action="focusDriver" data-payload="${h(JSON.stringify({id:c.driverId}))}" style="--team:${h(t.color)}"><b>${h(d.code)}</b><span>${h(d.name)}</span></button>`,
+    current:c.phase==='GARAGE'||c.phase==='ELIMINATED'?'—':time(c.currentLap),
+    last:c.lastLap>0?lapDisplay(c.lastLap,{fastest:c.lastLap===s.race.fastest.time}):'—',
+    best:lapDisplay(best,{fastest:s.race.fastest.driverId===c.driverId}),
+    sectors:`<div class="detail-sectors">${[0,1,2].map(i=>`<span class="tone-${sectorTone(c,i)}"><small>S${i+1}</small>${sectorValue(c,i)>0?time(sectorValue(c,i)):'—'}</span>`).join('')}</div>`,
+    age:`${c.tyreAge} 圈`,wear:wearMeter(c.tyreWear),fuel:number(c.fuel)+' kg',stops:c.stops,status:badge(phase(c),phaseTone(c))
+  };
+}
+function pitHistory(s){
+  const records=s.race.cars.flatMap(c=>(c.pitLog||[]).map((entry,i)=>({...entry,id:c.driverId,sequence:i+1}))).sort((a,b)=>(b.at??b.lap)-(a.at??a.lap)||a.id.localeCompare(b.id));
+  if(!records.length)return '<p class="empty-pit-log">尚无进站换胎记录。</p>';
+  return `<div class="table-scroll"><table class="pit-history-table"><thead><tr><th>比赛时间</th><th>车手</th><th>圈数</th><th>换胎</th><th>停站用时</th><th>总损失</th></tr></thead><tbody>${records.map(entry=>`<tr><td>${entry.at===undefined?'—':clock(entry.at,false)}</td><td><b>${h(driverOf(s,entry.id).code)}</b><small>${h(driverOf(s,entry.id).name)} · 第 ${entry.sequence} 停</small></td><td>L${entry.lap}</td><td><span class="pit-tyre-change">${entry.from?tyre(entry.from)+'<span>→</span>':''}${tyre(entry.compound)}</span></td><td>${Number(entry.stop).toFixed(2)} s</td><td>+${Number(entry.loss).toFixed(2)} s</td></tr>`).join('')}</tbody></table></div>`;
+}
+export function raceDetails(s){
+  return `<section class="panel live-race-details" id="race-details"><div class="panel-heading"><h2>${icon('chart')}圈速与进站数据</h2><span class="muted">全部车手 · 实时更新</span></div><div id="live-fastest">${fastestSummary(s,s.race.fastest)}</div><div class="table-scroll"><table class="race-detail-table"><thead><tr>${['车手','当前圈计时','上一圈','最佳圈','Sector 计时','胎龄','磨损','燃油','停站','状态'].map(label=>`<th>${label}</th>`).join('')}</tr></thead><tbody id="detail-timing-body">${s.race.cars.map(c=>`<tr data-detail-car="${h(c.driverId)}">${Object.entries(detailCells(s,c)).map(([key,value])=>`<td data-detail-cell="${key}">${value}</td>`).join('')}</tr>`).join('')}</tbody></table></div><h3 class="pit-history-heading">${icon('pit')}进站换胎记录</h3><div id="pit-history">${pitHistory(s)}</div></section>`;
+}
+function patchDetails(s){
+  const body=document.querySelector('#detail-timing-body');if(!body)return;
+  const rows=new Map([...body.children].map(row=>[row.dataset.detailCar,row]));
+  for(const c of s.race.cars){const row=rows.get(c.driverId);if(!row)continue;
+    for(const [key,value]of Object.entries(detailCells(s,c)))setHtml(row.querySelector(`[data-detail-cell="${key}"]`),value);
+    row.classList.toggle('focused-row',c.driverId===focused(s).driverId);
+    const expected=body.children[c.position-1];if(expected!==row)body.insertBefore(row,expected||null);
+  }
+  setHtml(document.querySelector('#pit-history'),pitHistory(s));
 }
 ```
 
@@ -3640,7 +3772,7 @@ export function patchLive(s){
 
 ```js
 // ===== 文件: js/ui/raceView.js =====
-import { liveView, patchLive } from './liveView.js';
+import { liveView, patchLive, raceDetails } from './liveView.js';
 // ===== 文件: js/ui/raceView.js =====
 import { teamOf } from '../core/helpers.js';
 import { currentTrack } from '../core/calendar.js';
@@ -3714,7 +3846,7 @@ function carControl(s,c) {
     <div data-live="inventory">${tyreInventory(s.calendar.weekend.tyres[c.driverId])}</div>
   </article>`;
 }
-export function raceView(s) {
+function renderRaceView(s) {
   const w=s.calendar.weekend,track=currentTrack(s),r=s.race;
   if(r?.realtime&&!r.finished)return liveView(s);
   if(!w)return `${header('比赛指挥','维修墙待命','先进入比赛周末，再执行练习、排位与比赛。')}${panel('下一站准备',`${empty(s.season.offseason?'当前处于转会窗。':'本站赛车尚未登记。')}${link('前往赛历','calendar','primary')}`)}`;
@@ -3770,6 +3902,11 @@ export function patchRace(s) {
 export function reportHtml(s,index) {
   const result=s.history.races[index];
   return result?`<p>${h(result.track)} · 第 ${result.round} 站 · ${result.kind==='SPRINT'?'冲刺':'正赛'}</p>${fastestSummary(s,result.fastest)}${resultTable(s,result)}<details><summary>罚则记录</summary>${result.penalties.map(p=>`<p>${badge('L'+p.lap,'warning','warning')} ${h(p.reason)} ${p.seconds?badge('+'+p.seconds+'s','danger'):''}</p>`).join('')||'<p>无罚则</p>'}</details>`:empty('该报告不存在。');
+}
+
+export function raceView(s){
+  const content=renderRaceView(s);
+  return s.calendar.weekend&&s.race?.realtime&&s.race.finished?content+raceDetails(s):content;
 }
 ```
 
@@ -3941,7 +4078,7 @@ export function badge(text,type='',symbol='') {
 export function button(label,action,payload={
 },options={
 }) {
-  return `<button class="btn ${h(options.class||'')}" data-action="${h(action)}" data-payload="${h(JSON.stringify(payload))}" ${options.disabled?'disabled':''} ${options.reason?`title="${h(options.reason)}"`:''} ${options.confirm?`data-confirm="${h(options.confirm)}"`:''}>${h(label)}</button>${options.disabled&&options.reason?`<small class="disabled-reason">${h(options.reason)}</small>`:''}`;
+  return `<button type="button" class="btn ${h(options.class||'')}" data-action="${h(action)}" data-payload="${h(JSON.stringify(payload))}" ${options.disabled?'disabled':''} ${options.reason?`title="${h(options.reason)}"`:''} ${options.confirm?`data-confirm="${h(options.confirm)}"`:''}>${h(label)}</button>${options.disabled&&options.reason?`<small class="disabled-reason">${h(options.reason)}</small>`:''}`;
 }
 export function link(label,route,cls='') {
   return `<a class="btn ${h(cls)}" href="#${h(route)}">${h(label)}</a>`;
@@ -4359,7 +4496,7 @@ function render() {
       return;
     }
     root.innerHTML=shell(s,views[route()](s));
-    requestAnimationFrame(()=>{charts();if(route()==='race'&&s.race?.realtime&&!s.race.finished)patchRace(s);});
+    requestAnimationFrame(()=>{charts();const latest=getState();if(route()==='race'&&latest?.race?.realtime&&!latest.race.finished)patchRace(latest);});
   }
   catch(error) {
     toast('界面渲染失败：'+error.message,'error');
@@ -4384,8 +4521,9 @@ function perform(action,payload={
   try{
     const prev=getState()?.race;const signature=prev?`${prev.q?.stage}/${prev.q?.status}`:'';
     const message=dispatch(action,payload);const active=getState()?.race;const changed=active&&signature!==`${active.q?.stage}/${active.q?.status}`;
-    if(!changed&&['tick','command','advanceRealtime','qualCommand'].includes(action)&&getState().race&&!getState().race.finished) {
+    if(!changed&&['tick','command','advanceRealtime','qualCommand','focusDriver','timingGap'].includes(action)&&getState().race&&!getState().race.finished) {
       if(action==='command'||action==='qualCommand')toast(message);
+      if(action==='focusDriver'||action==='timingGap')patchRace(getState());
       scheduleRender(true);
     }
     else{
@@ -4446,7 +4584,7 @@ function contractDialog(kind,id) {
   });
 }
 root.addEventListener('click',event=> {
-  const el=event.target.closest('button,a'); if(!el)return; if(el.hasAttribute('data-generate-seed')){captureDraft();draft.seed=generateSeed();render();return;}
+  const el=event.target.closest('button,a,[data-action]'); if(!el)return; if(el.hasAttribute('data-generate-seed')){captureDraft();draft.seed=generateSeed();render();return;}
   if(el.dataset.chooseTeam) {
     captureDraft(); draft.teamId=el.dataset.chooseTeam; render(); return;
   }
@@ -6338,6 +6476,7 @@ function pit(s,car,track) {
   const target=car.pitRequest;
   if(!target)return;
   car.pitRequest=null;
+  const previousCompound=car.compound;
   if(!useTyre(s,car,target)) {
     event(s,`${car.name}：请求配方已用尽，取消进站`,'warning');
     return;
@@ -6354,7 +6493,7 @@ function pit(s,car,track) {
   car.stops++;
   car.pitThisLap=true;
   car.pitLog.push({
-    lap:s.race.lap,compound:target,stop,loss
+    lap:s.race.realtime?car.lap:s.race.lap,compound:target,stop,loss,...(s.race.realtime?{at:s.race.time}:{}),from:previousCompound
   });
   event(s,`${car.name} 进站：${target} 胎，停站 ${stop.toFixed(2)} 秒`,'pit');
   if(chance(s,.003)) {
@@ -6698,7 +6837,7 @@ function prepareRaceLap(s,c){
   const r=s.race,track=currentTrack(s);c.pitThisLap=false;
   if(c.teamId!==s.player.teamId||c.plan.auto)aiRaceDecision(s,c,track);
   else{
-    [c.plan.pitLap,c.plan.secondLap].forEach((lap,i)=>{if(lap===c.lap&&!c.planUsed.includes(i)){c.pitRequest=c.plan.next;c.planUsed.push(i);}});
+    [c.plan.pitLap,c.plan.secondLap].forEach((lap,i)=>{if(Number.isInteger(lap)&&lap>0&&lap===c.lap&&!c.planUsed.includes(i)){c.pitRequest=c.plan.next;c.planUsed.push(i);}});
     if(r.control!=='GREEN'&&c.plan.backup==='B'&&c.tyreAge>12&&r.totalLaps-c.lap>8)c.pitRequest=r.wetness>.23?c.plan.rain:'H';
     if(c.plan.backup==='C'&&r.wetness>.25&&!['I','W'].includes(c.compound))c.pitRequest=r.wetness>.7?'W':c.plan.rain;
   }
@@ -7209,7 +7348,8 @@ function reduce(s,action,p={
     case'qualCommand':return qualCommand(s,p.id,p.command,p.value);
     case'skipQualBreak':return skipQualBreak(s);
     case'mapLabels':s.settings.mapLabels=s.settings.mapLabels==='team'?'all':'team';return '地图标注已切换';
-    case'focusDriver':s.settings.focusDriver=p.id;return '已切换遥测车手';
+    case'timingGap':requireCondition(['leader','interval'].includes(p.value),'时间差模式无效');s.settings.timingGap=p.value;return '时间差模式已切换';
+    case'focusDriver':requireCondition(s.race?.cars.some(c=>c.driverId===p.id),'当前场次没有该车手');s.settings.focusDriver=p.id;return '已切换遥测车手';
     case'driverCode':return setDriverCode(s,p.id,p.value);
     case'startRace':return startRealtimeRace(s);
     case'tick':return s.race?.realtime?fastForwardLap(s):tick(s,p.count||1,!!p.untilEvent);
@@ -7298,6 +7438,14 @@ function migrate(raw) {
   }
   if(s.schemaVersion===2){s.schemaVersion=3;assignDriverCodes(s);if(s.race&&!s.race.finished)attachRealtimeRace(s);}
   requireCondition(s.schemaVersion===3,'存档版本不受支持（本版本为 3）');
+  // Repair the 2.0.0 disabled-second-stop request in saves made before lap one.
+  if(s.race?.realtime&&!s.race.qualifying&&!s.race.finished&&Array.isArray(s.race.cars))for(const c of s.race.cars){
+    if(c.lap===0&&c.plan?.secondLap===0&&Array.isArray(c.planUsed)&&c.planUsed.includes(1)){
+      c.planUsed=c.planUsed.filter(i=>i!==1);
+      const manual=Array.isArray(s.race.events)&&s.race.events.some(e=>e.type==='radio'&&e.text?.startsWith(c.name+'：收到进站指令'));
+      if(!manual&&c.pitRequest===c.plan.next)c.pitRequest=null;
+    }
+  }
   return s;
 }
 function validate(raw) {
@@ -7460,7 +7608,7 @@ function badge(text,type='',symbol='') {
 function button(label,action,payload={
 },options={
 }) {
-  return `<button class="btn ${h(options.class||'')}" data-action="${h(action)}" data-payload="${h(JSON.stringify(payload))}" ${options.disabled?'disabled':''} ${options.reason?`title="${h(options.reason)}"`:''} ${options.confirm?`data-confirm="${h(options.confirm)}"`:''}>${h(label)}</button>${options.disabled&&options.reason?`<small class="disabled-reason">${h(options.reason)}</small>`:''}`;
+  return `<button type="button" class="btn ${h(options.class||'')}" data-action="${h(action)}" data-payload="${h(JSON.stringify(payload))}" ${options.disabled?'disabled':''} ${options.reason?`title="${h(options.reason)}"`:''} ${options.confirm?`data-confirm="${h(options.confirm)}"`:''}>${h(label)}</button>${options.disabled&&options.reason?`<small class="disabled-reason">${h(options.reason)}</small>`:''}`;
 }
 function link(label,route,cls='') {
   return `<a class="btn ${h(cls)}" href="#${h(route)}">${h(label)}</a>`;
@@ -7914,8 +8062,51 @@ function calendarView(s) {
 return {calendarView};
 }());
 
+// ===== 文件: js/ui/liveData.js =====
+modules['js/ui/liveData.js'] = (function () {
+// Pure display calculations. These never advance the simulation or consume RNG.
+function timingGap(s,c,baseTime){
+  const r=s.race;
+  if(c.retired)return 'OUT';
+  if(r.qualifying)return c.stageBest>=9999?'NO TIME':r.fastest.time===c.stageBest?'LEADER':'+'+(c.stageBest-r.fastest.time).toFixed(3);
+  const active=r.cars.filter(x=>!x.retired).slice().sort((a,b)=>a.position-b.position),index=active.findIndex(x=>x.driverId===c.driverId);
+  if(index<=0)return 'LEADER';
+  const reference=s.settings.timingGap==='interval'?active[index-1]:active[0];
+  const distance=Math.max(0,reference.totalDistance-c.totalDistance),laps=Math.floor(distance+1e-8);
+  return laps>0?'+'+laps+' LAP':'+'+(distance*baseTime).toFixed(1);
+}
+const intersects=(a,b,gap=5)=>a.x<b.x+b.width+gap&&a.x+a.width+gap>b.x&&a.y<b.y+b.height+gap&&a.y+a.height+gap>b.y;
+function layoutMapLabels(markers,previous={},reserved=[]){
+  const width=76,height=36,placed=reserved.slice(),result=[];
+  for(const marker of markers){
+    const {id,x,y}=marker,candidates=[];
+    if(previous[id])candidates.push(previous[id]);
+    for(let ring=0;ring<8;ring++){
+      const dx=14+ring*42,dy=12+ring*40;
+      candidates.push([dx,-height/2],[-width-dx,-height/2],[-width/2,-height-dy],[-width/2,dy],
+        [dx,-height-dy],[-width-dx,-height-dy],[dx,dy],[-width-dx,dy]);
+    }
+    // A bounded grid guarantees a place even when the whole field shares one point.
+    for(let yy=10;yy<=740-height-10;yy+=height+8)for(let xx=10;xx<=800-width-10;xx+=width+8)candidates.push([xx-x,yy-y]);
+    let best=null;
+    for(const [dx,dy]of candidates){
+      const box={x:Math.max(8,Math.min(800-width-8,x+dx)),y:Math.max(8,Math.min(740-height-8,y+dy)),width,height};
+      if(placed.some(p=>intersects(box,p)))continue;
+      if(markers.some(p=>p.x>=box.x-9&&p.x<=box.x+width+9&&p.y>=box.y-9&&p.y<=box.y+height+9))continue;
+      best=box;break;
+    }
+    if(!best)best={x:8,y:8,width,height};
+    placed.push(best);result.push({id,...best,dx:best.x-x,dy:best.y-y});
+  }
+  return result;
+}
+
+return {timingGap, layoutMapLabels};
+}());
+
 // ===== 文件: js/ui/liveView.js =====
 modules['js/ui/liveView.js'] = (function () {
+const { timingGap, layoutMapLabels } = modules['js/ui/liveData.js'];
 const { teamOf, driverOf } = modules['js/core/helpers.js'];
 const { currentTrack } = modules['js/core/calendar.js'];
 const { PHASE_NAMES, allowedQualTyres } = modules['js/core/realtime.js'];
@@ -7930,27 +8121,35 @@ function focused(s){return s.race.cars.find(c=>c.driverId===(s.settings.focusDri
 function sectorTone(c,i){return c.phase==='ABORT'?'neutral':c.sectorTones[i]||c.lastSectorTones?.[i]||'neutral';}
 function sectorValue(c,i){return c.sectors[i]||c.lastSectors[i]||0;}
 function sectorSpeed(c,i){return c.sectorSpeeds[i]||c.lastSectorSpeeds[i]||0;}
-function delta(s,c){
-  const r=s.race;if(c.retired)return 'OUT';if(r.qualifying)return c.stageBest>=9999?'NO TIME':r.fastest.time===c.stageBest?'LEADER':'+'+(c.stageBest-r.fastest.time).toFixed(3);
-  const lead=r.cars.find(x=>!x.retired)||c;if(c===lead)return 'LEADER';
-  const laps=lead.lap-c.lap;if(laps>0&&lead.progress>=c.progress)return '+'+laps+' LAP';
-  return '~+'+Math.max(0,(lead.totalDistance-c.totalDistance)*currentTrack(s).baseTime).toFixed(1);
-}
 function timingCells(s,c){
   const r=s.race,d=driverOf(s,c.driverId),t=teamOf(s,c.teamId);
-  return {pos:`<b>${c.position}</b>`,driver:`<button class="driver-code" data-action="focusDriver" data-payload="${h(JSON.stringify({id:c.driverId}))}" style="--team:${h(t.color)}" title="${h(d.name)}">${h(d.code)}</button><span class="tiny-sector-strip">${[0,1,2].map(i=>`<i class="tone-${sectorTone(c,i)}"></i>`).join('')}</span>`,gap:`<span class="tower-gap">${delta(s,c)}</span>`,best:lapDisplay(r.qualifying?c.stageBest:c.best,{fastest:r.fastest.driverId===c.driverId}),status:`<span class="phase-label tone-${phaseTone(c)}">${h(phase(c))}</span>`,tyre:tyre(c.compound)};
+  const code=`<button class="driver-code" data-action="focusDriver" data-payload="${h(JSON.stringify({id:c.driverId}))}" style="--team:${h(t.color)}" title="${h(d.name)}" aria-label="聚焦 ${h(d.code+' '+d.name)}">${h(d.code)}</button>`;
+  if(!r.qualifying)return {driver:code,gap:`<span class="tower-gap ${c.retired?'tone-danger':''}">${timingGap(s,c,currentTrack(s).baseTime)}</span>`,tyre:tyre(c.compound)};
+  return {driver:code+`<small class="phase-label tone-${phaseTone(c)}">${h(phase(c))}</small>`,best:lapDisplay(c.stageBest,{fastest:r.fastest.driverId===c.driverId}),gap:`<span class="tower-gap">${timingGap(s,c,currentTrack(s).baseTime)}</span>`,tyre:tyre(c.compound)};
 }
-function timingRow(s,c){return `<tr data-car="${h(c.driverId)}" class="${c.teamId===s.player.teamId?'player-row':''}">${Object.entries(timingCells(s,c)).map(([k,v])=>`<td data-cell="${k}">${v}</td>`).join('')}</tr>`;}
+function timingRow(s,c){return `<tr data-car="${h(c.driverId)}" data-action="focusDriver" data-payload="${h(JSON.stringify({id:c.driverId}))}" class="${c.teamId===s.player.teamId?'player-row':''}">${Object.entries(timingCells(s,c)).map(([k,v])=>`<td data-cell="${k}">${v}</td>`).join('')}</tr>`;}
+function gapControls(s){return `<div class="gap-controls" role="group" aria-label="时间差显示模式">${['leader','interval'].map(value=>`<button class="btn small ${((s.settings.timingGap||'leader')===value)?'selected':''}" data-action="timingGap" data-payload="${h(JSON.stringify({value}))}" aria-pressed="${(s.settings.timingGap||'leader')===value}" title="${value==='leader'?'相对第一名的差距':'相对前一名的差距'}">${value.toUpperCase()}</button>`).join('')}</div>`;}
+function weatherSummary(s){
+  const r=s.race,track=currentTrack(s),rain=r.rain||0;
+  const name=rain>.65?'大雨':rain>.2?'降雨':rain>.05?'小雨':r.wetness>.15?'雨停 · 路面湿滑':'晴朗 / 干燥';
+  return `<div class="live-weather" aria-label="实时天气"><div class="weather-current">${icon(rain>.05?'rain':'thermometer')}<strong>${name}</strong></div><div class="weather-facts"><span>路面积水 <b>${number(r.wetness*100)}%</b></span><span>路温 <b>${track.temp}°C</b></span></div></div>`;
+}
+function controlBanner(s){
+  const r=s.race,code=r.red?'RED':r.chequered?'CHEQUERED':r.control==='YELLOW'||r.yellow?'YELLOW':r.control;
+  const labels={GREEN:['TRACK CLEAR','赛道开放'],YELLOW:['YELLOW FLAG','黄旗 · 注意减速，禁止超车'],SC:['SAFETY CAR','安全车出动 · 禁止超车'],VSC:['VIRTUAL SAFETY CAR','虚拟安全车 · 减速行驶'],RED:['RED FLAG','红旗暂停 · 等待恢复'],CHEQUERED:['CHEQUERED FLAG','方格旗 · 等待其余车手冲线']};
+  const [title,description]=labels[code]||labels.GREEN;
+  return `<div class="tower-control control-${h(code)}" role="status" aria-live="polite"><span class="control-symbol">${icon('flag')}</span><div><strong>${title}</strong><span>${description}</span></div></div>`;
+}
 function trackSvg(s){
   const track=currentTrack(s),g=geometry(track.id),start=trackPoint(track.id,0),end=trackPoint(track.id,.98),out=trackPoint(track.id,.02);
   return `<svg id="track-map" viewBox="0 0 800 740" aria-label="${h(track.name)}赛道实时位置，点击三字母缩写查看车手" role="group"><defs><pattern id="map-grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#91a7bb" stroke-opacity=".035"/></pattern></defs><rect width="800" height="740" fill="url(#map-grid)"/><polyline points="${g.points.map(p=>p.join(',')).join(' ')}" class="circuit-shadow"/><polyline points="${g.points.map(p=>p.join(',')).join(' ')}" class="circuit-line"/>
     <path class="pit-lane" d="M${end.join(',')} Q${start[0]+40},${start[1]+40} ${out.join(',')}"/><text x="${start[0]+27}" y="${start[1]+48}" class="map-small">PIT</text><g transform="translate(${start.join(',')})"><rect x="-7" y="-9" width="14" height="18" fill="#e8eef6"/><path d="M-7-9H0V0H7V9H0V0H-7Z" fill="#121a25"/><text x="12" y="-13" class="map-small">START / FINISH</text></g>
     ${[.32,.68].map((f,i)=>{const p=trackPoint(track.id,f);return `<g transform="translate(${p.join(',')})"><circle r="7" fill="${i?'#67b9ff':'#d1a0ff'}"/><text x="12" y="-12" class="sector-label">S${i+1} / S${i+2}</text></g>`;}).join('')}
-    ${s.race.cars.map(c=>{const d=driverOf(s,c.driverId),t=teamOf(s,c.teamId);return `<a data-dot="${h(c.driverId)}" data-action="focusDriver" data-payload="${h(JSON.stringify({id:c.driverId}))}" tabindex="0" role="button" aria-label="${h(d.code+' '+d.name)}"><title>${h(d.name+' · '+t.name)}</title><circle class="dot-halo" r="16"/><circle class="driver-dot" r="8" fill="${c.slot?'#101925':t.color}" stroke="${t.color}" stroke-width="${c.slot?4:2}"/><rect class="dot-label-bg" x="11" y="${c.slot?-27:7}" width="41" height="22" rx="4"/><text class="dot-label" x="15" y="${c.slot?-11:23}" fill="${t.color}">${h(d.code)}</text></a>`;}).join('')}</svg>`;
+    ${s.race.cars.map(c=>{const d=driverOf(s,c.driverId),t=teamOf(s,c.teamId);return `<a data-dot="${h(c.driverId)}" data-action="focusDriver" data-payload="${h(JSON.stringify({id:c.driverId}))}" tabindex="0" role="button" aria-label="${h(d.code+' '+d.name)}"><title>${h(d.name+' · '+t.name)}</title><circle class="dot-hit" r="18" fill="transparent"/><circle class="dot-halo" r="16"/><circle class="driver-dot" r="8" fill="${c.slot?'#101925':t.color}" stroke="${t.color}" stroke-width="${c.slot?4:2}"/><line class="dot-connector" stroke="${t.color}"/><g class="dot-label-wrap"><rect class="dot-label-bg" width="76" height="36" rx="5"/><text class="dot-label" x="38" y="18" text-anchor="middle" dominant-baseline="central" fill="${t.color}">${h(d.code)}</text></g></a>`;}).join('')}</svg>`;
 }
 function telemetry(s,c){
   const d=driverOf(s,c.driverId),t=teamOf(s,c.teamId);
-  return `<div class="map-telemetry" id="map-telemetry" style="--team:${t.color}"><div class="telemetry-title"><strong>${h(d.code)}</strong><div><b>${h(d.name)}</b><small>${h(t.name)} · <span data-focus="phase">${phase(c)}</span></small></div><span data-focus="tyre">${tyre(c.compound)}</span></div><div class="live-numbers"><div><small>当前圈计时</small><b data-focus="lap">${time(c.currentLap)}</b></div><div><small>模拟实时速度</small><b><span data-focus="speed">${number(c.speed)}</span><em> km/h</em></b></div></div><div class="sector-grid">${[0,1,2].map(i=>`<div data-sector="${i}" class="sector-box tone-${sectorTone(c,i)}"><small>S${i+1}<span data-sector-current="${i}"></span></small><b data-sector-time="${i}">${sectorValue(c,i)>0?time(sectorValue(c,i)):'—'}</b><span><strong data-sector-speed="${i}">${number(sectorSpeed(c,i))}</strong> km/h 均速</span></div>`).join('')}</div><div class="telemetry-foot"><span>上圈 <b data-focus="last">${time(c.lastLap)}</b></span><span>最佳 <b data-focus="best">${time(c.best)}</b></span><span>已完成 <b data-focus="completed">${c.lap}</b> 圈</span></div></div>`;
+  return `<div class="map-telemetry" id="map-telemetry" data-focused-driver="${h(c.driverId)}" style="--team:${t.color}"><div class="telemetry-title"><strong data-focus="code">${h(d.code)}</strong><div><b data-focus="name">${h(d.name)}</b><small><span data-focus="team">${h(t.name)}</span> · <span data-focus="phase">${phase(c)}</span></small></div><span data-focus="tyre">${tyre(c.compound)}</span></div><div class="live-numbers"><div><small>当前圈计时</small><b data-focus="lap">${time(c.currentLap)}</b></div><div><small>模拟实时速度</small><b><span data-focus="speed">${number(c.speed)}</span><em> km/h</em></b></div></div><div class="sector-grid">${[0,1,2].map(i=>`<div data-sector="${i}" class="sector-box tone-${sectorTone(c,i)}"><small>S${i+1}<span data-sector-current="${i}"></span></small><b data-sector-time="${i}">${sectorValue(c,i)>0?time(sectorValue(c,i)):'—'}</b><span><strong data-sector-speed="${i}">${number(sectorSpeed(c,i))}</strong> km/h 均速</span></div>`).join('')}</div><div class="telemetry-foot"><span>上圈 <b data-focus="last">${time(c.lastLap)}</b></span><span>最佳 <b data-focus="best">${time(c.best)}</b></span><span>已完成 <b data-focus="completed">${c.lap}</b> 圈</span></div></div>`;
 }
 function command(s,c){
   const r=s.race,d=driverOf(s,c.driverId),q=r.qualifying,id=c.driverId;
@@ -7962,30 +8161,35 @@ function command(s,c){
 function liveView(s){
   const r=s.race,track=currentTrack(s),q=r.qualifying,c=focused(s);
   return `${header('LIVE TIMING / 比赛指挥',track.name+' · '+SESSION_NAMES[r.kind],q?'出场圈 → 飞行圈 → 回场圈。倒计时结束后，只能完成已开始的飞行圈。':'连续比赛时钟 · 车手独立计时 · 默认 1× 为现实时间',`<span class="live-indicator">LIVE</span>`)}
-    <div class="live-toolbar"><div class="session-clock"><small>${q?r.kind+r.q.stage+' · '+(r.q.status==='BREAK'?'节间休息':'剩余时间'):'已用时间'}</small><strong data-live-clock>${clock(q?r.q.remaining:r.time,q)}</strong></div><div class="live-lap"><strong data-live-lap>${q?r.kind+r.q.stage:'LAP '+Math.min(r.lap+1,r.totalLaps)}</strong><small>${q?(r.kind==='SQ'?'12 / 10 / 8 MIN':'18 / 15 / 12 MIN'):' / '+r.totalLaps}</small></div>${flagState(r)}<div class="speed-controls">${[1,2,4,8,16,32,64].map(v=>button(v+'×','speed',{value:v},{class:s.settings.speed===v?'selected':''})).join('')}</div><div class="actions">${button(r.running?'暂停':'继续','pause',{}, {class:'small'})}${button('快进一圈','tick',{}, {class:'small'})}${q?button('跳过节间休息','skipQualBreak',{}, {class:'small',disabled:r.q.status!=='BREAK'}):''}${button('自动完成','finishRace',{}, {class:'small',confirm:'按当前策略自动完成本场次；排位期间由 AI 安排本队出场。确认？'})}${button('红旗后恢复','resume',{}, {class:'small',disabled:!r.red})}</div></div>
-    <div class="broadcast-grid"><section class="panel live-tower"><div class="panel-heading"><h2>${icon('stopwatch')}实时排名</h2><span class="muted">${q?'最佳圈差距':'~ 估算差距'}</span></div><div class="table-scroll"><table class="broadcast-timing"><thead><tr><th>P</th><th>车手</th><th>差距</th><th>最佳圈</th><th>状态</th><th>胎</th></tr></thead><tbody id="timing-body">${r.cars.map(x=>timingRow(s,x)).join('')}</tbody></table></div><div class="timing-legend compact"><span class="tone-fastest">● 全场最快</span><span class="tone-success">● 个人最快</span><span class="tone-warning">● 较慢</span></div></section>
+    <div class="live-toolbar"><div class="session-clock"><small>${q?r.kind+r.q.stage+' · '+(r.q.status==='BREAK'?'节间休息':'剩余时间'):'已用时间'}</small><strong data-live-clock>${clock(q?r.q.remaining:r.time,q)}</strong></div><div class="live-lap"><strong data-live-lap>${q?r.kind+r.q.stage:'LAP '+Math.min(r.lap+1,r.totalLaps)}</strong><small>${q?(r.kind==='SQ'?'12 / 10 / 8 MIN':'18 / 15 / 12 MIN'):' / '+r.totalLaps}</small></div>${flagState(r)}<div id="toolbar-weather">${weatherSummary(s)}</div><div class="speed-controls">${[1,2,4,8,16,32,64].map(v=>button(v+'×','speed',{value:v},{class:s.settings.speed===v?'selected':''})).join('')}</div><div class="actions">${button(r.running?'暂停':'继续','pause',{}, {class:'small'})}${button('快进一圈','tick',{}, {class:'small'})}${q?button('跳过节间休息','skipQualBreak',{}, {class:'small',disabled:r.q.status!=='BREAK'}):''}${button('自动完成','finishRace',{}, {class:'small',confirm:'按当前策略自动完成本场次；排位期间由 AI 安排本队出场。确认？'})}${button('红旗后恢复','resume',{}, {class:'small',disabled:!r.red})}</div></div>
+    <div class="broadcast-grid"><section class="panel live-tower"><div id="tower-race-control">${controlBanner(s)}</div><div class="panel-heading"><h2>${icon('stopwatch')}实时排名</h2>${q?'<span class="muted">排位成绩</span>':gapControls(s)}</div><div class="table-scroll"><table class="broadcast-timing ${q?'qualifying-timing':'race-timing'}"><colgroup>${q?'<col style="width:27%"><col style="width:31%"><col style="width:28%"><col style="width:14%">':'<col style="width:36%"><col style="width:45%"><col style="width:19%">'}</colgroup><thead><tr>${q?'<th>车手</th><th>最佳圈</th><th>差距</th><th>轮胎</th>':`<th>车手</th><th data-gap-heading>${s.settings.timingGap==='interval'?'INTERVAL':'LEADER'}</th><th>轮胎</th>`}</tr></thead><tbody id="timing-body">${r.cars.map(x=>timingRow(s,x)).join('')}</tbody></table></div><p class="tower-note">${q?'点击车手查看遥测':'时间差 / 秒 · 点击任意一行聚焦车手'}</p></section>
     <section class="panel track-panel"><div class="map-heading"><div><p class="eyebrow">CIRCUIT TRACKER</p><h2>${h(track.city)}</h2></div><span>${track.length.toFixed(3)} KM · ${track.corners} TURNS</span></div>${trackSvg(s)}<div class="map-caption"><span>● 实心 / 空心：同队两台赛车</span><span>计时线示意 ${button('标注：'+(s.settings.mapLabels==='team'?'本队':'全场'),'mapLabels',{}, {class:'small map-label-toggle'})}</span></div>${telemetry(s,c)}</section>
     <aside class="live-commands"><h2>${icon('radio')}车队无线电</h2>${r.cars.filter(x=>x.teamId===s.player.teamId).sort((a,b)=>a.slot-b.slot).map(x=>command(s,x)).join('')}</aside></div>
-    <div id="live-fastest">${fastestSummary(s,r.fastest)}</div><div class="grid-2">${panel('赛事消息',`<div id="race-events" class="race-events">${r.events.slice(0,10).map(eventItem).join('')}</div>`)}${panel(q?'排位规则与状态':'天气与比赛策略',q?`<p>${s.teams.length*2} 台赛车，前两段各淘汰 ${s.teams.length===11?6:5} 台，最后 10 台争夺杆位。无有效圈显示 NO TIME。</p><p>${r.kind==='SQ'?'干地 SQ1 / SQ2 每段只允许一套新中性胎，SQ3 一套软胎。':'成绩相同时，先做出该成绩者排名靠前。Q1 / Q2 之间休息 7 分钟，Q2 / Q3 之间休息 8 分钟。'}</p><p class="muted">${r.kind==='SQ'?'冲刺排位各段之间休息 7 分钟。':'107% 超时将标记为待裁判审查，游戏默认允许发车。'}飞行圈默认完成后回场；可提前选择连续推进。${r.q.status==='BREAK'?'本段已结束，可等待倒计时或跳过休息。':''}</p><details><summary>已完成各段成绩</summary>${r.q.stages.map((rows,i)=>`<h3>${r.kind}${i+1}</h3>${table(['名次','车手','时间'],rows.map((x,j)=>[j+1,h(driverOf(s,x.id).code),time(x.time)]))}`).join('')||'暂无'}</details>`:`<p>${icon('rain')} 路面积水 <strong data-live-wet>${number(r.wetness*100)}%</strong> · 基准路温 ${track.temp}°C</p><p>正赛干地须实际使用两种干胎；使用过雨胎可豁免。${track.id==='monaco'&&s.season.year>=2025?'摩纳哥至少两次停站。':''}</p><p class="muted">绿色旗帜下可使用 DRS；雨地、安全车与虚拟安全车期间禁用。出站损失计入连续比赛时间。离开此页面、切换到后台或打开对话框时暂停推进。</p>`)}</div>`;
+    <div class="grid-2">${panel('赛事消息',`<div id="race-events" class="race-events">${r.events.slice(0,10).map(eventItem).join('')}</div>`)}${panel(q?'排位规则与状态':'比赛策略',q?`<p>${s.teams.length*2} 台赛车，前两段各淘汰 ${s.teams.length===11?6:5} 台，最后 10 台争夺杆位。无有效圈显示 NO TIME。</p><p>${r.kind==='SQ'?'干地 SQ1 / SQ2 每段只允许一套新中性胎，SQ3 一套软胎。':'成绩相同时，先做出该成绩者排名靠前。Q1 / Q2 之间休息 7 分钟，Q2 / Q3 之间休息 8 分钟。'}</p><p class="muted">${r.kind==='SQ'?'冲刺排位各段之间休息 7 分钟。':'107% 超时将标记为待裁判审查，游戏默认允许发车。'}飞行圈默认完成后回场；可提前选择连续推进。${r.q.status==='BREAK'?'本段已结束，可等待倒计时或跳过休息。':''}</p><details><summary>已完成各段成绩</summary>${r.q.stages.map((rows,i)=>`<h3>${r.kind}${i+1}</h3>${table(['名次','车手','时间'],rows.map((x,j)=>[j+1,h(driverOf(s,x.id).code),time(x.time)]))}`).join('')||'暂无'}</details>`:`<p>正赛干地须实际使用两种干胎；使用过雨胎可豁免。${track.id==='monaco'&&s.season.year>=2025?'摩纳哥至少两次停站。':''}</p><p class="muted">绿色旗帜下可使用 DRS；雨地、安全车与虚拟安全车期间禁用。出站损失计入连续比赛时间。离开此页面、切换到后台或打开对话框时暂停推进。</p>`)}</div>${raceDetails(s)}`;
 }
 const setText=(el,value)=>{if(el&&el.textContent!==String(value))el.textContent=value;};
 const setHtml=(el,value)=>{if(el&&el._liveHTML!==value){el.innerHTML=value;el._liveHTML=value;}};
 function patchLive(s){
   const r=s.race,track=currentTrack(s),body=document.querySelector('#timing-body');if(!body)return;
+  setHtml(document.querySelector('#toolbar-weather'),weatherSummary(s));setHtml(document.querySelector('#tower-race-control'),controlBanner(s));
   setText(document.querySelector('[data-live-clock]'),clock(r.qualifying?r.q.remaining:r.time,r.qualifying));
   setText(document.querySelector('[data-live-lap]'),r.qualifying?r.kind+r.q.stage:'LAP '+Math.min(r.lap+1,r.totalLaps));
   const flag=document.querySelector('[data-race="control"]'),code=r.red?'RED':r.control;
   if(flag){flag.className='flag-state flag-'+code;setHtml(flag,`${icon('flag')}<span>${h({GREEN:'绿旗',SC:'安全车',VSC:'虚拟安全车',RED:'红旗暂停'}[code]||code)}</span>`);}
-  const cells=new Map([...body.children].map(el=>[el.dataset.car,el]));
+  const cells=new Map([...body.children].map(el=>[el.dataset.car,el])),markers=[];
+  setText(document.querySelector('[data-gap-heading]'),s.settings.timingGap==='interval'?'INTERVAL':'LEADER');
+  for(const btn of document.querySelectorAll('.gap-controls button')){const selected=JSON.parse(btn.dataset.payload).value===(s.settings.timingGap||'leader');btn.classList.toggle('selected',selected);btn.setAttribute('aria-pressed',String(selected));}
   for(const c of r.cars){
     const row=cells.get(c.driverId);for(const [k,v]of Object.entries(timingCells(s,c)))setHtml(row?.querySelector(`[data-cell="${k}"]`),v);
-    if(row){row.classList.toggle('retired-row',c.retired);row.classList.toggle('focused-row',c.driverId===focused(s).driverId);body.appendChild(row);}
+    if(row){row.classList.toggle('retired-row',c.retired);row.classList.toggle('focused-row',c.driverId===focused(s).driverId);const expected=body.children[c.position-1];if(expected!==row)body.insertBefore(row,expected||null);}
     const dot=document.querySelector(`[data-dot="${c.driverId}"]`);if(dot){
       const hidden=['GARAGE','ELIMINATED','GRID'].includes(c.phase)||c.retired;
       dot.style.display=hidden?'none':'';
       const p=trackPoint(track.id,c.progress);if(c.phase==='PIT'){p[0]+=25;p[1]+=25;}
       dot.setAttribute('transform',`translate(${p[0].toFixed(2)} ${p[1].toFixed(2)})`);
-      dot.classList.toggle('hide-label',s.settings.mapLabels==='team'&&c.teamId!==s.player.teamId&&c.driverId!==focused(s).driverId);
+      const showLabel=!hidden&&(s.settings.mapLabels!=='team'||c.teamId===s.player.teamId||c.driverId===focused(s).driverId);
+      dot.classList.toggle('hide-label',!showLabel);if(showLabel)markers.push({id:c.driverId,x:p[0],y:p[1]});
+      dot.setAttribute('aria-pressed',String(c.driverId===focused(s).driverId));
       dot.classList.toggle('selected-dot',c.driverId===focused(s).driverId);dot.classList.toggle('slow-dot',['OUT','IN','ABORT','PIT'].includes(c.phase));
       setText(dot.querySelector('.dot-label'),driverOf(s,c.driverId).code);
     }
@@ -8005,7 +8209,13 @@ function patchLive(s){
       }else setText(ctrl.querySelector('[data-live="intent"]'),c.pitRequest?'已预约：本圈末进站换 '+c.pitRequest+' 胎':c.phase==='PIT'?'正在维修区，出站后恢复比赛':'按当前策略行驶 · 停站 '+c.stops+' 次');
     }
   }
-  const c=focused(s),focus=document.querySelector('#map-telemetry');if(focus){
+  const svg=document.querySelector('#track-map');
+  if(svg){const previous=svg._labelOffsets||{};const priority=markers.sort((a,b)=>Number(b.id===focused(s).driverId)-Number(a.id===focused(s).driverId)||a.id.localeCompare(b.id));
+    const offsets={};for(const label of layoutMapLabels(priority,previous)){const dot=svg.querySelector(`[data-dot="${label.id}"]`);dot.querySelector('.dot-label-wrap').setAttribute('transform',`translate(${label.dx} ${label.dy})`);const line=dot.querySelector('.dot-connector');line.setAttribute('x2',label.dx+38);line.setAttribute('y2',label.dy+18);offsets[label.id]=[label.dx,label.dy];}svg._labelOffsets=offsets;
+  }
+  const c=focused(s),d=driverOf(s,c.driverId),t=teamOf(s,c.teamId),focus=document.querySelector('#map-telemetry');if(focus){
+    focus.dataset.focusedDriver=c.driverId;focus.style.setProperty('--team',t.color);
+    for(const [key,value]of Object.entries({code:d.code,name:d.name,team:t.name}))setText(focus.querySelector(`[data-focus="${key}"]`),value);
     for(const [k,v]of Object.entries({phase:phase(c),lap:time(c.currentLap),speed:number(c.speed),last:time(c.lastLap),best:time(r.qualifying?c.stageBest:c.best),completed:c.lap}))setText(focus.querySelector(`[data-focus="${k}"]`),v);
     setHtml(focus.querySelector('[data-focus="tyre"]'),tyre(c.compound));
     for(let i=0;i<3;i++){
@@ -8013,15 +8223,46 @@ function patchLive(s){
       setText(focus.querySelector(`[data-sector-current="${i}"]`),active?'进行中':'');setText(focus.querySelector(`[data-sector-time="${i}"]`),active?time(Math.max(0,r.time-c.sectorStart)):sectorValue(c,i)>0?time(sectorValue(c,i)):'—');setText(focus.querySelector(`[data-sector-speed="${i}"]`),number(sectorSpeed(c,i)));
     }
   }
+  patchDetails(s);
   setHtml(document.querySelector('#live-fastest'),fastestSummary(s,r.fastest));setHtml(document.querySelector('#race-events'),r.events.slice(0,10).map(eventItem).join(''));setText(document.querySelector('[data-live-wet]'),number(r.wetness*100)+'%');
 }
 
-return {clock, liveView, patchLive};
+function detailCells(s,c){
+  const d=driverOf(s,c.driverId),t=teamOf(s,c.teamId),best=s.race.qualifying?c.stageBest:c.best;
+  return {
+    driver:`<button class="detail-driver" data-action="focusDriver" data-payload="${h(JSON.stringify({id:c.driverId}))}" style="--team:${h(t.color)}"><b>${h(d.code)}</b><span>${h(d.name)}</span></button>`,
+    current:c.phase==='GARAGE'||c.phase==='ELIMINATED'?'—':time(c.currentLap),
+    last:c.lastLap>0?lapDisplay(c.lastLap,{fastest:c.lastLap===s.race.fastest.time}):'—',
+    best:lapDisplay(best,{fastest:s.race.fastest.driverId===c.driverId}),
+    sectors:`<div class="detail-sectors">${[0,1,2].map(i=>`<span class="tone-${sectorTone(c,i)}"><small>S${i+1}</small>${sectorValue(c,i)>0?time(sectorValue(c,i)):'—'}</span>`).join('')}</div>`,
+    age:`${c.tyreAge} 圈`,wear:wearMeter(c.tyreWear),fuel:number(c.fuel)+' kg',stops:c.stops,status:badge(phase(c),phaseTone(c))
+  };
+}
+function pitHistory(s){
+  const records=s.race.cars.flatMap(c=>(c.pitLog||[]).map((entry,i)=>({...entry,id:c.driverId,sequence:i+1}))).sort((a,b)=>(b.at??b.lap)-(a.at??a.lap)||a.id.localeCompare(b.id));
+  if(!records.length)return '<p class="empty-pit-log">尚无进站换胎记录。</p>';
+  return `<div class="table-scroll"><table class="pit-history-table"><thead><tr><th>比赛时间</th><th>车手</th><th>圈数</th><th>换胎</th><th>停站用时</th><th>总损失</th></tr></thead><tbody>${records.map(entry=>`<tr><td>${entry.at===undefined?'—':clock(entry.at,false)}</td><td><b>${h(driverOf(s,entry.id).code)}</b><small>${h(driverOf(s,entry.id).name)} · 第 ${entry.sequence} 停</small></td><td>L${entry.lap}</td><td><span class="pit-tyre-change">${entry.from?tyre(entry.from)+'<span>→</span>':''}${tyre(entry.compound)}</span></td><td>${Number(entry.stop).toFixed(2)} s</td><td>+${Number(entry.loss).toFixed(2)} s</td></tr>`).join('')}</tbody></table></div>`;
+}
+function raceDetails(s){
+  return `<section class="panel live-race-details" id="race-details"><div class="panel-heading"><h2>${icon('chart')}圈速与进站数据</h2><span class="muted">全部车手 · 实时更新</span></div><div id="live-fastest">${fastestSummary(s,s.race.fastest)}</div><div class="table-scroll"><table class="race-detail-table"><thead><tr>${['车手','当前圈计时','上一圈','最佳圈','Sector 计时','胎龄','磨损','燃油','停站','状态'].map(label=>`<th>${label}</th>`).join('')}</tr></thead><tbody id="detail-timing-body">${s.race.cars.map(c=>`<tr data-detail-car="${h(c.driverId)}">${Object.entries(detailCells(s,c)).map(([key,value])=>`<td data-detail-cell="${key}">${value}</td>`).join('')}</tr>`).join('')}</tbody></table></div><h3 class="pit-history-heading">${icon('pit')}进站换胎记录</h3><div id="pit-history">${pitHistory(s)}</div></section>`;
+}
+function patchDetails(s){
+  const body=document.querySelector('#detail-timing-body');if(!body)return;
+  const rows=new Map([...body.children].map(row=>[row.dataset.detailCar,row]));
+  for(const c of s.race.cars){const row=rows.get(c.driverId);if(!row)continue;
+    for(const [key,value]of Object.entries(detailCells(s,c)))setHtml(row.querySelector(`[data-detail-cell="${key}"]`),value);
+    row.classList.toggle('focused-row',c.driverId===focused(s).driverId);
+    const expected=body.children[c.position-1];if(expected!==row)body.insertBefore(row,expected||null);
+  }
+  setHtml(document.querySelector('#pit-history'),pitHistory(s));
+}
+
+return {clock, liveView, patchLive, raceDetails};
 }());
 
 // ===== 文件: js/ui/raceView.js =====
 modules['js/ui/raceView.js'] = (function () {
-const { liveView, patchLive } = modules['js/ui/liveView.js'];
+const { liveView, patchLive, raceDetails } = modules['js/ui/liveView.js'];
 // ===== 文件: js/ui/raceView.js =====
 const { teamOf } = modules['js/core/helpers.js'];
 const { currentTrack } = modules['js/core/calendar.js'];
@@ -8095,7 +8336,7 @@ function carControl(s,c) {
     <div data-live="inventory">${tyreInventory(s.calendar.weekend.tyres[c.driverId])}</div>
   </article>`;
 }
-function raceView(s) {
+function renderRaceView(s) {
   const w=s.calendar.weekend,track=currentTrack(s),r=s.race;
   if(r?.realtime&&!r.finished)return liveView(s);
   if(!w)return `${header('比赛指挥','维修墙待命','先进入比赛周末，再执行练习、排位与比赛。')}${panel('下一站准备',`${empty(s.season.offseason?'当前处于转会窗。':'本站赛车尚未登记。')}${link('前往赛历','calendar','primary')}`)}`;
@@ -8153,7 +8394,12 @@ function reportHtml(s,index) {
   return result?`<p>${h(result.track)} · 第 ${result.round} 站 · ${result.kind==='SPRINT'?'冲刺':'正赛'}</p>${fastestSummary(s,result.fastest)}${resultTable(s,result)}<details><summary>罚则记录</summary>${result.penalties.map(p=>`<p>${badge('L'+p.lap,'warning','warning')} ${h(p.reason)} ${p.seconds?badge('+'+p.seconds+'s','danger'):''}</p>`).join('')||'<p>无罚则</p>'}</details>`:empty('该报告不存在。');
 }
 
-return {raceView, patchRace, reportHtml};
+function raceView(s){
+  const content=renderRaceView(s);
+  return s.calendar.weekend&&s.race?.realtime&&s.race.finished?content+raceDetails(s):content;
+}
+
+return {patchRace, reportHtml, raceView};
 }());
 
 // ===== 文件: js/ui/standingsView.js =====
@@ -8378,7 +8624,7 @@ function render() {
       return;
     }
     root.innerHTML=shell(s,views[route()](s));
-    requestAnimationFrame(()=>{charts();if(route()==='race'&&s.race?.realtime&&!s.race.finished)patchRace(s);});
+    requestAnimationFrame(()=>{charts();const latest=getState();if(route()==='race'&&latest?.race?.realtime&&!latest.race.finished)patchRace(latest);});
   }
   catch(error) {
     toast('界面渲染失败：'+error.message,'error');
@@ -8403,8 +8649,9 @@ function perform(action,payload={
   try{
     const prev=getState()?.race;const signature=prev?`${prev.q?.stage}/${prev.q?.status}`:'';
     const message=dispatch(action,payload);const active=getState()?.race;const changed=active&&signature!==`${active.q?.stage}/${active.q?.status}`;
-    if(!changed&&['tick','command','advanceRealtime','qualCommand'].includes(action)&&getState().race&&!getState().race.finished) {
+    if(!changed&&['tick','command','advanceRealtime','qualCommand','focusDriver','timingGap'].includes(action)&&getState().race&&!getState().race.finished) {
       if(action==='command'||action==='qualCommand')toast(message);
+      if(action==='focusDriver'||action==='timingGap')patchRace(getState());
       scheduleRender(true);
     }
     else{
@@ -8465,7 +8712,7 @@ function contractDialog(kind,id) {
   });
 }
 root.addEventListener('click',event=> {
-  const el=event.target.closest('button,a'); if(!el)return; if(el.hasAttribute('data-generate-seed')){captureDraft();draft.seed=generateSeed();render();return;}
+  const el=event.target.closest('button,a,[data-action]'); if(!el)return; if(el.hasAttribute('data-generate-seed')){captureDraft();draft.seed=generateSeed();render();return;}
   if(el.dataset.chooseTeam) {
     captureDraft(); draft.teamId=el.dataset.chooseTeam; render(); return;
   }
@@ -8714,12 +8961,12 @@ return {};
 // ===== 文件: package.json =====
 {
   "name": "pitwall-f1-manager",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "private": true,
   "type": "module",
   "description": "纯静态、零依赖 F1 车队经营模拟",
   "scripts": {
-    "test": "node tests/engine.test.js && node tests/realtime.test.js && python3 tests/static.test.py"
+    "test": "node tests/engine.test.js && node tests/realtime.test.js && node tests/live-display.test.js && python3 tests/static.test.py"
   }
 }
 ```
@@ -8831,6 +9078,8 @@ python -m http.server 8000
 - 默认 **1× = 1 秒现实时间推进 1 秒比赛时间**。可选 2× / 4× / 8× / 16× / 32× / 64×，支持暂停、快进一圈、自动完成。
 - 练习仍为快速数据采集；排位、冲刺排位、冲刺赛和正赛全部使用连续时钟。
 - 中央显示内置的 25 条真实赛道轮廓。赛车按车队颜色绘制，同队实心 / 空心区分，三字母缩写标识；点击地图或计时塔缩写切换遥测。
+- 放大时间差、车手缩写、当前圈计时与车速等关键数据。正赛 / 冲刺排名只显示车手、时间差、轮胎三列，默认 LEADER 相对领先者，可切换 INTERVAL 相对前一名，退赛车显示 OUT。
+- 天气、路面积水与路温直接显示在倍速控制栏；实时排名上方用赛事横幅突出黄旗、SC、VSC、红旗等状态。
 - 显示当前圈计时、上圈、最佳圈、即时模拟车速，以及 S1 / S2 / S3 独立计时和平均速度。全场最快紫色、个人最佳绿色、较慢黄色；无效圈灰色。
 - 地图位置随模拟时间连续计算，弯道降低速度、直道提高速度。每辆车独立过计时线，圈速不是预先一次结算后播放动画。
 - 赛车设置与指令影响下一赛段，轮胎磨损、油耗和事件按赛段 / 过线事件更新。进站损失真正占用时间，不会立即跳到换胎后的圈末。
@@ -8839,6 +9088,9 @@ python -m http.server 8000
 - 领先者完成距离后出示方格旗，其他赛车在下一次过线结束，套圈车无需补跑完整距离；保留真实完成圈数进行结算。
 - 红旗需要点击恢复；自动完成会自动恢复。切换页面、浏览器后台或打开对话框时自动暂停推进，不积攒后台时间。
 - 赛道中心线是地理轮廓；三段计时线、维修区支线与速度曲线是游戏近似，规则实现边界见 `DATA.md`。
+- 页面最下方集中显示所有车手的当前圈、上一圈、最快圈、Sector、胎龄、磨损、燃油与停站次数，并保留按时间排列的进站换胎记录（圈数、配方变化、停站用时、总损失）。赛后仍可查看。
+- 地图标签自动避让；点击排名任意行、地图标签或底部车手名，会同步更新聚焦车手姓名、车队颜色、遥测与选中标记。
+- “第二次进站 = 0”表示关闭二停，不会在发车时预约进站；旧版尚未执行的第 0 圈误请求在载入时修复，并保留手动进站指令。
 - 车手缩写可在“车手”页修改，必须为唯一的三个英文字母。
 
 赛后生成分类、积分、最快圈、进站和处罚信息、每十圈领跑分段记录与本队位置曲线。成绩存入分站档案。点击“完成本站结算”后，才可装车、签约和准备下一站。
@@ -8941,6 +9193,7 @@ python tools/build_offline.py
 ```bash
 node tests/engine.test.js
 node tests/realtime.test.js
+node tests/live-display.test.js
 ```
 
 无需 npm install。测试覆盖 40 个真实车队开局、四季两模式、冲刺、排位、研发、合同、存档、跨季与 500 圈模拟，实际结果见 `SELF_CHECK.md`。
@@ -9078,7 +9331,7 @@ node tests/realtime.test.js
 - 非动力外观部件不限制年度使用数；动力 / 变速箱数量有限。超额统一每次罚退 10 位，不复刻首次 / 后续各部件的全部细分罚退规则。
 - 赛道限制三次警告，第四次 5 秒、后续 10 秒；碰撞可罚 10 秒；维修区超速使用穿越罚则。不模拟申诉、驾驶证超级积分、排位阻挡调查；游戏内严重危险驾驶可罚下场正赛维修区起步，但不复刻全部真实裁定。
 - 不模拟轮胎胎号、整套 parc fermé 例外、组件封印、维修区开放 / 关闭的全部特例与红旗免费换胎规则。
-- 实时引擎以连续秒数推进，按各车赛段过线、出场、进站结束和倒计时边界处理事件。正赛实时差距以距离差和基准圈速估计，界面以 `~` 标记；最终名次使用实际完成圈数与过线时刻。已实现套圈车在领跑者方格旗后的下一次过线结束，尚无完整 SC 解套圈程序。
+- 实时引擎以连续秒数推进，按各车赛段过线、出场、进站结束和倒计时边界处理事件。正赛实时差距以距离差和基准圈速估计，可用 LEADER / INTERVAL 分别选择领先者或前一名作为参照，单位为秒；最终名次使用实际完成圈数与过线时刻。已实现套圈车在领跑者方格旗后的下一次过线结束，尚无完整 SC 解套圈程序。
 - 争夺同一赛段出口的反超需要通过超车 / 防守能力、DRS 与赛道难度判定。持续贴身缠斗、阻挡、碰撞裁定和安全车队列仍为策略游戏近似。实时赛段时长按赛道曲率分配，再叠加赛车、车手、轮胎与事件，不再按固定比例拆分整圈时间。
 - 实现正赛 2 小时 / 冲刺 1 小时的计时终点：时限经过后，领先者于下一圈末结束。未实现红旗总时限、提前永久终止、缩短积分梯度与全部重启程序。排位天气采用周末起始湿度，不逐分钟演化雨带。
 - 合同是“报价 → 按薪水 / 声望计算接受概率 → 即时转会”，包含违约补偿；尚未实现多轮讨价还价、承诺条款的独立任务树。
@@ -9096,6 +9349,12 @@ node tests/realtime.test.js
 模拟随机数只来自 `rng.js`；种子和 RNG 当前状态均保存。日期推进是游戏日期。导出 / 存档时间戳是元数据，不参与模拟。浏览器定时器按实际经过秒数乘以倍速推进连续时间。离开比赛页面、进入后台或弹窗期间不积攒追赶时间。相同种子、相同比赛时刻执行相同指令时，大时间步与多个小时间步产生相同事件与 RNG 状态；已加入排位 / 正赛分步一致性测试。
 
 游戏不发起外部 API 请求，不采集个人信息。存档保存于当前浏览器运行域的 localStorage；JSON 文件由用户主动下载或导入。
+
+## 2.1.0 显示与进站修正
+
+三列排名的实时差距仍按距离差与赛道基准圈速估计；切换参照不会改变比赛状态或随机序列。地图标签使用确定的避让布局。底部进站记录取真实模拟停站事件，按该车实际完成圈数记录，并显示旧胎 → 新胎与时间损失。
+
+首停 / 二停窗口仅在正整数圈数匹配时触发，0 表示禁用。自动策略与 B / C 预案仍可根据既有设定调整停站；未启用这些行为时按玩家窗口执行。
 ````
 
 ## SELF_CHECK.md
@@ -9104,7 +9363,7 @@ node tests/realtime.test.js
 <!-- ===== 文件: SELF_CHECK.md ===== -->
 # 实现与验证自检
 
-验证日期：2026-10-21。以下区分实现、自动测试与浏览器检查；没有把未执行的本机测试标记为实测通过。
+验证日期：2026-10-22。以下区分实现、自动测试与浏览器检查；没有把未执行的本机测试标记为实测通过。
 
 ## 附件要求的逐项自检
 
@@ -9124,7 +9383,7 @@ node tests/realtime.test.js
 | ✓ | 刷新恢复存档，无白屏 | `js/main.js` 启动恢复；浏览器实际刷新比赛中的暂停存档，恢复圈数、轮胎、指令，再继续比赛。 |
 | ✓ | 无外部 API / CDN，支持仓库子路径 | `tests/static.test.py` 检查运行时引用相对、资源存在、无 fetch / XHR / WebSocket 与 Math.random；浏览器实际打开 `/subpath-check/index.html#car` 并显示车辆 / 轮胎曲线。未实际推送 GitHub 或创建托管站点。 |
 
-## 本次新增内容
+## 实时赛道版内容
 
 | 结果 | 内容 | 验证 |
 | --- | --- | --- |
@@ -9137,12 +9396,21 @@ node tests/realtime.test.js
 | ✓ | 归零边界、红旗、暂停、快进 | 自动检查归零前已开始飞行圈允许完成、归零后出场圈无计时成绩、红旗冻结与恢复 |
 | ✓ | 实际进站时间与套圈车结束比赛 | 自动检查 Pit 停留、真实圈时、领跑者方格旗后下一次过线结束 |
 
+## 2.1.0 修复与验证
+
+- 新增 `tests/live-display.test.js`，7 项检查：第 26 圈首停且关闭二停、LEADER / INTERVAL / OUT、22 台车密集地图标签避让、三列结构与详细区位置、聚焦 ID 与旗帜、旧存档误请求修复、设置保存与纯显示不消耗 RNG。
+- 浏览器实测：普通排位点击 VER、地图点击 LEC、正赛点击 RUS，姓名、车队颜色与遥测同步更新；19 个同时显示的地图标签包围框没有相交。
+- 浏览器实测：正赛排名三列、INTERVAL 切换、顶栏天气、底部详细区位于页面最后；第一圈本队停站次数为 0。
+- 浏览器实测：手动预约进站后取消，指令确实清除；再次预约并过线后，底部正确显示 L2、M → H、停站 2.24 秒及总损失 24.24 秒。
+- 本次桌面布局检查无应用来源脚本错误。手机和用户本机 Win10 浏览器未逐一实测；保留响应式断点与明确的字母宽度。
+
 ## 自动回归结果
 
 - `node tests/engine.test.js`：原有 19 项经营 / 兼容引擎测试通过。
 - `node tests/realtime.test.js`：新增 25 项实时引擎测试通过。
 - 新版 action 入口全程完成 2025：24 个周末、30 场比赛，每六站序列化 / 恢复一次并完成季末。
-- 合计 44 项引擎测试，再加静态资源检查；完整输出保存于 `tests/last-run.txt`，结构化结果保存于 `tests/last-run.json`。
+- `node tests/live-display.test.js`：7 项显示 / 进站修复检查通过。
+- 合计 51 项回归测试，再加静态资源检查；完整输出保存于 `tests/last-run.txt`，结构化结果保存于 `tests/last-run.json`。
 - 其中包含 40 个真实车队开局、四季两模式完整周末与全部年度冲刺流程。
 - 实际测试输出：`tests/last-run.txt`；结构化结果：`tests/last-run.json`。
 - 500 圈性能采用**十场各 50 圈**，断言每场确实完成 50 圈，避免全部退赛提前结束造成虚假基准。最终耗时见日志，低于 1 秒目标。该基准验证保留的旧版兼容引擎，**不作为新实时引擎或界面帧率的基准**。该数字不含 DOM 渲染、JSON 序列化或存储，且取决于测试机器。
@@ -9172,6 +9440,16 @@ node tests/realtime.test.js
 
 ```md
 <!-- ===== 文件: CHANGELOG.md ===== -->
+# 2.1.0 · 赛事显示与进站修复
+
+- 修复“二停 = 0”被误判为第 0 圈停站，造成首圈自动换胎。计划首停按该车实际完成圈数执行；修复旧存档中尚未执行的误请求，保留手动指令。
+- 正赛 / 冲刺排名精简为车手缩写、时间差、轮胎三列；默认 LEADER，可切换 INTERVAL，退赛显示 OUT。
+- 地图车手标签自动避让，放大关键数据并为字母、时间差保留完整宽度。
+- 修复聚焦车手身份与遥测不同步；点击排行榜、地图及底部车手名都能立即更新姓名、车队颜色与数据。
+- 页面底部集中显示全场圈速与轮胎 / 燃油数据、逐次进站换胎历史，赛后继续保留。
+- 倍速栏显示当前天气、路面积水和路温；排名顶部增加赛事状态横幅。
+- 修复“取消进站”按钮触发表单提交；新增 7 项进站、时间差、标签避让和显示回归测试。
+
 # 2.0.0 · 实时赛道版
 
 - 新增中央赛道地图，内置 25 条地理轮廓，车队颜色、实心 / 空心标记与三字母缩写。
@@ -9990,7 +10268,7 @@ console.log(JSON.stringify({tests:results},null,2));
 ```json
 // ===== 文件: tests/last-run.json =====
 {
-  "date": "2026-10-21",
+  "date": "2026-10-22",
   "tests": [
     {
       "name": "四个赛季真实开季阵容与 22/24 站赛历",
@@ -10066,7 +10344,7 @@ console.log(JSON.stringify({tests:results},null,2));
     },
     {
       "name": "500圈实测",
-      "milliseconds": 143.18998699999997,
+      "milliseconds": 128.13851099999988,
       "totalLaps": 500
     },
     {
@@ -10172,6 +10450,34 @@ console.log(JSON.stringify({tests:results},null,2));
     {
       "name": "新版 action 全程推进 2025：24 站、30 场比赛、中途存档恢复与季末",
       "status": "PASS"
+    },
+    {
+      "name": "首停第26圈、二停关闭：两台赛车第一圈和第25圈均不提前进站，第26圈才执行",
+      "status": "PASS"
+    },
+    {
+      "name": "LEADER / INTERVAL 使用不同参照，领先车为 LEADER，退赛车为 OUT，套圈差距正常",
+      "status": "PASS"
+    },
+    {
+      "name": "22辆赛车聚集在同一点或边缘：标签不相交、完整位于地图内",
+      "status": "PASS"
+    },
+    {
+      "name": "正赛排名恰好三列，天气和赛事状态位于上方，完整详细数据位于最后",
+      "status": "PASS"
+    },
+    {
+      "name": "聚焦身份取明确车手ID，排序变化后仍保留选择；红旗与SC横幅对应当前状态",
+      "status": "PASS"
+    },
+    {
+      "name": "修复旧存档中的第0圈二停误请求，同时保留手动进站指令",
+      "status": "PASS"
+    },
+    {
+      "name": "排名模式与聚焦选择经过保存后仍保留，界面计算不消耗RNG",
+      "status": "PASS"
     }
   ],
   "static": "PASS",
@@ -10202,7 +10508,7 @@ PASS 车手签入、续约、解约与员工合同
 PASS 完整 2025 → 2026 赛季结算、转会窗与新规
 PASS SC、雨地、红旗恢复、进站、赛道限制与 DRS 距离
 PASS 预算帽升级处罚保持积分明细与总积分一致
-  benchmark: 143.19 ms / 500 laps
+  benchmark: 128.14 ms / 500 laps
 PASS 500 圈模拟性能：十场 50 圈总计少于 1000 ms（不含 DOM 与存档）
 {
   "tests": [
@@ -10280,7 +10586,7 @@ PASS 500 圈模拟性能：十场 50 圈总计少于 1000 ms（不含 DOM 与存
     },
     {
       "name": "500圈实测",
-      "milliseconds": 143.18998699999997,
+      "milliseconds": 128.13851099999988,
       "totalLaps": 500
     },
     {
@@ -10421,8 +10727,93 @@ PASS 新版 action 全程推进 2025：24 站、30 场比赛、中途存档恢�
   ]
 }
 
+$ node tests/live-display.test.js
+PASS 首停第26圈、二停关闭：两台赛车第一圈和第25圈均不提前进站，第26圈才执行
+PASS LEADER / INTERVAL 使用不同参照，领先车为 LEADER，退赛车为 OUT，套圈差距正常
+PASS 22辆赛车聚集在同一点或边缘：标签不相交、完整位于地图内
+PASS 正赛排名恰好三列，天气和赛事状态位于上方，完整详细数据位于最后
+PASS 聚焦身份取明确车手ID，排序变化后仍保留选择；红旗与SC横幅对应当前状态
+PASS 修复旧存档中的第0圈二停误请求，同时保留手动进站指令
+PASS 排名模式与聚焦选择经过保存后仍保留，界面计算不消耗RNG
+{
+  "tests": [
+    {
+      "name": "首停第26圈、二停关闭：两台赛车第一圈和第25圈均不提前进站，第26圈才执行",
+      "status": "PASS"
+    },
+    {
+      "name": "LEADER / INTERVAL 使用不同参照，领先车为 LEADER，退赛车为 OUT，套圈差距正常",
+      "status": "PASS"
+    },
+    {
+      "name": "22辆赛车聚集在同一点或边缘：标签不相交、完整位于地图内",
+      "status": "PASS"
+    },
+    {
+      "name": "正赛排名恰好三列，天气和赛事状态位于上方，完整详细数据位于最后",
+      "status": "PASS"
+    },
+    {
+      "name": "聚焦身份取明确车手ID，排序变化后仍保留选择；红旗与SC横幅对应当前状态",
+      "status": "PASS"
+    },
+    {
+      "name": "修复旧存档中的第0圈二停误请求，同时保留手动进站指令",
+      "status": "PASS"
+    },
+    {
+      "name": "排名模式与聚焦选择经过保存后仍保留，界面计算不消耗RNG",
+      "status": "PASS"
+    }
+  ]
+}
+
 $ python3 tests/static.test.py
 PASS 所有引用相对、资源齐全、无外部 API、无 Math.random、核心无 DOM
+```
+
+## tests/live-display.test.js
+
+```js
+// ===== 文件: tests/live-display.test.js =====
+import assert from 'node:assert/strict';
+import { createGame, reduce } from '../js/core/state.js';
+import { currentTrack } from '../js/core/calendar.js';
+import { qualifying, practice } from '../js/core/race.js';
+import { startRealtimeRace, advanceRealtime, fastForwardLap, resumeRealtime } from '../js/core/realtime.js';
+import { timingGap, layoutMapLabels } from '../js/ui/liveData.js';
+import { liveView } from '../js/ui/liveView.js';
+import { importText, exportText } from '../js/core/save.js';
+import { teamOf } from '../js/core/helpers.js';
+const tests=[];
+function test(name,fn){try{fn();tests.push({name,status:'PASS'});console.log('PASS',name);}catch(e){tests.push({name,status:'FAIL',error:e.message});console.error('FAIL',name,e.stack);process.exitCode=1;}}
+function race(){const s=createGame({year:2025,seed:'pit-window-fix'});reduce(s,'enterWeekend');while(s.calendar.weekend.sessions[s.calendar.weekend.index].startsWith('FP'))practice(s);qualifying(s,'push',true);for(const id of teamOf(s).drivers)Object.assign(s.calendar.weekend.strategy[id],{start:'M',pitLap:26,secondLap:0,next:'H',backup:'A',auto:false});s.calendar.weekend.weatherStart=0;startRealtimeRace(s);for(const cell of s.race.forecast)cell.rain=0;return s;}
+function untilOwnLap(s,c,lap){let guard=0;while(c.lap<lap&&!c.retired&&!s.race.finished&&guard++<2000){if(s.race.red)resumeRealtime(s);advanceRealtime(s,1,true);}assert.ok(!c.retired,'test driver retired');assert.ok(guard<2000);}
+test('首停第26圈、二停关闭：两台赛车第一圈和第25圈均不提前进站，第26圈才执行',()=>{
+ const s=race(),cars=teamOf(s).drivers.map(id=>s.race.cars.find(c=>c.driverId===id));
+ for(const c of cars){assert.equal(c.pitRequest,null);assert.deepEqual(c.planUsed,[]);}
+ const slow=cars.sort((a,b)=>b.grid-a.grid)[0];untilOwnLap(s,slow,1);for(const c of cars){assert.equal(c.stops,0);assert.equal(c.pitRequest,null);}
+ // Preserve the scheduled lap while neutralising unrelated tyre and failure risks.
+ let guard=0;while(cars.some(c=>c.lap<26)&&guard++<4000){for(const c of cars){c.tyreWear=0;c.tyreAge=0;for(const p of Object.values(s.parts[c.teamId].cars[c.slot]))p.wear=0;}if(s.race.red)resumeRealtime(s);advanceRealtime(s,1,true);for(const c of cars)if(c.lap<26)assert.equal(c.stops,0);}
+ for(const c of cars){assert.equal(c.retired,false);assert.equal(c.stops,1);assert.equal(c.pitLog[0].lap,26);assert.equal(c.pitLog[0].from,'M');assert.equal(c.pitLog[0].compound,'H');assert.ok(c.pitLog[0].at>0);assert.deepEqual(c.planUsed,[0]);}
+});
+test('LEADER / INTERVAL 使用不同参照，领先车为 LEADER，退赛车为 OUT，套圈差距正常',()=>{
+ const s=race(),[a,b,c]=s.race.cars;s.race.cars=[a,b,c];[a,b,c].forEach((x,i)=>{x.position=i+1;x.totalDistance=5-i*.1;});const base=currentTrack(s).baseTime;
+ assert.equal(timingGap(s,a,base),'LEADER');const leader=timingGap(s,c,base);reduce(s,'timingGap',{value:'interval'});const interval=timingGap(s,c,base);assert.equal(leader,'+'+(.2*base).toFixed(1));assert.equal(interval,'+'+(.1*base).toFixed(1));c.retired=true;assert.equal(timingGap(s,c,base),'OUT');c.retired=false;c.totalDistance=3.4;assert.equal(timingGap(s,c,base),'+1 LAP');assert.throws(()=>reduce(s,'timingGap',{value:'bad'}));
+});
+test('22辆赛车聚集在同一点或边缘：标签不相交、完整位于地图内',()=>{
+ for(const [x,y]of [[400,370],[8,8],[792,732]]){const markers=Array.from({length:22},(_,i)=>({id:'driver'+i,x,y}));const labels=layoutMapLabels(markers);assert.equal(labels.length,22);for(let i=0;i<labels.length;i++){const a=labels[i];assert.ok(a.x>=0&&a.y>=0&&a.x+a.width<=800&&a.y+a.height<=740);for(const b of labels.slice(i+1))assert.ok(a.x+a.width<=b.x||b.x+b.width<=a.x||a.y+a.height<=b.y||b.y+b.height<=a.y,'overlapping labels');}}
+});
+test('正赛排名恰好三列，天气和赛事状态位于上方，完整详细数据位于最后',()=>{
+ const s=race(),markup=liveView(s),tower=markup.slice(markup.indexOf('<table class="broadcast-timing'),markup.indexOf('</table>'));
+ assert.equal((tower.match(/<th[ >]/g)||[]).length,3);assert.equal((tower.match(/<td /g)||[]).length,s.race.cars.length*3);assert.ok(!tower.includes('data-cell="best"'));assert.ok(markup.indexOf('id="toolbar-weather"')<markup.indexOf('id="timing-body"'));assert.ok(markup.indexOf('id="tower-race-control"')<markup.indexOf('id="timing-body"'));assert.ok(markup.indexOf('id="race-details"')>markup.indexOf('id="race-events"'));assert.ok(markup.includes('id="pit-history"'));assert.ok(markup.includes('data-detail-cell="current"'));assert.ok(markup.includes('data-detail-cell="best"'));
+});
+test('聚焦身份取明确车手ID，排序变化后仍保留选择；红旗与SC横幅对应当前状态',()=>{
+ const s=race(),id=s.race.cars.at(-1).driverId;reduce(s,'focusDriver',{id});s.race.cars.reverse();const markup=liveView(s);assert.ok(markup.includes('data-focused-driver="'+id+'"'));assert.throws(()=>reduce(s,'focusDriver',{id:'missing'}));s.race.control='SC';assert.ok(liveView(s).includes('SAFETY CAR'));s.race.red=true;assert.ok(liveView(s).includes('RED FLAG'));
+});
+test('修复旧存档中的第0圈二停误请求，同时保留手动进站指令',()=>{for(const manual of [false,true]){const s=race(),c=s.race.cars.find(c=>c.teamId===s.player.teamId);c.planUsed=[1];c.pitRequest=c.plan.next;if(manual)s.race.events.push({lap:0,type:'radio',text:c.name+'：收到进站指令，本圈末换 H 胎'});const loaded=importText(exportText(s)),car=loaded.race.cars.find(x=>x.driverId===c.driverId);assert.deepEqual(car.planUsed,[]);assert.equal(car.pitRequest,manual?'H':null);}});
+test('排名模式与聚焦选择经过保存后仍保留，界面计算不消耗RNG',()=>{const s=race(),id=s.race.cars.at(-1).driverId;reduce(s,'timingGap',{value:'interval'});reduce(s,'focusDriver',{id});const before=s.rng;liveView(s);assert.equal(s.rng,before);const saved=importText(exportText(s));assert.equal(saved.settings.timingGap,'interval');assert.equal(saved.settings.focusDriver,id);});
+console.log(JSON.stringify({tests},null,2));
 ```
 
 ## tests/realtime.test.js

@@ -24,7 +24,7 @@ export function badge(text,type='',symbol='') {
 export function button(label,action,payload={
 },options={
 }) {
-  return `<button class="btn ${h(options.class||'')}" data-action="${h(action)}" data-payload="${h(JSON.stringify(payload))}" ${options.disabled?'disabled':''} ${options.reason?`title="${h(options.reason)}"`:''} ${options.confirm?`data-confirm="${h(options.confirm)}"`:''}>${h(label)}</button>${options.disabled&&options.reason?`<small class="disabled-reason">${h(options.reason)}</small>`:''}`;
+  return `<button type="button" class="btn ${h(options.class||'')}" data-action="${h(action)}" data-payload="${h(JSON.stringify(payload))}" ${options.disabled?'disabled':''} ${options.reason?`title="${h(options.reason)}"`:''} ${options.confirm?`data-confirm="${h(options.confirm)}"`:''}>${h(label)}</button>${options.disabled&&options.reason?`<small class="disabled-reason">${h(options.reason)}</small>`:''}`;
 }
 export function link(label,route,cls='') {
   return `<a class="btn ${h(cls)}" href="#${h(route)}">${h(label)}</a>`;

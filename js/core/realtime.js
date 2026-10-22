@@ -63,7 +63,7 @@ function prepareRaceLap(s,c){
   const r=s.race,track=currentTrack(s);c.pitThisLap=false;
   if(c.teamId!==s.player.teamId||c.plan.auto)aiRaceDecision(s,c,track);
   else{
-    [c.plan.pitLap,c.plan.secondLap].forEach((lap,i)=>{if(lap===c.lap&&!c.planUsed.includes(i)){c.pitRequest=c.plan.next;c.planUsed.push(i);}});
+    [c.plan.pitLap,c.plan.secondLap].forEach((lap,i)=>{if(Number.isInteger(lap)&&lap>0&&lap===c.lap&&!c.planUsed.includes(i)){c.pitRequest=c.plan.next;c.planUsed.push(i);}});
     if(r.control!=='GREEN'&&c.plan.backup==='B'&&c.tyreAge>12&&r.totalLaps-c.lap>8)c.pitRequest=r.wetness>.23?c.plan.rain:'H';
     if(c.plan.backup==='C'&&r.wetness>.25&&!['I','W'].includes(c.compound))c.pitRequest=r.wetness>.7?'W':c.plan.rain;
   }

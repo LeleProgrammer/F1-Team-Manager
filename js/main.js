@@ -168,7 +168,7 @@ function render() {
       return;
     }
     root.innerHTML=shell(s,views[route()](s));
-    requestAnimationFrame(()=>{charts();if(route()==='race'&&s.race?.realtime&&!s.race.finished)patchRace(s);});
+    requestAnimationFrame(()=>{charts();const latest=getState();if(route()==='race'&&latest?.race?.realtime&&!latest.race.finished)patchRace(latest);});
   }
   catch(error) {
     toast('界面渲染失败：'+error.message,'error');
@@ -193,8 +193,9 @@ function perform(action,payload={
   try{
     const prev=getState()?.race;const signature=prev?`${prev.q?.stage}/${prev.q?.status}`:'';
     const message=dispatch(action,payload);const active=getState()?.race;const changed=active&&signature!==`${active.q?.stage}/${active.q?.status}`;
-    if(!changed&&['tick','command','advanceRealtime','qualCommand'].includes(action)&&getState().race&&!getState().race.finished) {
+    if(!changed&&['tick','command','advanceRealtime','qualCommand','focusDriver','timingGap'].includes(action)&&getState().race&&!getState().race.finished) {
       if(action==='command'||action==='qualCommand')toast(message);
+      if(action==='focusDriver'||action==='timingGap')patchRace(getState());
       scheduleRender(true);
     }
     else{
@@ -255,7 +256,7 @@ function contractDialog(kind,id) {
   });
 }
 root.addEventListener('click',event=> {
-  const el=event.target.closest('button,a'); if(!el)return; if(el.hasAttribute('data-generate-seed')){captureDraft();draft.seed=generateSeed();render();return;}
+  const el=event.target.closest('button,a,[data-action]'); if(!el)return; if(el.hasAttribute('data-generate-seed')){captureDraft();draft.seed=generateSeed();render();return;}
   if(el.dataset.chooseTeam) {
     captureDraft(); draft.teamId=el.dataset.chooseTeam; render(); return;
   }

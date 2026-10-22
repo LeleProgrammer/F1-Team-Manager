@@ -172,7 +172,8 @@ export function reduce(s,action,p={
     case'qualCommand':return qualCommand(s,p.id,p.command,p.value);
     case'skipQualBreak':return skipQualBreak(s);
     case'mapLabels':s.settings.mapLabels=s.settings.mapLabels==='team'?'all':'team';return '地图标注已切换';
-    case'focusDriver':s.settings.focusDriver=p.id;return '已切换遥测车手';
+    case'timingGap':requireCondition(['leader','interval'].includes(p.value),'时间差模式无效');s.settings.timingGap=p.value;return '时间差模式已切换';
+    case'focusDriver':requireCondition(s.race?.cars.some(c=>c.driverId===p.id),'当前场次没有该车手');s.settings.focusDriver=p.id;return '已切换遥测车手';
     case'driverCode':return setDriverCode(s,p.id,p.value);
     case'startRace':return startRealtimeRace(s);
     case'tick':return s.race?.realtime?fastForwardLap(s):tick(s,p.count||1,!!p.untilEvent);

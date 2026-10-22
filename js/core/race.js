@@ -197,6 +197,7 @@ export function pit(s,car,track) {
   const target=car.pitRequest;
   if(!target)return;
   car.pitRequest=null;
+  const previousCompound=car.compound;
   if(!useTyre(s,car,target)) {
     event(s,`${car.name}：请求配方已用尽，取消进站`,'warning');
     return;
@@ -213,7 +214,7 @@ export function pit(s,car,track) {
   car.stops++;
   car.pitThisLap=true;
   car.pitLog.push({
-    lap:s.race.lap,compound:target,stop,loss
+    lap:s.race.realtime?car.lap:s.race.lap,compound:target,stop,loss,...(s.race.realtime?{at:s.race.time}:{}),from:previousCompound
   });
   event(s,`${car.name} 进站：${target} 胎，停站 ${stop.toFixed(2)} 秒`,'pit');
   if(chance(s,.003)) {

@@ -31,6 +31,14 @@ export function migrate(raw) {
   }
   if(s.schemaVersion===2){s.schemaVersion=3;assignDriverCodes(s);if(s.race&&!s.race.finished)attachRealtimeRace(s);}
   requireCondition(s.schemaVersion===3,'存档版本不受支持（本版本为 3）');
+  // Repair the 2.0.0 disabled-second-stop request in saves made before lap one.
+  if(s.race?.realtime&&!s.race.qualifying&&!s.race.finished&&Array.isArray(s.race.cars))for(const c of s.race.cars){
+    if(c.lap===0&&c.plan?.secondLap===0&&Array.isArray(c.planUsed)&&c.planUsed.includes(1)){
+      c.planUsed=c.planUsed.filter(i=>i!==1);
+      const manual=Array.isArray(s.race.events)&&s.race.events.some(e=>e.type==='radio'&&e.text?.startsWith(c.name+'：收到进站指令'));
+      if(!manual&&c.pitRequest===c.plan.next)c.pitRequest=null;
+    }
+  }
   return s;
 }
 export function validate(raw) {

@@ -1,4 +1,4 @@
-import { liveView, patchLive } from './liveView.js';
+import { liveView, patchLive, raceDetails } from './liveView.js';
 // ===== 文件: js/ui/raceView.js =====
 import { teamOf } from '../core/helpers.js';
 import { currentTrack } from '../core/calendar.js';
@@ -72,7 +72,7 @@ function carControl(s,c) {
     <div data-live="inventory">${tyreInventory(s.calendar.weekend.tyres[c.driverId])}</div>
   </article>`;
 }
-export function raceView(s) {
+function renderRaceView(s) {
   const w=s.calendar.weekend,track=currentTrack(s),r=s.race;
   if(r?.realtime&&!r.finished)return liveView(s);
   if(!w)return `${header('比赛指挥','维修墙待命','先进入比赛周末，再执行练习、排位与比赛。')}${panel('下一站准备',`${empty(s.season.offseason?'当前处于转会窗。':'本站赛车尚未登记。')}${link('前往赛历','calendar','primary')}`)}`;
@@ -128,4 +128,9 @@ export function patchRace(s) {
 export function reportHtml(s,index) {
   const result=s.history.races[index];
   return result?`<p>${h(result.track)} · 第 ${result.round} 站 · ${result.kind==='SPRINT'?'冲刺':'正赛'}</p>${fastestSummary(s,result.fastest)}${resultTable(s,result)}<details><summary>罚则记录</summary>${result.penalties.map(p=>`<p>${badge('L'+p.lap,'warning','warning')} ${h(p.reason)} ${p.seconds?badge('+'+p.seconds+'s','danger'):''}</p>`).join('')||'<p>无罚则</p>'}</details>`:empty('该报告不存在。');
+}
+
+export function raceView(s){
+  const content=renderRaceView(s);
+  return s.calendar.weekend&&s.race?.realtime&&s.race.finished?content+raceDetails(s):content;
 }
