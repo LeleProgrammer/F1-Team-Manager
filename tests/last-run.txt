@@ -286,3 +286,12 @@ PASS 本队高亮绑定车手所属车队，覆盖实时排名、详细表、积
 
 $ python3 tests/static.test.py
 PASS 所有引用相对、资源齐全、无外部 API、无 Math.random、核心无 DOM
+
+2.2.1 定向回归（2026-10-22）
+node tests/live-display.test.js：9 项全部通过，包含新检查：时间差按现实时间每500ms刷新，模式切换立即刷新，排位不节流
+$ node --check js/ui/liveView.js
+
+$ node --check js/offline.js
+
+$ python3 tests/static.test.py
+PASS 所有引用相对、资源齐全、无外部 API、无 Math.random、核心无 DOM

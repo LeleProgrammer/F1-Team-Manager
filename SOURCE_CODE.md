@@ -3700,6 +3700,11 @@ const setText=(el,value)=>{if(el&&el.textContent!==String(value))el.textContent=
 const setHtml=(el,value)=>{if(el&&el._liveHTML!==value){el.innerHTML=value;el._liveHTML=value;}};
 export function patchLive(s){
   const r=s.race,track=currentTrack(s),body=document.querySelector('#timing-body');if(!body)return;
+  // Throttle only race/sprint gap text by real elapsed time, independent of simulation speed.
+  // A new table or a LEADER / INTERVAL switch receives a fresh reading immediately.
+  const now=globalThis.performance.now(),gapMode=s.settings.timingGap||'leader';
+  const refreshGaps=r.qualifying||body._gapMode!==gapMode||now-(body._gapUpdatedAt??-Infinity)>=500;
+  if(refreshGaps){body._gapUpdatedAt=now;body._gapMode=gapMode;}
   setHtml(document.querySelector('#toolbar-weather'),weatherSummary(s));setHtml(document.querySelector('#tower-race-control'),controlBanner(s));
   setText(document.querySelector('[data-live-clock]'),clock(r.qualifying?r.q.remaining:r.time,r.qualifying));
   setText(document.querySelector('[data-live-lap]'),r.qualifying?r.kind+r.q.stage:'LAP '+Math.min(r.lap+1,r.totalLaps));
@@ -3709,7 +3714,10 @@ export function patchLive(s){
   setText(document.querySelector('[data-gap-heading]'),s.settings.timingGap==='interval'?'INTERVAL':'LEADER');
   for(const btn of document.querySelectorAll('.gap-controls button')){const selected=JSON.parse(btn.dataset.payload).value===(s.settings.timingGap||'leader');btn.classList.toggle('selected',selected);btn.setAttribute('aria-pressed',String(selected));}
   for(const c of r.cars){
-    const row=cells.get(c.driverId);for(const [k,v]of Object.entries(timingCells(s,c)))setHtml(row?.querySelector(`[data-cell="${k}"]`),v);
+    const row=cells.get(c.driverId);for(const [k,v]of Object.entries(timingCells(s,c))){
+      if(k==='gap'&&!refreshGaps)continue;
+      setHtml(row?.querySelector(`[data-cell="${k}"]`),v);
+    }
     if(row){row.classList.toggle('retired-row',c.retired);row.classList.toggle('focused-row',c.driverId===focused(s).driverId);const expected=body.children[c.position-1];if(expected!==row)body.insertBefore(row,expected||null);}
     const dot=document.querySelector(`[data-dot="${c.driverId}"]`);if(dot){
       const hidden=['GARAGE','ELIMINATED','GRID'].includes(c.phase)||c.retired;
@@ -8190,6 +8198,11 @@ const setText=(el,value)=>{if(el&&el.textContent!==String(value))el.textContent=
 const setHtml=(el,value)=>{if(el&&el._liveHTML!==value){el.innerHTML=value;el._liveHTML=value;}};
 function patchLive(s){
   const r=s.race,track=currentTrack(s),body=document.querySelector('#timing-body');if(!body)return;
+  // Throttle only race/sprint gap text by real elapsed time, independent of simulation speed.
+  // A new table or a LEADER / INTERVAL switch receives a fresh reading immediately.
+  const now=globalThis.performance.now(),gapMode=s.settings.timingGap||'leader';
+  const refreshGaps=r.qualifying||body._gapMode!==gapMode||now-(body._gapUpdatedAt??-Infinity)>=500;
+  if(refreshGaps){body._gapUpdatedAt=now;body._gapMode=gapMode;}
   setHtml(document.querySelector('#toolbar-weather'),weatherSummary(s));setHtml(document.querySelector('#tower-race-control'),controlBanner(s));
   setText(document.querySelector('[data-live-clock]'),clock(r.qualifying?r.q.remaining:r.time,r.qualifying));
   setText(document.querySelector('[data-live-lap]'),r.qualifying?r.kind+r.q.stage:'LAP '+Math.min(r.lap+1,r.totalLaps));
@@ -8199,7 +8212,10 @@ function patchLive(s){
   setText(document.querySelector('[data-gap-heading]'),s.settings.timingGap==='interval'?'INTERVAL':'LEADER');
   for(const btn of document.querySelectorAll('.gap-controls button')){const selected=JSON.parse(btn.dataset.payload).value===(s.settings.timingGap||'leader');btn.classList.toggle('selected',selected);btn.setAttribute('aria-pressed',String(selected));}
   for(const c of r.cars){
-    const row=cells.get(c.driverId);for(const [k,v]of Object.entries(timingCells(s,c)))setHtml(row?.querySelector(`[data-cell="${k}"]`),v);
+    const row=cells.get(c.driverId);for(const [k,v]of Object.entries(timingCells(s,c))){
+      if(k==='gap'&&!refreshGaps)continue;
+      setHtml(row?.querySelector(`[data-cell="${k}"]`),v);
+    }
     if(row){row.classList.toggle('retired-row',c.retired);row.classList.toggle('focused-row',c.driverId===focused(s).driverId);const expected=body.children[c.position-1];if(expected!==row)body.insertBefore(row,expected||null);}
     const dot=document.querySelector(`[data-dot="${c.driverId}"]`);if(dot){
       const hidden=['GARAGE','ELIMINATED','GRID'].includes(c.phase)||c.retired;
@@ -8980,7 +8996,7 @@ return {};
 // ===== 文件: package.json =====
 {
   "name": "pitwall-f1-manager",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "private": true,
   "type": "module",
   "description": "纯静态、零依赖 F1 车队经营模拟",
@@ -9043,6 +9059,7 @@ python -m http.server 8000
 ## 排名与显示
 
 - 实时排名第一列在三字母缩写左侧显示名次；正赛 / 冲刺仍为车手、时间差、轮胎三列。
+- 正赛 / 冲刺赛时间差每 0.5 秒刷新一次（现实时间，不受倍速影响），切换 LEADER / INTERVAL 时立即刷新。
 - 时间差按秒保留三位小数，例如 `+1.237`。LEADER 对比领跑者，INTERVAL 对比前车；榜首显示当前模式名称，退赛显示 OUT，套圈显示圈数。
 - 本队车手以浅绿色行背景和左侧色条高亮，覆盖赛时 / 赛后排名、底部详细数据与进站记录、积分榜；切换排序不会丢失高亮。当前聚焦车手另有右侧浅色标记。
 - 字体保留原版系统字体，不需要安装或下载字体。
@@ -9439,12 +9456,18 @@ node tests/live-display.test.js
 - 增加本队高亮在多处排名中绑定所属车队的自动回归，并补充排名数字与毫秒格式检查。
 - 经典脚本入口 offline.html 实测恢复 INTERVAL 模式，榜首显示 INTERVAL，本队两行高亮与原版等宽字体保持正确。
 
+## 2.2.1 时间差刷新验证
+
+- 定向回归：500ms 内保持时间差，达到 500ms 才更新；64× 仍按现实时间节流；模式切换立即更新；OUT 按刷新节奏显示，排位赛保持原更新频率。
+- 浏览器检查冲刺赛正常推进后暂停，切换 LEADER / INTERVAL 即时显示正确榜首与三位小数差距。
+- 新增检查只控制排名时间差 DOM 的更新，不修改模拟计时、赛道位置或保存数据。
+
 ## 自动回归结果
 
 - `node tests/engine.test.js`：原有 19 项经营 / 兼容引擎测试通过。
 - `node tests/realtime.test.js`：新增 25 项实时引擎测试通过。
 - 新版 action 入口全程完成 2025：24 个周末、30 场比赛，每六站序列化 / 恢复一次并完成季末。
-- `node tests/live-display.test.js`：8 项显示 / 进站修复检查通过。
+- `node tests/live-display.test.js`：9 项显示 / 进站修复检查通过。
 - 回归测试与静态资源检查均通过；完整输出保存于 `tests/last-run.txt`，结构化结果保存于 `tests/last-run.json`。
 - 其中包含 40 个真实车队开局、四季两模式完整周末与全部年度冲刺流程。
 - 实际测试输出：`tests/last-run.txt`；结构化结果：`tests/last-run.json`。
@@ -9475,6 +9498,11 @@ node tests/live-display.test.js
 
 ```md
 <!-- ===== 文件: CHANGELOG.md ===== -->
+# 2.2.1 · 时间差刷新频率
+
+- 正赛 / 冲刺赛 LEADER、INTERVAL 时间差改为每 0.5 秒刷新一次，按现实时间计，不随倍速加快。
+- 切换 LEADER / INTERVAL 立即显示新模式读数；排位赛、比赛模拟、赛道位置与其他遥测继续按原频率更新。
+
 # 2.2.0 · 排名辨识优化
 
 - 排位赛、冲刺与正赛的车手缩写左侧加入实时排名数字，仍保留原有列数。
@@ -10526,6 +10554,10 @@ console.log(JSON.stringify({tests:results},null,2));
     {
       "name": "本队高亮绑定车手所属车队，覆盖实时排名、详细表、积分榜与车队分站明细",
       "status": "PASS"
+    },
+    {
+      "name": "时间差按现实时间每500ms刷新，模式切换立即刷新，排位不节流",
+      "status": "PASS"
     }
   ]
 }
@@ -10823,6 +10855,15 @@ PASS 本队高亮绑定车手所属车队，覆盖实时排名、详细表、积
 
 $ python3 tests/static.test.py
 PASS 所有引用相对、资源齐全、无外部 API、无 Math.random、核心无 DOM
+
+2.2.1 定向回归（2026-10-22）
+node tests/live-display.test.js：9 项全部通过，包含新检查：时间差按现实时间每500ms刷新，模式切换立即刷新，排位不节流
+$ node --check js/ui/liveView.js
+
+$ node --check js/offline.js
+
+$ python3 tests/static.test.py
+PASS 所有引用相对、资源齐全、无外部 API、无 Math.random、核心无 DOM
 ```
 
 ## tests/live-display.test.js
@@ -10836,7 +10877,7 @@ import { qualifying, practice } from '../js/core/race.js';
 import { startRealtimeRace, advanceRealtime, fastForwardLap, resumeRealtime } from '../js/core/realtime.js';
 import { timingGap, layoutMapLabels } from '../js/ui/liveData.js';
 import { standingsView } from '../js/ui/standingsView.js';
-import { liveView } from '../js/ui/liveView.js';
+import { liveView, patchLive } from '../js/ui/liveView.js';
 import { importText, exportText } from '../js/core/save.js';
 import { teamOf } from '../js/core/helpers.js';
 const tests=[];
@@ -10873,6 +10914,29 @@ test('本队高亮绑定车手所属车队，覆盖实时排名、详细表、�
  const tower=markup.slice(markup.indexOf('id="timing-body"'),markup.indexOf('</tbody>'));assert.equal((tower.match(/class="player-row"/g)||[]).length,2);
  const standings=standingsView(s);for(const [id,count]of [['constructors',1],['drivers-standings',2],['round-points',1]]){const section=standings.slice(standings.indexOf('id="'+id+'"'));assert.equal((section.slice(0,section.indexOf('</table>')).match(/class="player-row"/g)||[]).length,count);}
  const original=s.race.cars[0];s.race.cars.reverse();assert.ok(liveView(s).includes('aria-label="第 '+original.position+' 名">'+original.position+'</span>'));
+});
+test('时间差按现实时间每500ms刷新，模式切换立即刷新，排位不节流',()=>{
+ const s=race(),cells=new Map(),rows=s.race.cars.map(c=>{
+  const values=Object.fromEntries(['driver','gap','tyre'].map(key=>[key,{innerHTML:''}]));cells.set(c.driverId,values);
+  return {dataset:{car:c.driverId},classList:{toggle(){}},querySelector(selector){return values[selector.match(/data-cell="(.*?)"/)[1]];}};
+ });
+ const body={children:rows},priorDocument=Object.getOwnPropertyDescriptor(globalThis,'document'),priorPerformance=Object.getOwnPropertyDescriptor(globalThis,'performance');let now=0;
+ try{
+  Object.defineProperty(globalThis,'document',{configurable:true,value:{querySelector:selector=>selector==='#timing-body'?body:null,querySelectorAll:()=>[]}});
+  Object.defineProperty(globalThis,'performance',{configurable:true,value:{now:()=>now}});
+  const c=s.race.cars[1],gap=cells.get(c.driverId).gap;patchLive(s);const initial=gap.innerHTML;c.totalDistance-=.001;
+  for(now=60;now<500;now+=60)patchLive(s);assert.equal(gap.innerHTML,initial);
+  now=500;patchLive(s);assert.notEqual(gap.innerHTML,initial);const sampled=gap.innerHTML;
+  s.settings.speed=64;s.race.time+=64;c.totalDistance-=.001;now=999;patchLive(s);assert.equal(gap.innerHTML,sampled);
+  now=1000;patchLive(s);assert.notEqual(gap.innerHTML,sampled);
+  s.settings.timingGap='interval';now=1001;patchLive(s);assert.ok(cells.get(s.race.cars[0].driverId).gap.innerHTML.includes('INTERVAL'));
+  c.retired=true;now=1501;patchLive(s);assert.ok(gap.innerHTML.includes('OUT'));
+  s.race.qualifying=true;s.race.q={stage:1,status:'RUNNING',remaining:100};s.race.kind='Q';c.retired=false;c.stageBest=90;s.race.fastest.time=89;now=1502;patchLive(s);const qualifying=gap.innerHTML;
+  c.stageBest=89.5;now=1503;patchLive(s);assert.notEqual(gap.innerHTML,qualifying);
+ }finally{
+  if(priorDocument)Object.defineProperty(globalThis,'document',priorDocument);else delete globalThis.document;
+  Object.defineProperty(globalThis,'performance',priorPerformance);
+ }
 });
 console.log(JSON.stringify({tests},null,2));
 ```

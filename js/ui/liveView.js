@@ -63,6 +63,11 @@ const setText=(el,value)=>{if(el&&el.textContent!==String(value))el.textContent=
 const setHtml=(el,value)=>{if(el&&el._liveHTML!==value){el.innerHTML=value;el._liveHTML=value;}};
 export function patchLive(s){
   const r=s.race,track=currentTrack(s),body=document.querySelector('#timing-body');if(!body)return;
+  // Throttle only race/sprint gap text by real elapsed time, independent of simulation speed.
+  // A new table or a LEADER / INTERVAL switch receives a fresh reading immediately.
+  const now=globalThis.performance.now(),gapMode=s.settings.timingGap||'leader';
+  const refreshGaps=r.qualifying||body._gapMode!==gapMode||now-(body._gapUpdatedAt??-Infinity)>=500;
+  if(refreshGaps){body._gapUpdatedAt=now;body._gapMode=gapMode;}
   setHtml(document.querySelector('#toolbar-weather'),weatherSummary(s));setHtml(document.querySelector('#tower-race-control'),controlBanner(s));
   setText(document.querySelector('[data-live-clock]'),clock(r.qualifying?r.q.remaining:r.time,r.qualifying));
   setText(document.querySelector('[data-live-lap]'),r.qualifying?r.kind+r.q.stage:'LAP '+Math.min(r.lap+1,r.totalLaps));
@@ -72,7 +77,10 @@ export function patchLive(s){
   setText(document.querySelector('[data-gap-heading]'),s.settings.timingGap==='interval'?'INTERVAL':'LEADER');
   for(const btn of document.querySelectorAll('.gap-controls button')){const selected=JSON.parse(btn.dataset.payload).value===(s.settings.timingGap||'leader');btn.classList.toggle('selected',selected);btn.setAttribute('aria-pressed',String(selected));}
   for(const c of r.cars){
-    const row=cells.get(c.driverId);for(const [k,v]of Object.entries(timingCells(s,c)))setHtml(row?.querySelector(`[data-cell="${k}"]`),v);
+    const row=cells.get(c.driverId);for(const [k,v]of Object.entries(timingCells(s,c))){
+      if(k==='gap'&&!refreshGaps)continue;
+      setHtml(row?.querySelector(`[data-cell="${k}"]`),v);
+    }
     if(row){row.classList.toggle('retired-row',c.retired);row.classList.toggle('focused-row',c.driverId===focused(s).driverId);const expected=body.children[c.position-1];if(expected!==row)body.insertBefore(row,expected||null);}
     const dot=document.querySelector(`[data-dot="${c.driverId}"]`);if(dot){
       const hidden=['GARAGE','ELIMINATED','GRID'].includes(c.phase)||c.retired;

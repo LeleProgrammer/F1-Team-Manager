@@ -5,7 +5,7 @@ import { qualifying, practice } from '../js/core/race.js';
 import { startRealtimeRace, advanceRealtime, fastForwardLap, resumeRealtime } from '../js/core/realtime.js';
 import { timingGap, layoutMapLabels } from '../js/ui/liveData.js';
 import { standingsView } from '../js/ui/standingsView.js';
-import { liveView } from '../js/ui/liveView.js';
+import { liveView, patchLive } from '../js/ui/liveView.js';
 import { importText, exportText } from '../js/core/save.js';
 import { teamOf } from '../js/core/helpers.js';
 const tests=[];
@@ -42,5 +42,28 @@ test('本队高亮绑定车手所属车队，覆盖实时排名、详细表、�
  const tower=markup.slice(markup.indexOf('id="timing-body"'),markup.indexOf('</tbody>'));assert.equal((tower.match(/class="player-row"/g)||[]).length,2);
  const standings=standingsView(s);for(const [id,count]of [['constructors',1],['drivers-standings',2],['round-points',1]]){const section=standings.slice(standings.indexOf('id="'+id+'"'));assert.equal((section.slice(0,section.indexOf('</table>')).match(/class="player-row"/g)||[]).length,count);}
  const original=s.race.cars[0];s.race.cars.reverse();assert.ok(liveView(s).includes('aria-label="第 '+original.position+' 名">'+original.position+'</span>'));
+});
+test('时间差按现实时间每500ms刷新，模式切换立即刷新，排位不节流',()=>{
+ const s=race(),cells=new Map(),rows=s.race.cars.map(c=>{
+  const values=Object.fromEntries(['driver','gap','tyre'].map(key=>[key,{innerHTML:''}]));cells.set(c.driverId,values);
+  return {dataset:{car:c.driverId},classList:{toggle(){}},querySelector(selector){return values[selector.match(/data-cell="(.*?)"/)[1]];}};
+ });
+ const body={children:rows},priorDocument=Object.getOwnPropertyDescriptor(globalThis,'document'),priorPerformance=Object.getOwnPropertyDescriptor(globalThis,'performance');let now=0;
+ try{
+  Object.defineProperty(globalThis,'document',{configurable:true,value:{querySelector:selector=>selector==='#timing-body'?body:null,querySelectorAll:()=>[]}});
+  Object.defineProperty(globalThis,'performance',{configurable:true,value:{now:()=>now}});
+  const c=s.race.cars[1],gap=cells.get(c.driverId).gap;patchLive(s);const initial=gap.innerHTML;c.totalDistance-=.001;
+  for(now=60;now<500;now+=60)patchLive(s);assert.equal(gap.innerHTML,initial);
+  now=500;patchLive(s);assert.notEqual(gap.innerHTML,initial);const sampled=gap.innerHTML;
+  s.settings.speed=64;s.race.time+=64;c.totalDistance-=.001;now=999;patchLive(s);assert.equal(gap.innerHTML,sampled);
+  now=1000;patchLive(s);assert.notEqual(gap.innerHTML,sampled);
+  s.settings.timingGap='interval';now=1001;patchLive(s);assert.ok(cells.get(s.race.cars[0].driverId).gap.innerHTML.includes('INTERVAL'));
+  c.retired=true;now=1501;patchLive(s);assert.ok(gap.innerHTML.includes('OUT'));
+  s.race.qualifying=true;s.race.q={stage:1,status:'RUNNING',remaining:100};s.race.kind='Q';c.retired=false;c.stageBest=90;s.race.fastest.time=89;now=1502;patchLive(s);const qualifying=gap.innerHTML;
+  c.stageBest=89.5;now=1503;patchLive(s);assert.notEqual(gap.innerHTML,qualifying);
+ }finally{
+  if(priorDocument)Object.defineProperty(globalThis,'document',priorDocument);else delete globalThis.document;
+  Object.defineProperty(globalThis,'performance',priorPerformance);
+ }
 });
 console.log(JSON.stringify({tests},null,2));

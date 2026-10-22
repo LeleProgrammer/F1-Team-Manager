@@ -50,12 +50,18 @@
 - 增加本队高亮在多处排名中绑定所属车队的自动回归，并补充排名数字与毫秒格式检查。
 - 经典脚本入口 offline.html 实测恢复 INTERVAL 模式，榜首显示 INTERVAL，本队两行高亮与原版等宽字体保持正确。
 
+## 2.2.1 时间差刷新验证
+
+- 定向回归：500ms 内保持时间差，达到 500ms 才更新；64× 仍按现实时间节流；模式切换立即更新；OUT 按刷新节奏显示，排位赛保持原更新频率。
+- 浏览器检查冲刺赛正常推进后暂停，切换 LEADER / INTERVAL 即时显示正确榜首与三位小数差距。
+- 新增检查只控制排名时间差 DOM 的更新，不修改模拟计时、赛道位置或保存数据。
+
 ## 自动回归结果
 
 - `node tests/engine.test.js`：原有 19 项经营 / 兼容引擎测试通过。
 - `node tests/realtime.test.js`：新增 25 项实时引擎测试通过。
 - 新版 action 入口全程完成 2025：24 个周末、30 场比赛，每六站序列化 / 恢复一次并完成季末。
-- `node tests/live-display.test.js`：8 项显示 / 进站修复检查通过。
+- `node tests/live-display.test.js`：9 项显示 / 进站修复检查通过。
 - 回归测试与静态资源检查均通过；完整输出保存于 `tests/last-run.txt`，结构化结果保存于 `tests/last-run.json`。
 - 其中包含 40 个真实车队开局、四季两模式完整周末与全部年度冲刺流程。
 - 实际测试输出：`tests/last-run.txt`；结构化结果：`tests/last-run.json`。
