@@ -8,6 +8,7 @@ import { eliminationSize, trackLimits } from './rules.js';
 import { aiRaceDecision } from './ai.js';
 import { startRace, finishRace, event, useTyre, pit, retire, reliability, controlEvents, resumeRed } from './race.js';
 import { SECTOR_ENDS, geometry, sectorMotion } from './trackGeometry.js';
+import { beginPitTransit, pitTimeline, pitCarState } from './pitMotion.js';
 const NEVER=1e12,EPS=1e-7;
 export const PHASE_NAMES={GARAGE:'车库',OUT:'出场圈',FLY:'飞行圈',ABORT:'已放弃',IN:'回场圈',RACE:'比赛中',GRID:'等待出发',PIT:'维修区',FINISHED:'已冲线',ELIMINATED:'已淘汰'};
 export function initCar(c,time=0){
@@ -46,7 +47,7 @@ export function refreshPositions(s){
       const f=clamp((r.time-c.segmentStart)/(c.segmentDuration||1),0,1),start=SECTOR_ENDS[c.sector-1]||0,width=SECTOR_ENDS[c.sector]-start;
       const motion=sectorMotion(track.id,c.sector,f);c.progress=start+width*motion.distance;c.speed=track.length*width/c.segmentDuration*3600*motion.rate;
       c.currentLap=Math.max(0,r.time-c.lapStart);c.totalDistance=c.lap+c.progress;
-    }else{c.speed=0;if(c.phase==='PIT')c.currentLap=r.time-c.lapStart;}
+    }else{c.speed=0;if(c.phase==='PIT'&&!c.retired){c.currentLap=r.time-c.lapStart;c.speed=Math.min(80,pitCarState(track.id,c,r.time).speed/geometry(track.id).totalLength*track.length*3600);}}
   }
   if(r.qualifying)r.cars.sort((a,b)=>Number(a.phase==='ELIMINATED')-Number(b.phase==='ELIMINATED')||a.stageBest-b.stageBest||a.bestAt-b.bestAt||a.grid-b.grid);
   else r.cars.sort((a,b)=>Number(a.retired)-Number(b.retired)||(a.finished&&b.finished?b.lap-a.lap||a.time-b.time:b.totalDistance-a.totalDistance)||a.grid-b.grid);
@@ -101,10 +102,10 @@ function completeSector(s,c){
   if(c.fuel<=0)retire(s,c,'燃油耗尽');
   reliability(s,c,track);if(c.retired){c.segmentEnd=NEVER;return;}
   prepareRaceLap(s,c);
-  if(c.driveThrough&&r.control==='GREEN'){c.driveThrough=false;c.lapStart=r.time;c.phase='PIT';c.pitUntil=r.time+track.pitLoss;c.segmentEnd=NEVER;c.sectors=[];c.sectorTones=[];event(s,`${c.name} 执行穿越维修区罚则`,'penalty');return;}
+  if(c.driveThrough&&r.control==='GREEN'){c.driveThrough=false;c.lapStart=r.time;c.phase='PIT';c.pitUntil=r.time+track.pitLoss;beginPitTransit(c,r.time,c.pitUntil,0,true);c.segmentEnd=NEVER;c.sectors=[];c.sectorTones=[];event(s,`${c.name} 执行穿越维修区罚则`,'penalty');return;}
   if(c.pitRequest){
     c.lapStart=r.time;const before=c.time;pit(s,c,track);const delay=c.time-before;c.time=before;
-    if(delay>0){c.sectors=[];c.sectorSpeeds=[];c.sectorTones=[];c.phase='PIT';c.pitUntil=r.time+delay;c.segmentEnd=NEVER;c.usedWet=c.usedWet||['I','W'].includes(c.compound);return;}
+    if(delay>0){c.sectors=[];c.sectorSpeeds=[];c.sectorTones=[];c.phase='PIT';c.pitUntil=r.time+delay;beginPitTransit(c,r.time,c.pitUntil,c.pitLog.at(-1).stop);c.segmentEnd=NEVER;c.usedWet=c.usedWet||['I','W'].includes(c.compound);return;}
   }
   c.sector=0;c.sectors=[];c.sectorSpeeds=[];c.sectorTones=[];c.lapStart=r.time;c.lapValid=true;startSegment(s,c);
   if(c.pendingDelay){c.segmentDuration+=c.pendingDelay;c.segmentEnd+=c.pendingDelay;c.pendingDelay=0;}
@@ -235,7 +236,7 @@ export function advanceRealtime(s,seconds,force=false){
           if(type)sendQual(s,c,type,stock[type]>0);
         }}else{c.phase='RACE';c.lapStart=r.time;prepareRaceLap(s,c);startSegment(s,c);}
       }
-      if(c.phase==='PIT'&&c.pitUntil<=r.time+EPS){c.phase='RACE';c.sector=0;c.sectors=[];c.sectorSpeeds=[];c.sectorTones=[];startSegment(s,c);c.sectorStart=c.lapStart;}
+      if(c.phase==='PIT'&&c.pitUntil<=r.time+EPS){if(!c.pitTransit)c.pitTransit=pitTimeline(c);c.phase='RACE';c.sector=0;c.sectors=[];c.sectorSpeeds=[];c.sectorTones=[];startSegment(s,c);c.sectorStart=c.lapStart;}
       if(c.segmentEnd<=r.time+EPS&&['RACE','OUT','FLY','IN','ABORT'].includes(c.phase))completeSector(s,c);
     }
     if(r.qualifying){

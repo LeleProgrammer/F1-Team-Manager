@@ -79,6 +79,7 @@ export function validate(raw) {
   if(s.race?.realtime){
     const r=s.race;requireCondition(Number.isFinite(r.time)&&r.time>=0&&r.cars.every(c=>Number.isFinite(c.segmentEnd)&&Number.isFinite(c.segmentDuration)&&Number.isFinite(c.progress)&&c.progress>=0&&c.progress<=1&&Number.isInteger(c.sector)&&c.sector>=0&&c.sector<=2),'实时计时数据损坏');
     requireCondition(r.cars.every(c=>['GRID','RACE','PIT','GARAGE','OUT','FLY','IN','ABORT','ELIMINATED','FINISHED'].includes(c.phase)&&['segmentStart','segmentEnd','segmentDuration','sectorStart','lapStart','currentLap','speed','progress','totalDistance','nextRelease','pitUntil'].every(k=>Number.isFinite(c[k]))&&c.segmentDuration>=0),'实时赛车状态损坏');
+    requireCondition(r.cars.every(c=>!c.pitTransit||(['entered','stopStart','stopEnd','release','lap'].every(k=>Number.isFinite(c.pitTransit[k]))&&c.pitTransit.entered<=c.pitTransit.stopStart&&c.pitTransit.stopStart<=c.pitTransit.stopEnd&&c.pitTransit.stopEnd<=c.pitTransit.release&&typeof c.pitTransit.driveThrough==='boolean')),'维修区动画时间线损坏');
     if(r.qualifying){requireCondition(r.q&&[1,2,3].includes(r.q.stage)&&['RUNNING','BREAK','DONE'].includes(r.q.status),'排位阶段损坏');s.calendar.weekend.qualifying=r.q;}
   }
   requireCondition(s.drivers.every(d=>/^[A-Z]{3}$/.test(d.code))&&new Set(s.drivers.map(d=>d.code)).size===s.drivers.length,'车手缩写数据损坏');

@@ -2,6 +2,7 @@
 export function timingGap(s,c,baseTime){
   const r=s.race;
   if(c.retired)return 'OUT';
+  if(!r.qualifying&&c.phase==='PIT')return 'IN PIT';
   if(r.qualifying)return c.stageBest>=9999?'NO TIME':r.fastest.time===c.stageBest?'LEADER':'+'+(c.stageBest-r.fastest.time).toFixed(3);
   const active=r.cars.filter(x=>!x.retired).slice().sort((a,b)=>a.position-b.position),index=active.findIndex(x=>x.driverId===c.driverId);
   if(index<=0)return s.settings.timingGap==='interval'?'INTERVAL':'LEADER';

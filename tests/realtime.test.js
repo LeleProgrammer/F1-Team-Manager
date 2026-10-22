@@ -6,6 +6,7 @@ import { startQualifying, startRealtimeRace, advanceRealtime, fastForwardLap, fi
 import { exportText, importText } from '../js/core/save.js';
 import { teamOf, copy } from '../js/core/helpers.js';
 import { geometry, trackPoint } from '../js/core/trackGeometry.js';
+import { pitLaneGeometry, pitCarState, raceMapPoint, PIT_EXIT_PROGRESS } from '../js/core/pitMotion.js';
 import { TRACKS } from '../js/data/tracks.js';
 import { assignDriverCodes, setDriverCode } from '../js/core/driverCodes.js';
 const results=[];
@@ -61,6 +62,34 @@ test('实时场次中途保存加载，排位与正赛后续逐字段一致',()=
 test('暂停不推进时钟，手动快进一圈可用且保持暂停',()=>{const s=rgame();s.race.running=false;advanceRealtime(s,30);assert.equal(s.race.time,0);fastForwardLap(s);assert.equal(s.race.lap,1);assert.equal(s.race.running,false);});
 test('进站损失实际占用比赛时间，坑位期间赛车停止，圈速包含该损失',()=>{
  const s=rgame(),c=own(s);c.plan.auto=false;c.plan.pitLap=1;c.plan.secondLap=0;cross(s,c);assert.equal(c.phase,'PIT');assert.equal(c.stops,1);const time=s.race.time,delay=c.pitUntil-time;assert.ok(delay>15);advanceRealtime(s,delay/2,true);assert.equal(c.phase,'PIT');assert.equal(c.speed,0);advanceRealtime(s,c.pitUntil-s.race.time,true);assert.equal(c.phase,'RACE');cross(s,c);assert.ok(c.lastLap>80+delay*.8);assert.ok(c.usedDry.includes('H'));
+});
+test('正赛与冲刺进站：连续驶入、实际秒数静止换胎、连续驶出，损失不变',()=>{
+ for(const sprint of [false,true]){
+  const s=rgame({sprint}),c=own(s),track=TRACKS[s.calendar.events[s.calendar.round].track];c.plan.auto=false;c.plan.pitLap=1;c.plan.secondLap=0;cross(s,c);
+  const t=c.pitTransit,lane=pitLaneGeometry(track.id),log=c.pitLog.at(-1);
+  assert.equal(c.phase,'PIT');assert.ok(Math.abs(t.stopEnd-t.stopStart-log.stop)<1e-7);assert.ok(Math.abs(t.release-t.entered-log.loss)<1e-7);
+  assert.deepEqual(raceMapPoint(track.id,c,t.entered),trackPoint(track.id,0));
+  advanceRealtime(s,t.entered+(t.stopStart-t.entered)*.5-s.race.time,true);assert.ok(c.speed>0&&c.speed<=80);assert.notDeepEqual(raceMapPoint(track.id,c,s.race.time),lane.entry);
+  advanceRealtime(s,t.stopStart+.1-s.race.time,true);const parked=raceMapPoint(track.id,c,s.race.time);assert.equal(c.speed,0);assert.deepEqual(parked,lane.box);
+  advanceRealtime(s,t.stopEnd-.1-s.race.time,true);assert.equal(c.speed,0);assert.deepEqual(raceMapPoint(track.id,c,s.race.time),parked);
+  advanceRealtime(s,t.stopEnd+.2-s.race.time,true);assert.ok(c.speed>0);assert.notDeepEqual(raceMapPoint(track.id,c,s.race.time),parked);
+  const exit=pitCarState(track.id,c,t.release).point;advanceRealtime(s,t.release-s.race.time,true);assert.equal(c.phase,'RACE');assert.deepEqual(raceMapPoint(track.id,c,s.race.time),exit);assert.deepEqual(exit,trackPoint(track.id,PIT_EXIT_PROGRESS));
+  const before=raceMapPoint(track.id,c,s.race.time);advanceRealtime(s,.001,true);const after=raceMapPoint(track.id,c,s.race.time);assert.ok(Math.hypot(after[0]-before[0],after[1]-before[1])<.2);
+  advanceRealtime(s,c.segmentEnd-s.race.time,true);assert.equal(c.sector,1);assert.deepEqual(raceMapPoint(track.id,c,s.race.time),trackPoint(track.id,.32));assert.equal(c.stops,1);
+ }
+});
+test('全部25条赛道：维修路径端点正确、停车边界连续、坐标在地图内',()=>{
+ for(const id of Object.keys(TRACKS)){
+  const c={phase:'PIT',lap:1,pitTransit:{entered:0,stopStart:11,stopEnd:13.5,release:24.5,lap:1,driveThrough:false}},lane=pitLaneGeometry(id);let previous=pitCarState(id,c,0).point;
+  for(let i=1;i<=2450;i++){const state=pitCarState(id,c,i/100),p=state.point;assert.ok(p.every(Number.isFinite));assert.ok(p[0]>=0&&p[0]<=800&&p[1]>=0&&p[1]<=740);assert.ok(Math.hypot(p[0]-previous[0],p[1]-previous[1])<2);previous=p;}
+  assert.deepEqual(pitCarState(id,c,11).point,lane.box);assert.deepEqual(pitCarState(id,c,13).point,lane.box);
+ }
+});
+test('维修区中途存档可恢复动画，旧版PIT存档兼容；穿越维修区不停车换胎',()=>{
+ const s=rgame(),c=own(s);c.plan.auto=false;c.plan.pitLap=1;c.plan.secondLap=0;cross(s,c);advanceRealtime(s,3,true);const loaded=importText(exportText(s)),other=own(loaded),id=s.calendar.events[s.calendar.round].track;
+ assert.deepEqual(raceMapPoint(id,c,s.race.time),raceMapPoint(id,other,loaded.race.time));delete other.pitTransit;const legacy=importText(exportText(loaded));assert.deepEqual(raceMapPoint(id,c,s.race.time),raceMapPoint(id,own(legacy),legacy.race.time));
+ for(const state of [s,legacy])advanceRealtime(state,own(state).pitUntil-state.race.time+.1,true);assert.deepEqual(raceMapPoint(id,own(s),s.race.time),raceMapPoint(id,own(legacy),legacy.race.time));
+ const through=rgame(),d=own(through);d.plan.auto=false;d.pitRequest=null;d.driveThrough=true;cross(through,d);assert.equal(d.phase,'PIT');assert.equal(d.pitTransit.driveThrough,true);assert.equal(d.stops,0);advanceRealtime(through,(d.pitUntil-through.race.time)/2,true);assert.ok(d.speed>0);assert.equal(pitCarState(id,d,through.race.time).stage,'EXIT');
 });
 test('方格旗按各车下一次过线结算，套圈车不补跑完整距离',()=>{
  const s=rgame(),slow=s.race.cars.at(-1);s.race.totalLaps=5;advanceRealtime(s,10);for(const c of s.race.cars){c.fuel=100;c.plan.auto=true;}slow.segmentEnd+=200;slow.segmentDuration+=200;finishRealtime(s);assert.equal(s.race.finished,true);const row=s.race.result.rows.find(c=>c.driverId===slow.driverId);assert.ok(row.lap<5);assert.ok(s.race.result.rows.every(c=>c.lap<=5));assert.equal(s.race.result.rows.length,20);

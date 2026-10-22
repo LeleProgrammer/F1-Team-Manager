@@ -5,7 +5,7 @@ export function geometry(id){
   if(cache.has(id))return cache.get(id);
   const points=TRACK_LAYOUTS[id],lengths=[0];
   for(let i=1;i<points.length;i++)lengths.push(lengths.at(-1)+Math.hypot(points[i][0]-points[i-1][0],points[i][1]-points[i-1][1]));
-  const total=lengths.at(-1),fractions=lengths.map(v=>v/total),value={points,fractions,profiles:[],sectorWeights:[]};cache.set(id,value);
+  const total=lengths.at(-1),fractions=lengths.map(v=>v/total),value={points,fractions,totalLength:total,profiles:[],sectorWeights:[]};cache.set(id,value);
   // Equal-distance samples estimate bend intensity, rather than using the density
   // of GeoJSON vertices. The resulting travel-time profile is deterministic.
   for(let sector=0;sector<3;sector++){

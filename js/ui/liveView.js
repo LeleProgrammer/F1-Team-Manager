@@ -3,11 +3,19 @@ import { teamOf, driverOf } from '../core/helpers.js';
 import { currentTrack } from '../core/calendar.js';
 import { PHASE_NAMES, allowedQualTyres } from '../core/realtime.js';
 import { geometry, trackPoint, SECTOR_ENDS } from '../core/trackGeometry.js';
+import { pitLaneGeometry, pitCarState, raceMapPoint } from '../core/pitMotion.js';
 import { MODES, ENGINES } from '../data/parts.js';
 import { SESSION_NAMES } from '../data/i18n.js';
 import { h, header, panel, badge, button, icon, time, number, tyre, tyreInventory, tyreField, select, lapDisplay, flagState, fastestSummary, eventItem, wearMeter, table } from './uiKit.js';
 export function clock(seconds,countdown=true){const n=Math.max(0,countdown?Math.ceil(seconds):Math.floor(seconds));return `${Math.floor(n/60).toString().padStart(2,'0')}:${(n%60).toString().padStart(2,'0')}`;}
 function phase(c){return c.retired?'退赛':PHASE_NAMES[c.phase]||c.phase;}
+function livePhase(s,c){
+  if(!s.race.qualifying&&!c.retired&&c.phase==='PIT'){
+    const motion=pitCarState(currentTrack(s).id,c,s.race.time);
+    return motion.stage==='SERVICE'?'换胎中 · '+motion.remaining.toFixed(1)+'s':motion.stage==='ENTRY'?'驶入维修区':'驶出维修区';
+  }
+  return phase(c);
+}
 function phaseTone(c){return c.retired?'danger':c.phase==='FLY'?'success':c.phase==='OUT'?'info':['PIT','IN','ABORT'].includes(c.phase)?'warning':'neutral';}
 function focused(s){return s.race.cars.find(c=>c.driverId===(s.settings.focusDriver||teamOf(s).drivers[0]))||s.race.cars.find(c=>c.driverId===teamOf(s).drivers[0])||s.race.cars[0];}
 function sectorTone(c,i){return c.phase==='ABORT'?'neutral':c.sectorTones[i]||c.lastSectorTones?.[i]||'neutral';}
@@ -16,8 +24,8 @@ function sectorSpeed(c,i){return c.sectorSpeeds[i]||c.lastSectorSpeeds[i]||0;}
 function timingCells(s,c){
   const r=s.race,d=driverOf(s,c.driverId),t=teamOf(s,c.teamId);
   const code=`<div class="tower-driver"><span class="tower-position" aria-label="第 ${c.position} 名">${c.position}</span><button class="driver-code" data-action="focusDriver" data-payload="${h(JSON.stringify({id:c.driverId}))}" style="--team:${h(t.color)}" title="${h(d.name)}" aria-label="聚焦 ${h(d.code+' '+d.name)}">${h(d.code)}</button></div>`;
-  if(!r.qualifying)return {driver:code,gap:`<span class="tower-gap ${c.retired?'tone-danger':''}">${timingGap(s,c,currentTrack(s).baseTime)}</span>`,tyre:tyre(c.compound)};
-  return {driver:code+`<small class="phase-label tone-${phaseTone(c)}">${h(phase(c))}</small>`,best:lapDisplay(c.stageBest,{fastest:r.fastest.driverId===c.driverId}),gap:`<span class="tower-gap">${timingGap(s,c,currentTrack(s).baseTime)}</span>`,tyre:tyre(c.compound)};
+  if(!r.qualifying)return {driver:code,gap:`<span class="tower-gap ${c.retired?'tone-danger':c.phase==='PIT'?'gap-in-pit':''}">${timingGap(s,c,currentTrack(s).baseTime)}</span>`,tyre:tyre(c.compound)};
+  return {driver:code+`<small class="phase-label tone-${phaseTone(c)}">${h(livePhase(s,c))}</small>`,best:lapDisplay(c.stageBest,{fastest:r.fastest.driverId===c.driverId}),gap:`<span class="tower-gap">${timingGap(s,c,currentTrack(s).baseTime)}</span>`,tyre:tyre(c.compound)};
 }
 function timingRow(s,c){return `<tr data-car="${h(c.driverId)}" data-action="focusDriver" data-payload="${h(JSON.stringify({id:c.driverId}))}" class="${c.teamId===s.player.teamId?'player-row':''}">${Object.entries(timingCells(s,c)).map(([k,v])=>`<td data-cell="${k}">${v}</td>`).join('')}</tr>`;}
 function gapControls(s){return `<div class="gap-controls" role="group" aria-label="时间差显示模式">${['leader','interval'].map(value=>`<button class="btn small ${((s.settings.timingGap||'leader')===value)?'selected':''}" data-action="timingGap" data-payload="${h(JSON.stringify({value}))}" aria-pressed="${(s.settings.timingGap||'leader')===value}" title="${value==='leader'?'相对第一名的差距':'相对前一名的差距'}">${value.toUpperCase()}</button>`).join('')}</div>`;}
@@ -33,19 +41,19 @@ function controlBanner(s){
   return `<div class="tower-control control-${h(code)}" role="status" aria-live="polite"><span class="control-symbol">${icon('flag')}</span><div><strong>${title}</strong><span>${description}</span></div></div>`;
 }
 function trackSvg(s){
-  const track=currentTrack(s),g=geometry(track.id),start=trackPoint(track.id,0),end=trackPoint(track.id,.98),out=trackPoint(track.id,.02);
+  const track=currentTrack(s),g=geometry(track.id),start=trackPoint(track.id,0),lane=pitLaneGeometry(track.id);
   return `<svg id="track-map" viewBox="0 0 800 740" aria-label="${h(track.name)}赛道实时位置，点击三字母缩写查看车手" role="group"><defs><pattern id="map-grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#91a7bb" stroke-opacity=".035"/></pattern></defs><rect width="800" height="740" fill="url(#map-grid)"/><polyline points="${g.points.map(p=>p.join(',')).join(' ')}" class="circuit-shadow"/><polyline points="${g.points.map(p=>p.join(',')).join(' ')}" class="circuit-line"/>
-    <path class="pit-lane" d="M${end.join(',')} Q${start[0]+40},${start[1]+40} ${out.join(',')}"/><text x="${start[0]+27}" y="${start[1]+48}" class="map-small">PIT</text><g transform="translate(${start.join(',')})"><rect x="-7" y="-9" width="14" height="18" fill="#e8eef6"/><path d="M-7-9H0V0H7V9H0V0H-7Z" fill="#121a25"/><text x="12" y="-13" class="map-small">START / FINISH</text></g>
+    <path class="pit-lane" d="${lane.path}"/><g class="pit-box" data-pit-box transform="translate(${lane.box.join(',')})"><rect x="-12" y="-9" width="24" height="18" rx="3"/><text x="0" y="-17" text-anchor="middle">PIT</text></g><g transform="translate(${start.join(',')})"><rect x="-7" y="-9" width="14" height="18" fill="#e8eef6"/><path d="M-7-9H0V0H7V9H0V0H-7Z" fill="#121a25"/><text x="12" y="-13" class="map-small">START / FINISH</text></g>
     ${[.32,.68].map((f,i)=>{const p=trackPoint(track.id,f);return `<g transform="translate(${p.join(',')})"><circle r="7" fill="${i?'#67b9ff':'#d1a0ff'}"/><text x="12" y="-12" class="sector-label">S${i+1} / S${i+2}</text></g>`;}).join('')}
     ${s.race.cars.map(c=>{const d=driverOf(s,c.driverId),t=teamOf(s,c.teamId);return `<a data-dot="${h(c.driverId)}" data-action="focusDriver" data-payload="${h(JSON.stringify({id:c.driverId}))}" tabindex="0" role="button" aria-label="${h(d.code+' '+d.name)}"><title>${h(d.name+' · '+t.name)}</title><circle class="dot-hit" r="18" fill="transparent"/><circle class="dot-halo" r="16"/><circle class="driver-dot" r="8" fill="${c.slot?'#101925':t.color}" stroke="${t.color}" stroke-width="${c.slot?4:2}"/><line class="dot-connector" stroke="${t.color}"/><g class="dot-label-wrap"><rect class="dot-label-bg" width="76" height="36" rx="5"/><text class="dot-label" x="38" y="18" text-anchor="middle" dominant-baseline="central" fill="${t.color}">${h(d.code)}</text></g></a>`;}).join('')}</svg>`;
 }
 function telemetry(s,c){
   const d=driverOf(s,c.driverId),t=teamOf(s,c.teamId);
-  return `<div class="map-telemetry" id="map-telemetry" data-focused-driver="${h(c.driverId)}" style="--team:${t.color}"><div class="telemetry-title"><strong data-focus="code">${h(d.code)}</strong><div><b data-focus="name">${h(d.name)}</b><small><span data-focus="team">${h(t.name)}</span> · <span data-focus="phase">${phase(c)}</span></small></div><span data-focus="tyre">${tyre(c.compound)}</span></div><div class="live-numbers"><div><small>当前圈计时</small><b data-focus="lap">${time(c.currentLap)}</b></div><div><small>模拟实时速度</small><b><span data-focus="speed">${number(c.speed)}</span><em> km/h</em></b></div></div><div class="sector-grid">${[0,1,2].map(i=>`<div data-sector="${i}" class="sector-box tone-${sectorTone(c,i)}"><small>S${i+1}<span data-sector-current="${i}"></span></small><b data-sector-time="${i}">${sectorValue(c,i)>0?time(sectorValue(c,i)):'—'}</b><span><strong data-sector-speed="${i}">${number(sectorSpeed(c,i))}</strong> km/h 均速</span></div>`).join('')}</div><div class="telemetry-foot"><span>上圈 <b data-focus="last">${time(c.lastLap)}</b></span><span>最佳 <b data-focus="best">${time(c.best)}</b></span><span>已完成 <b data-focus="completed">${c.lap}</b> 圈</span></div></div>`;
+  return `<div class="map-telemetry" id="map-telemetry" data-focused-driver="${h(c.driverId)}" style="--team:${t.color}"><div class="telemetry-title"><strong data-focus="code">${h(d.code)}</strong><div><b data-focus="name">${h(d.name)}</b><small><span data-focus="team">${h(t.name)}</span> · <span data-focus="phase">${livePhase(s,c)}</span></small></div><span data-focus="tyre">${tyre(c.compound)}</span></div><div class="live-numbers"><div><small>当前圈计时</small><b data-focus="lap">${time(c.currentLap)}</b></div><div><small>模拟实时速度</small><b><span data-focus="speed">${number(c.speed)}</span><em> km/h</em></b></div></div><div class="sector-grid">${[0,1,2].map(i=>`<div data-sector="${i}" class="sector-box tone-${sectorTone(c,i)}"><small>S${i+1}<span data-sector-current="${i}"></span></small><b data-sector-time="${i}">${sectorValue(c,i)>0?time(sectorValue(c,i)):'—'}</b><span><strong data-sector-speed="${i}">${number(sectorSpeed(c,i))}</strong> km/h 均速</span></div>`).join('')}</div><div class="telemetry-foot"><span>上圈 <b data-focus="last">${time(c.lastLap)}</b></span><span>最佳 <b data-focus="best">${time(c.best)}</b></span><span>已完成 <b data-focus="completed">${c.lap}</b> 圈</span></div></div>`;
 }
 function command(s,c){
   const r=s.race,d=driverOf(s,c.driverId),q=r.qualifying,id=c.driverId;
-  return `<article class="live-command" data-command-car="${h(id)}"><div class="split"><h3><span class="driver-chip">${h(d.code)}</span> ${h(d.name)}</h3><span data-live="phase">${badge(phase(c),phaseTone(c))}</span></div><div class="car-health"><span>${icon('fuel')}<b data-live="fuel">${number(c.fuel)}</b> kg</span><span>${icon('thermometer')}<b data-live="temp">${number(c.tyreTemperature)}</b>°C</span></div><div data-live="wear">${wearMeter(c.tyreWear)}</div>
+  return `<article class="live-command" data-command-car="${h(id)}"><div class="split"><h3><span class="driver-chip">${h(d.code)}</span> ${h(d.name)}</h3><span data-live="phase">${badge(livePhase(s,c),phaseTone(c))}</span></div><div class="car-health"><span>${icon('fuel')}<b data-live="fuel">${number(c.fuel)}</b> kg</span><span>${icon('thermometer')}<b data-live="temp">${number(c.tyreTemperature)}</b>°C</span></div><div data-live="wear">${wearMeter(c.tyreWear)}</div>
     ${q?`<form data-form="qualSend"><input name="id" value="${h(id)}" type="hidden">${tyreField('出场配方','compound',allowedQualTyres(s,c)[0],{compact:true})}<div class="inline-form">${select('fresh',[['new','使用新胎'],['reuse','复用本段轮胎']],'new','aria-label="选择新胎或复用轮胎"')}<button class="btn primary" type="submit" data-q-send>驶出车库</button></div></form><div class="qual-commands">${button('出场圈后 → 飞行圈','qualCommand',{id,command:'fly'},{class:'small'})}${button('出场圈后 → 回 Pit','qualCommand',{id,command:'return'},{class:'small'})}${button('放弃飞行圈 → 回 Pit','qualCommand',{id,command:'abort'},{class:'small danger'})}${button('完成后 → 回场圈','qualCommand',{id,command:'return'},{class:'small'})}${button('完成后 → 再推一圈','qualCommand',{id,command:'repeat'},{class:'small'})}${button('自动出场：'+(c.autoQual?'开':'关'),'qualCommand',{id,command:'auto'},{class:'small'})}</div><p class="command-intent" data-live="intent"></p>`:
     `<label class="field"><span>驾驶指令</span>${select('mode',Object.entries(MODES).map(([k,v])=>[k,v.name]),c.mode,`data-live-command="mode" data-driver="${h(id)}"`)}</label><label class="field"><span>引擎模式</span>${select('engine',Object.entries(ENGINES).map(([k,v])=>[k,v.name]),c.engine,`data-live-command="engine" data-driver="${h(id)}"`)}</label><form data-form="pit"><input name="id" value="${h(id)}" type="hidden">${tyreField('下一次过线进站','value','H',{compact:true})}<div class="actions"><button class="btn primary small" type="submit">${icon('pit')}确认进站</button>${button('取消','command',{id,command:'cancelPit'},{class:'small'})}</div></form><p class="command-intent" data-live="intent"></p>`}
     <div data-live="inventory">${tyreInventory(s.calendar.weekend.tyres[id])}</div></article>`;
@@ -78,23 +86,26 @@ export function patchLive(s){
   for(const btn of document.querySelectorAll('.gap-controls button')){const selected=JSON.parse(btn.dataset.payload).value===(s.settings.timingGap||'leader');btn.classList.toggle('selected',selected);btn.setAttribute('aria-pressed',String(selected));}
   for(const c of r.cars){
     const row=cells.get(c.driverId);for(const [k,v]of Object.entries(timingCells(s,c))){
-      if(k==='gap'&&!refreshGaps)continue;
-      setHtml(row?.querySelector(`[data-cell="${k}"]`),v);
+      const cell=row?.querySelector(`[data-cell="${k}"]`),inPit=!r.qualifying&&!c.retired&&c.phase==='PIT';
+      // PIT is a status change: show/clear it immediately, without waiting for the gap sample.
+      if(k==='gap'&&!refreshGaps&&cell?._inPit===inPit)continue;
+      setHtml(cell,v);if(k==='gap'&&cell)cell._inPit=inPit;
     }
     if(row){row.classList.toggle('retired-row',c.retired);row.classList.toggle('focused-row',c.driverId===focused(s).driverId);const expected=body.children[c.position-1];if(expected!==row)body.insertBefore(row,expected||null);}
     const dot=document.querySelector(`[data-dot="${c.driverId}"]`);if(dot){
       const hidden=['GARAGE','ELIMINATED','GRID'].includes(c.phase)||c.retired;
       dot.style.display=hidden?'none':'';
-      const p=trackPoint(track.id,c.progress);if(c.phase==='PIT'){p[0]+=25;p[1]+=25;}
+      const p=r.qualifying?trackPoint(track.id,c.progress):raceMapPoint(track.id,c,r.time);
       dot.setAttribute('transform',`translate(${p[0].toFixed(2)} ${p[1].toFixed(2)})`);
       const showLabel=!hidden&&(s.settings.mapLabels!=='team'||c.teamId===s.player.teamId||c.driverId===focused(s).driverId);
       dot.classList.toggle('hide-label',!showLabel);if(showLabel)markers.push({id:c.driverId,x:p[0],y:p[1]});
       dot.setAttribute('aria-pressed',String(c.driverId===focused(s).driverId));
       dot.classList.toggle('selected-dot',c.driverId===focused(s).driverId);dot.classList.toggle('slow-dot',['OUT','IN','ABORT','PIT'].includes(c.phase));
+      dot.classList.toggle('servicing-dot',!r.qualifying&&c.phase==='PIT'&&pitCarState(track.id,c,r.time).stage==='SERVICE');
       setText(dot.querySelector('.dot-label'),driverOf(s,c.driverId).code);
     }
     const ctrl=document.querySelector(`[data-command-car="${c.driverId}"]`);if(ctrl){
-      setText(ctrl.querySelector('[data-live="fuel"]'),number(c.fuel));setText(ctrl.querySelector('[data-live="temp"]'),number(c.tyreTemperature));setHtml(ctrl.querySelector('[data-live="phase"]'),badge(phase(c),phaseTone(c)));setHtml(ctrl.querySelector('[data-live="wear"]'),wearMeter(c.tyreWear));setHtml(ctrl.querySelector('[data-live="inventory"]'),tyreInventory(s.calendar.weekend.tyres[c.driverId]));
+      setText(ctrl.querySelector('[data-live="fuel"]'),number(c.fuel));setText(ctrl.querySelector('[data-live="temp"]'),number(c.tyreTemperature));setHtml(ctrl.querySelector('[data-live="phase"]'),badge(livePhase(s,c),phaseTone(c)));setHtml(ctrl.querySelector('[data-live="wear"]'),wearMeter(c.tyreWear));setHtml(ctrl.querySelector('[data-live="inventory"]'),tyreInventory(s.calendar.weekend.tyres[c.driverId]));
       const inactive=c.retired||c.finished||c.phase==='ELIMINATED';
       for(const el of ctrl.querySelectorAll('select,input,button'))el.disabled=inactive;
       if(r.qualifying){
@@ -106,17 +117,18 @@ export function patchLive(s){
           if(p.command==='auto')setText(btn,'自动出场：'+(c.autoQual?'开':'关'));
         }
         setText(ctrl.querySelector('[data-live="intent"]'),c.phase==='OUT'?'圈末计划：'+(c.outChoice==='PIT'?'返回 Pit':'开始飞行圈'):c.phase==='FLY'?'完成后：'+(c.afterLap==='FLY'?'再推一个飞行圈':'进入回场圈'):c.phase==='ABORT'?'本圈无效，圈末返回 Pit':c.phase==='IN'?'完成回场圈后返回车库':c.phase==='GARAGE'?'等待出场指令':'本段已淘汰');
-      }else setText(ctrl.querySelector('[data-live="intent"]'),c.pitRequest?'已预约：本圈末进站换 '+c.pitRequest+' 胎':c.phase==='PIT'?'正在维修区，出站后恢复比赛':'按当前策略行驶 · 停站 '+c.stops+' 次');
+      }else setText(ctrl.querySelector('[data-live="intent"]'),c.pitRequest?'已预约：本圈末进站换 '+c.pitRequest+' 胎':c.phase==='PIT'?livePhase(s,c):'按当前策略行驶 · 停站 '+c.stops+' 次');
     }
   }
   const svg=document.querySelector('#track-map');
   if(svg){const previous=svg._labelOffsets||{};const priority=markers.sort((a,b)=>Number(b.id===focused(s).driverId)-Number(a.id===focused(s).driverId)||a.id.localeCompare(b.id));
-    const offsets={};for(const label of layoutMapLabels(priority,previous)){const dot=svg.querySelector(`[data-dot="${label.id}"]`);dot.querySelector('.dot-label-wrap').setAttribute('transform',`translate(${label.dx} ${label.dy})`);const line=dot.querySelector('.dot-connector');line.setAttribute('x2',label.dx+38);line.setAttribute('y2',label.dy+18);offsets[label.id]=[label.dx,label.dy];}svg._labelOffsets=offsets;
+    const lane=pitLaneGeometry(track.id),box=svg.querySelector('[data-pit-box]');box?.classList.toggle('pit-box-active',!r.qualifying&&r.cars.some(c=>c.phase==='PIT'&&pitCarState(track.id,c,r.time).stage==='SERVICE'));
+    const offsets={};for(const label of layoutMapLabels(priority,previous,[{x:lane.box[0]-17,y:lane.box[1]-33,width:34,height:47}])){const dot=svg.querySelector(`[data-dot="${label.id}"]`);dot.querySelector('.dot-label-wrap').setAttribute('transform',`translate(${label.dx} ${label.dy})`);const line=dot.querySelector('.dot-connector');line.setAttribute('x2',label.dx+38);line.setAttribute('y2',label.dy+18);offsets[label.id]=[label.dx,label.dy];}svg._labelOffsets=offsets;
   }
   const c=focused(s),d=driverOf(s,c.driverId),t=teamOf(s,c.teamId),focus=document.querySelector('#map-telemetry');if(focus){
     focus.dataset.focusedDriver=c.driverId;focus.style.setProperty('--team',t.color);
     for(const [key,value]of Object.entries({code:d.code,name:d.name,team:t.name}))setText(focus.querySelector(`[data-focus="${key}"]`),value);
-    for(const [k,v]of Object.entries({phase:phase(c),lap:time(c.currentLap),speed:number(c.speed),last:time(c.lastLap),best:time(r.qualifying?c.stageBest:c.best),completed:c.lap}))setText(focus.querySelector(`[data-focus="${k}"]`),v);
+    for(const [k,v]of Object.entries({phase:livePhase(s,c),lap:time(c.currentLap),speed:number(c.speed),last:time(c.lastLap),best:time(r.qualifying?c.stageBest:c.best),completed:c.lap}))setText(focus.querySelector(`[data-focus="${k}"]`),v);
     setHtml(focus.querySelector('[data-focus="tyre"]'),tyre(c.compound));
     for(let i=0;i<3;i++){
       const box=focus.querySelector(`[data-sector="${i}"]`);box.className='sector-box tone-'+(sectorTone(c,i));const active=c.sector===i&&['RACE','OUT','FLY','IN','ABORT'].includes(c.phase);
@@ -135,7 +147,7 @@ function detailCells(s,c){
     last:c.lastLap>0?lapDisplay(c.lastLap,{fastest:c.lastLap===s.race.fastest.time}):'—',
     best:lapDisplay(best,{fastest:s.race.fastest.driverId===c.driverId}),
     sectors:`<div class="detail-sectors">${[0,1,2].map(i=>`<span class="tone-${sectorTone(c,i)}"><small>S${i+1}</small>${sectorValue(c,i)>0?time(sectorValue(c,i)):'—'}</span>`).join('')}</div>`,
-    age:`${c.tyreAge} 圈`,wear:wearMeter(c.tyreWear),fuel:number(c.fuel)+' kg',stops:c.stops,status:badge(phase(c),phaseTone(c))
+    age:`${c.tyreAge} 圈`,wear:wearMeter(c.tyreWear),fuel:number(c.fuel)+' kg',stops:c.stops,status:badge(livePhase(s,c),phaseTone(c))
   };
 }
 function pitHistory(s){

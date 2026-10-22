@@ -58,7 +58,7 @@ test('时间差按现实时间每500ms刷新，模式切换立即刷新，排位
   s.settings.speed=64;s.race.time+=64;c.totalDistance-=.001;now=999;patchLive(s);assert.equal(gap.innerHTML,sampled);
   now=1000;patchLive(s);assert.notEqual(gap.innerHTML,sampled);
   s.settings.timingGap='interval';now=1001;patchLive(s);assert.ok(cells.get(s.race.cars[0].driverId).gap.innerHTML.includes('INTERVAL'));
-  c.retired=true;now=1501;patchLive(s);assert.ok(gap.innerHTML.includes('OUT'));
+  c.phase='PIT';now=1002;patchLive(s);assert.ok(gap.innerHTML.includes('IN PIT'));assert.ok(gap.innerHTML.includes('gap-in-pit'));c.phase='RACE';now=1003;patchLive(s);assert.ok(!gap.innerHTML.includes('IN PIT'));c.retired=true;now=1501;patchLive(s);assert.ok(gap.innerHTML.includes('OUT'));
   s.race.qualifying=true;s.race.q={stage:1,status:'RUNNING',remaining:100};s.race.kind='Q';c.retired=false;c.stageBest=90;s.race.fastest.time=89;now=1502;patchLive(s);const qualifying=gap.innerHTML;
   c.stageBest=89.5;now=1503;patchLive(s);assert.notEqual(gap.innerHTML,qualifying);
  }finally{

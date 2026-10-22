@@ -53,3 +53,11 @@
 .broadcast-timing tr.player-row:hover,.race-detail-table tr.player-row:hover{background:#315a479e}
 .broadcast-timing tr.focused-row,.race-detail-table tr.focused-row{box-shadow:inset -3px 0 0 #e8f2ff}
 .broadcast-timing tr.player-row.focused-row,.race-detail-table tr.player-row.focused-row{background:#315a47aa}
+
+/* Broadcast pit status and schematic service bay. */
+.tower-gap.gap-in-pit{color:#4ce4ed;font-weight:800;letter-spacing:.4px}
+.pit-lane{stroke:#41ced9;stroke-width:4;stroke-dasharray:5 4;opacity:.8}
+.pit-box rect{fill:#102d36;stroke:#41ced9;stroke-width:2}
+.pit-box text{fill:#7feef3;font:700 13px Consolas,"Liberation Mono",Menlo,monospace;paint-order:stroke;stroke:#101925;stroke-width:4}
+.pit-box-active rect{fill:#1a6872;stroke:#a1fbff;stroke-width:3}
+.servicing-dot .dot-halo{opacity:1;stroke:#4ce4ed;stroke-width:3}

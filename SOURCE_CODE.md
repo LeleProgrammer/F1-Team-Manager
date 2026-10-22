@@ -358,6 +358,14 @@ dialog::backdrop { background: #04070bcc; backdrop-filter: blur(3px); }
 .broadcast-timing tr.player-row:hover,.race-detail-table tr.player-row:hover{background:#315a479e}
 .broadcast-timing tr.focused-row,.race-detail-table tr.focused-row{box-shadow:inset -3px 0 0 #e8f2ff}
 .broadcast-timing tr.player-row.focused-row,.race-detail-table tr.player-row.focused-row{background:#315a47aa}
+
+/* Broadcast pit status and schematic service bay. */
+.tower-gap.gap-in-pit{color:#4ce4ed;font-weight:800;letter-spacing:.4px}
+.pit-lane{stroke:#41ced9;stroke-width:4;stroke-dasharray:5 4;opacity:.8}
+.pit-box rect{fill:#102d36;stroke:#41ced9;stroke-width:2}
+.pit-box text{fill:#7feef3;font:700 13px Consolas,"Liberation Mono",Menlo,monospace;paint-order:stroke;stroke:#101925;stroke-width:4}
+.pit-box-active rect{fill:#1a6872;stroke:#a1fbff;stroke-width:3}
+.servicing-dot .dot-halo{opacity:1;stroke:#4ce4ed;stroke-width:3}
 ```
 
 ## css/race.css
@@ -1725,6 +1733,69 @@ export function driverStandings(s) {
 }
 ```
 
+## js/core/pitMotion.js
+
+```js
+// ===== 文件: js/core/pitMotion.js =====
+// Deterministic schematic pit lane. Timing comes from the actual recorded stop.
+import { geometry, trackPoint, SECTOR_ENDS } from './trackGeometry.js';
+const lanes=new Map();
+export const PIT_EXIT_PROGRESS=.035;
+const clamp01=x=>Math.max(0,Math.min(1,x));
+function cubic(points,t){
+  const u=1-t;
+  return [0,1].map(i=>u*u*u*points[0][i]+3*u*u*t*points[1][i]+3*u*t*t*points[2][i]+t*t*t*points[3][i]);
+}
+function tangent(id,p){const a=trackPoint(id,p-.001),b=trackPoint(id,p+.001),length=Math.hypot(b[0]-a[0],b[1]-a[1])||1;return [(b[0]-a[0])/length,(b[1]-a[1])/length];}
+export function pitLaneGeometry(id){
+  if(lanes.has(id))return lanes.get(id);
+  const entry=trackPoint(id,0),exit=trackPoint(id,PIT_EXIT_PROGRESS),a=tangent(id,0),b=tangent(id,PIT_EXIT_PROGRESS);
+  const midpoint=[(entry[0]+exit[0])/2,(entry[1]+exit[1])/2],normal=[-a[1],a[0]];
+  // Pick the side with more space inside the map, then keep the box in bounds.
+  const space=sign=>Math.min(midpoint[0]+normal[0]*sign*65,800-midpoint[0]-normal[0]*sign*65,midpoint[1]+normal[1]*sign*65,740-midpoint[1]-normal[1]*sign*65);
+  const sign=space(1)>=space(-1)?1:-1,box=midpoint.map((x,i)=>Math.max(24,Math.min(i?716:776,x+normal[i]*sign*65)));
+  const distance=Math.hypot(exit[0]-entry[0],exit[1]-entry[1])||1,along=[(exit[0]-entry[0])/distance,(exit[1]-entry[1])/distance];
+  const inward=[entry,entry.map((x,i)=>x+a[i]*22),box.map((x,i)=>x-along[i]*24),box];
+  const outward=[box,box.map((x,i)=>x+along[i]*24),exit.map((x,i)=>x-b[i]*22),exit];
+  const lane={entry,exit,box,inward,outward,path:`M${entry.join(',')} C${inward.slice(1).map(p=>p.join(',')).join(' ')} C${outward.slice(1).map(p=>p.join(',')).join(' ')}`};
+  lanes.set(id,lane);return lane;
+}
+export function beginPitTransit(c,entered,release,stop=0,driveThrough=false){
+  const stationary=driveThrough?0:Math.max(0,Math.min(stop,release-entered)),travel=(release-entered-stationary)/2;
+  c.pitTransit={entered,stopStart:entered+travel,stopEnd:entered+travel+stationary,release,lap:c.lap,driveThrough};
+  return c.pitTransit;
+}
+export function pitTimeline(c){
+  if(c.pitTransit)return c.pitTransit;
+  // Older saves may already be in PIT, with no separate animation timeline.
+  const log=c.pitLog?.at(-1),entered=c.lapStart,release=c.pitUntil;
+  const stop=log&&log.lap===c.lap&&Math.abs((log.at??entered)-entered)<.01?Math.min(log.stop,release-entered):0;
+  const travel=(release-entered-stop)/2;
+  return {entered,stopStart:entered+travel,stopEnd:entered+travel+stop,release,lap:c.lap,driveThrough:stop===0};
+}
+export function pitCarState(id,c,time){
+  const lane=pitLaneGeometry(id),timeline=pitTimeline(c),{entered,stopStart,stopEnd,release}=timeline;
+  let segment,f,rate,stage;
+  if(time<stopStart){
+    const duration=stopStart-entered||1;f=clamp01((time-entered)/duration);rate=timeline.driveThrough?1/duration:2*(1-f)/duration;f=timeline.driveThrough?f:2*f-f*f;segment=lane.inward;stage='ENTRY';
+  }else if(time<stopEnd){return {point:lane.box.slice(),speed:0,stage:'SERVICE',remaining:Math.max(0,stopEnd-time)};}
+  else{
+    const duration=release-stopEnd||1;f=clamp01((time-stopEnd)/duration);rate=timeline.driveThrough?1/duration:2*f/duration;f=timeline.driveThrough?f:f*f;segment=lane.outward;stage='EXIT';
+  }
+  const point=cubic(segment,f),u=1-f,velocity=[0,1].map(i=>3*u*u*(segment[1][i]-segment[0][i])+6*u*f*(segment[2][i]-segment[1][i])+3*f*f*(segment[3][i]-segment[2][i]));
+  return {point,speed:Math.hypot(...velocity)*rate,stage,remaining:0};
+}
+export function raceMapPoint(id,c,time){
+  if(c.phase==='PIT')return pitCarState(id,c,time).point;
+  let progress=c.progress;
+  // Rejoin at the drawn exit, then merge continuously into the normal S1 path.
+  // This display interpolation does not alter lap timing or race classification.
+  if(c.phase==='RACE'&&c.pitTransit?.lap===c.lap&&c.sector===0&&time>=c.pitTransit.release)
+    progress=PIT_EXIT_PROGRESS+(SECTOR_ENDS[0]-PIT_EXIT_PROGRESS)*clamp01(progress/SECTOR_ENDS[0]);
+  return trackPoint(id,progress);
+}
+```
+
 ## js/core/race.js
 
 ```js
@@ -2186,6 +2257,7 @@ import { eliminationSize, trackLimits } from './rules.js';
 import { aiRaceDecision } from './ai.js';
 import { startRace, finishRace, event, useTyre, pit, retire, reliability, controlEvents, resumeRed } from './race.js';
 import { SECTOR_ENDS, geometry, sectorMotion } from './trackGeometry.js';
+import { beginPitTransit, pitTimeline, pitCarState } from './pitMotion.js';
 const NEVER=1e12,EPS=1e-7;
 export const PHASE_NAMES={GARAGE:'车库',OUT:'出场圈',FLY:'飞行圈',ABORT:'已放弃',IN:'回场圈',RACE:'比赛中',GRID:'等待出发',PIT:'维修区',FINISHED:'已冲线',ELIMINATED:'已淘汰'};
 export function initCar(c,time=0){
@@ -2224,7 +2296,7 @@ export function refreshPositions(s){
       const f=clamp((r.time-c.segmentStart)/(c.segmentDuration||1),0,1),start=SECTOR_ENDS[c.sector-1]||0,width=SECTOR_ENDS[c.sector]-start;
       const motion=sectorMotion(track.id,c.sector,f);c.progress=start+width*motion.distance;c.speed=track.length*width/c.segmentDuration*3600*motion.rate;
       c.currentLap=Math.max(0,r.time-c.lapStart);c.totalDistance=c.lap+c.progress;
-    }else{c.speed=0;if(c.phase==='PIT')c.currentLap=r.time-c.lapStart;}
+    }else{c.speed=0;if(c.phase==='PIT'&&!c.retired){c.currentLap=r.time-c.lapStart;c.speed=Math.min(80,pitCarState(track.id,c,r.time).speed/geometry(track.id).totalLength*track.length*3600);}}
   }
   if(r.qualifying)r.cars.sort((a,b)=>Number(a.phase==='ELIMINATED')-Number(b.phase==='ELIMINATED')||a.stageBest-b.stageBest||a.bestAt-b.bestAt||a.grid-b.grid);
   else r.cars.sort((a,b)=>Number(a.retired)-Number(b.retired)||(a.finished&&b.finished?b.lap-a.lap||a.time-b.time:b.totalDistance-a.totalDistance)||a.grid-b.grid);
@@ -2279,10 +2351,10 @@ function completeSector(s,c){
   if(c.fuel<=0)retire(s,c,'燃油耗尽');
   reliability(s,c,track);if(c.retired){c.segmentEnd=NEVER;return;}
   prepareRaceLap(s,c);
-  if(c.driveThrough&&r.control==='GREEN'){c.driveThrough=false;c.lapStart=r.time;c.phase='PIT';c.pitUntil=r.time+track.pitLoss;c.segmentEnd=NEVER;c.sectors=[];c.sectorTones=[];event(s,`${c.name} 执行穿越维修区罚则`,'penalty');return;}
+  if(c.driveThrough&&r.control==='GREEN'){c.driveThrough=false;c.lapStart=r.time;c.phase='PIT';c.pitUntil=r.time+track.pitLoss;beginPitTransit(c,r.time,c.pitUntil,0,true);c.segmentEnd=NEVER;c.sectors=[];c.sectorTones=[];event(s,`${c.name} 执行穿越维修区罚则`,'penalty');return;}
   if(c.pitRequest){
     c.lapStart=r.time;const before=c.time;pit(s,c,track);const delay=c.time-before;c.time=before;
-    if(delay>0){c.sectors=[];c.sectorSpeeds=[];c.sectorTones=[];c.phase='PIT';c.pitUntil=r.time+delay;c.segmentEnd=NEVER;c.usedWet=c.usedWet||['I','W'].includes(c.compound);return;}
+    if(delay>0){c.sectors=[];c.sectorSpeeds=[];c.sectorTones=[];c.phase='PIT';c.pitUntil=r.time+delay;beginPitTransit(c,r.time,c.pitUntil,c.pitLog.at(-1).stop);c.segmentEnd=NEVER;c.usedWet=c.usedWet||['I','W'].includes(c.compound);return;}
   }
   c.sector=0;c.sectors=[];c.sectorSpeeds=[];c.sectorTones=[];c.lapStart=r.time;c.lapValid=true;startSegment(s,c);
   if(c.pendingDelay){c.segmentDuration+=c.pendingDelay;c.segmentEnd+=c.pendingDelay;c.pendingDelay=0;}
@@ -2413,7 +2485,7 @@ export function advanceRealtime(s,seconds,force=false){
           if(type)sendQual(s,c,type,stock[type]>0);
         }}else{c.phase='RACE';c.lapStart=r.time;prepareRaceLap(s,c);startSegment(s,c);}
       }
-      if(c.phase==='PIT'&&c.pitUntil<=r.time+EPS){c.phase='RACE';c.sector=0;c.sectors=[];c.sectorSpeeds=[];c.sectorTones=[];startSegment(s,c);c.sectorStart=c.lapStart;}
+      if(c.phase==='PIT'&&c.pitUntil<=r.time+EPS){if(!c.pitTransit)c.pitTransit=pitTimeline(c);c.phase='RACE';c.sector=0;c.sectors=[];c.sectorSpeeds=[];c.sectorTones=[];startSegment(s,c);c.sectorStart=c.lapStart;}
       if(c.segmentEnd<=r.time+EPS&&['RACE','OUT','FLY','IN','ABORT'].includes(c.phase))completeSector(s,c);
     }
     if(r.qualifying){
@@ -2829,6 +2901,7 @@ export function validate(raw) {
   if(s.race?.realtime){
     const r=s.race;requireCondition(Number.isFinite(r.time)&&r.time>=0&&r.cars.every(c=>Number.isFinite(c.segmentEnd)&&Number.isFinite(c.segmentDuration)&&Number.isFinite(c.progress)&&c.progress>=0&&c.progress<=1&&Number.isInteger(c.sector)&&c.sector>=0&&c.sector<=2),'实时计时数据损坏');
     requireCondition(r.cars.every(c=>['GRID','RACE','PIT','GARAGE','OUT','FLY','IN','ABORT','ELIMINATED','FINISHED'].includes(c.phase)&&['segmentStart','segmentEnd','segmentDuration','sectorStart','lapStart','currentLap','speed','progress','totalDistance','nextRelease','pitUntil'].every(k=>Number.isFinite(c[k]))&&c.segmentDuration>=0),'实时赛车状态损坏');
+    requireCondition(r.cars.every(c=>!c.pitTransit||(['entered','stopStart','stopEnd','release','lap'].every(k=>Number.isFinite(c.pitTransit[k]))&&c.pitTransit.entered<=c.pitTransit.stopStart&&c.pitTransit.stopStart<=c.pitTransit.stopEnd&&c.pitTransit.stopEnd<=c.pitTransit.release&&typeof c.pitTransit.driveThrough==='boolean')),'维修区动画时间线损坏');
     if(r.qualifying){requireCondition(r.q&&[1,2,3].includes(r.q.stage)&&['RUNNING','BREAK','DONE'].includes(r.q.status),'排位阶段损坏');s.calendar.weekend.qualifying=r.q;}
   }
   requireCondition(s.drivers.every(d=>/^[A-Z]{3}$/.test(d.code))&&new Set(s.drivers.map(d=>d.code)).size===s.drivers.length,'车手缩写数据损坏');
@@ -3396,7 +3469,7 @@ export function geometry(id){
   if(cache.has(id))return cache.get(id);
   const points=TRACK_LAYOUTS[id],lengths=[0];
   for(let i=1;i<points.length;i++)lengths.push(lengths.at(-1)+Math.hypot(points[i][0]-points[i-1][0],points[i][1]-points[i-1][1]));
-  const total=lengths.at(-1),fractions=lengths.map(v=>v/total),value={points,fractions,profiles:[],sectorWeights:[]};cache.set(id,value);
+  const total=lengths.at(-1),fractions=lengths.map(v=>v/total),value={points,fractions,totalLength:total,profiles:[],sectorWeights:[]};cache.set(id,value);
   // Equal-distance samples estimate bend intensity, rather than using the density
   // of GeoJSON vertices. The resulting travel-time profile is deterministic.
   for(let sector=0;sector<3;sector++){
@@ -3597,6 +3670,7 @@ export function financeView(s) {
 export function timingGap(s,c,baseTime){
   const r=s.race;
   if(c.retired)return 'OUT';
+  if(!r.qualifying&&c.phase==='PIT')return 'IN PIT';
   if(r.qualifying)return c.stageBest>=9999?'NO TIME':r.fastest.time===c.stageBest?'LEADER':'+'+(c.stageBest-r.fastest.time).toFixed(3);
   const active=r.cars.filter(x=>!x.retired).slice().sort((a,b)=>a.position-b.position),index=active.findIndex(x=>x.driverId===c.driverId);
   if(index<=0)return s.settings.timingGap==='interval'?'INTERVAL':'LEADER';
@@ -3640,11 +3714,19 @@ import { teamOf, driverOf } from '../core/helpers.js';
 import { currentTrack } from '../core/calendar.js';
 import { PHASE_NAMES, allowedQualTyres } from '../core/realtime.js';
 import { geometry, trackPoint, SECTOR_ENDS } from '../core/trackGeometry.js';
+import { pitLaneGeometry, pitCarState, raceMapPoint } from '../core/pitMotion.js';
 import { MODES, ENGINES } from '../data/parts.js';
 import { SESSION_NAMES } from '../data/i18n.js';
 import { h, header, panel, badge, button, icon, time, number, tyre, tyreInventory, tyreField, select, lapDisplay, flagState, fastestSummary, eventItem, wearMeter, table } from './uiKit.js';
 export function clock(seconds,countdown=true){const n=Math.max(0,countdown?Math.ceil(seconds):Math.floor(seconds));return `${Math.floor(n/60).toString().padStart(2,'0')}:${(n%60).toString().padStart(2,'0')}`;}
 function phase(c){return c.retired?'退赛':PHASE_NAMES[c.phase]||c.phase;}
+function livePhase(s,c){
+  if(!s.race.qualifying&&!c.retired&&c.phase==='PIT'){
+    const motion=pitCarState(currentTrack(s).id,c,s.race.time);
+    return motion.stage==='SERVICE'?'换胎中 · '+motion.remaining.toFixed(1)+'s':motion.stage==='ENTRY'?'驶入维修区':'驶出维修区';
+  }
+  return phase(c);
+}
 function phaseTone(c){return c.retired?'danger':c.phase==='FLY'?'success':c.phase==='OUT'?'info':['PIT','IN','ABORT'].includes(c.phase)?'warning':'neutral';}
 function focused(s){return s.race.cars.find(c=>c.driverId===(s.settings.focusDriver||teamOf(s).drivers[0]))||s.race.cars.find(c=>c.driverId===teamOf(s).drivers[0])||s.race.cars[0];}
 function sectorTone(c,i){return c.phase==='ABORT'?'neutral':c.sectorTones[i]||c.lastSectorTones?.[i]||'neutral';}
@@ -3653,8 +3735,8 @@ function sectorSpeed(c,i){return c.sectorSpeeds[i]||c.lastSectorSpeeds[i]||0;}
 function timingCells(s,c){
   const r=s.race,d=driverOf(s,c.driverId),t=teamOf(s,c.teamId);
   const code=`<div class="tower-driver"><span class="tower-position" aria-label="第 ${c.position} 名">${c.position}</span><button class="driver-code" data-action="focusDriver" data-payload="${h(JSON.stringify({id:c.driverId}))}" style="--team:${h(t.color)}" title="${h(d.name)}" aria-label="聚焦 ${h(d.code+' '+d.name)}">${h(d.code)}</button></div>`;
-  if(!r.qualifying)return {driver:code,gap:`<span class="tower-gap ${c.retired?'tone-danger':''}">${timingGap(s,c,currentTrack(s).baseTime)}</span>`,tyre:tyre(c.compound)};
-  return {driver:code+`<small class="phase-label tone-${phaseTone(c)}">${h(phase(c))}</small>`,best:lapDisplay(c.stageBest,{fastest:r.fastest.driverId===c.driverId}),gap:`<span class="tower-gap">${timingGap(s,c,currentTrack(s).baseTime)}</span>`,tyre:tyre(c.compound)};
+  if(!r.qualifying)return {driver:code,gap:`<span class="tower-gap ${c.retired?'tone-danger':c.phase==='PIT'?'gap-in-pit':''}">${timingGap(s,c,currentTrack(s).baseTime)}</span>`,tyre:tyre(c.compound)};
+  return {driver:code+`<small class="phase-label tone-${phaseTone(c)}">${h(livePhase(s,c))}</small>`,best:lapDisplay(c.stageBest,{fastest:r.fastest.driverId===c.driverId}),gap:`<span class="tower-gap">${timingGap(s,c,currentTrack(s).baseTime)}</span>`,tyre:tyre(c.compound)};
 }
 function timingRow(s,c){return `<tr data-car="${h(c.driverId)}" data-action="focusDriver" data-payload="${h(JSON.stringify({id:c.driverId}))}" class="${c.teamId===s.player.teamId?'player-row':''}">${Object.entries(timingCells(s,c)).map(([k,v])=>`<td data-cell="${k}">${v}</td>`).join('')}</tr>`;}
 function gapControls(s){return `<div class="gap-controls" role="group" aria-label="时间差显示模式">${['leader','interval'].map(value=>`<button class="btn small ${((s.settings.timingGap||'leader')===value)?'selected':''}" data-action="timingGap" data-payload="${h(JSON.stringify({value}))}" aria-pressed="${(s.settings.timingGap||'leader')===value}" title="${value==='leader'?'相对第一名的差距':'相对前一名的差距'}">${value.toUpperCase()}</button>`).join('')}</div>`;}
@@ -3670,19 +3752,19 @@ function controlBanner(s){
   return `<div class="tower-control control-${h(code)}" role="status" aria-live="polite"><span class="control-symbol">${icon('flag')}</span><div><strong>${title}</strong><span>${description}</span></div></div>`;
 }
 function trackSvg(s){
-  const track=currentTrack(s),g=geometry(track.id),start=trackPoint(track.id,0),end=trackPoint(track.id,.98),out=trackPoint(track.id,.02);
+  const track=currentTrack(s),g=geometry(track.id),start=trackPoint(track.id,0),lane=pitLaneGeometry(track.id);
   return `<svg id="track-map" viewBox="0 0 800 740" aria-label="${h(track.name)}赛道实时位置，点击三字母缩写查看车手" role="group"><defs><pattern id="map-grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#91a7bb" stroke-opacity=".035"/></pattern></defs><rect width="800" height="740" fill="url(#map-grid)"/><polyline points="${g.points.map(p=>p.join(',')).join(' ')}" class="circuit-shadow"/><polyline points="${g.points.map(p=>p.join(',')).join(' ')}" class="circuit-line"/>
-    <path class="pit-lane" d="M${end.join(',')} Q${start[0]+40},${start[1]+40} ${out.join(',')}"/><text x="${start[0]+27}" y="${start[1]+48}" class="map-small">PIT</text><g transform="translate(${start.join(',')})"><rect x="-7" y="-9" width="14" height="18" fill="#e8eef6"/><path d="M-7-9H0V0H7V9H0V0H-7Z" fill="#121a25"/><text x="12" y="-13" class="map-small">START / FINISH</text></g>
+    <path class="pit-lane" d="${lane.path}"/><g class="pit-box" data-pit-box transform="translate(${lane.box.join(',')})"><rect x="-12" y="-9" width="24" height="18" rx="3"/><text x="0" y="-17" text-anchor="middle">PIT</text></g><g transform="translate(${start.join(',')})"><rect x="-7" y="-9" width="14" height="18" fill="#e8eef6"/><path d="M-7-9H0V0H7V9H0V0H-7Z" fill="#121a25"/><text x="12" y="-13" class="map-small">START / FINISH</text></g>
     ${[.32,.68].map((f,i)=>{const p=trackPoint(track.id,f);return `<g transform="translate(${p.join(',')})"><circle r="7" fill="${i?'#67b9ff':'#d1a0ff'}"/><text x="12" y="-12" class="sector-label">S${i+1} / S${i+2}</text></g>`;}).join('')}
     ${s.race.cars.map(c=>{const d=driverOf(s,c.driverId),t=teamOf(s,c.teamId);return `<a data-dot="${h(c.driverId)}" data-action="focusDriver" data-payload="${h(JSON.stringify({id:c.driverId}))}" tabindex="0" role="button" aria-label="${h(d.code+' '+d.name)}"><title>${h(d.name+' · '+t.name)}</title><circle class="dot-hit" r="18" fill="transparent"/><circle class="dot-halo" r="16"/><circle class="driver-dot" r="8" fill="${c.slot?'#101925':t.color}" stroke="${t.color}" stroke-width="${c.slot?4:2}"/><line class="dot-connector" stroke="${t.color}"/><g class="dot-label-wrap"><rect class="dot-label-bg" width="76" height="36" rx="5"/><text class="dot-label" x="38" y="18" text-anchor="middle" dominant-baseline="central" fill="${t.color}">${h(d.code)}</text></g></a>`;}).join('')}</svg>`;
 }
 function telemetry(s,c){
   const d=driverOf(s,c.driverId),t=teamOf(s,c.teamId);
-  return `<div class="map-telemetry" id="map-telemetry" data-focused-driver="${h(c.driverId)}" style="--team:${t.color}"><div class="telemetry-title"><strong data-focus="code">${h(d.code)}</strong><div><b data-focus="name">${h(d.name)}</b><small><span data-focus="team">${h(t.name)}</span> · <span data-focus="phase">${phase(c)}</span></small></div><span data-focus="tyre">${tyre(c.compound)}</span></div><div class="live-numbers"><div><small>当前圈计时</small><b data-focus="lap">${time(c.currentLap)}</b></div><div><small>模拟实时速度</small><b><span data-focus="speed">${number(c.speed)}</span><em> km/h</em></b></div></div><div class="sector-grid">${[0,1,2].map(i=>`<div data-sector="${i}" class="sector-box tone-${sectorTone(c,i)}"><small>S${i+1}<span data-sector-current="${i}"></span></small><b data-sector-time="${i}">${sectorValue(c,i)>0?time(sectorValue(c,i)):'—'}</b><span><strong data-sector-speed="${i}">${number(sectorSpeed(c,i))}</strong> km/h 均速</span></div>`).join('')}</div><div class="telemetry-foot"><span>上圈 <b data-focus="last">${time(c.lastLap)}</b></span><span>最佳 <b data-focus="best">${time(c.best)}</b></span><span>已完成 <b data-focus="completed">${c.lap}</b> 圈</span></div></div>`;
+  return `<div class="map-telemetry" id="map-telemetry" data-focused-driver="${h(c.driverId)}" style="--team:${t.color}"><div class="telemetry-title"><strong data-focus="code">${h(d.code)}</strong><div><b data-focus="name">${h(d.name)}</b><small><span data-focus="team">${h(t.name)}</span> · <span data-focus="phase">${livePhase(s,c)}</span></small></div><span data-focus="tyre">${tyre(c.compound)}</span></div><div class="live-numbers"><div><small>当前圈计时</small><b data-focus="lap">${time(c.currentLap)}</b></div><div><small>模拟实时速度</small><b><span data-focus="speed">${number(c.speed)}</span><em> km/h</em></b></div></div><div class="sector-grid">${[0,1,2].map(i=>`<div data-sector="${i}" class="sector-box tone-${sectorTone(c,i)}"><small>S${i+1}<span data-sector-current="${i}"></span></small><b data-sector-time="${i}">${sectorValue(c,i)>0?time(sectorValue(c,i)):'—'}</b><span><strong data-sector-speed="${i}">${number(sectorSpeed(c,i))}</strong> km/h 均速</span></div>`).join('')}</div><div class="telemetry-foot"><span>上圈 <b data-focus="last">${time(c.lastLap)}</b></span><span>最佳 <b data-focus="best">${time(c.best)}</b></span><span>已完成 <b data-focus="completed">${c.lap}</b> 圈</span></div></div>`;
 }
 function command(s,c){
   const r=s.race,d=driverOf(s,c.driverId),q=r.qualifying,id=c.driverId;
-  return `<article class="live-command" data-command-car="${h(id)}"><div class="split"><h3><span class="driver-chip">${h(d.code)}</span> ${h(d.name)}</h3><span data-live="phase">${badge(phase(c),phaseTone(c))}</span></div><div class="car-health"><span>${icon('fuel')}<b data-live="fuel">${number(c.fuel)}</b> kg</span><span>${icon('thermometer')}<b data-live="temp">${number(c.tyreTemperature)}</b>°C</span></div><div data-live="wear">${wearMeter(c.tyreWear)}</div>
+  return `<article class="live-command" data-command-car="${h(id)}"><div class="split"><h3><span class="driver-chip">${h(d.code)}</span> ${h(d.name)}</h3><span data-live="phase">${badge(livePhase(s,c),phaseTone(c))}</span></div><div class="car-health"><span>${icon('fuel')}<b data-live="fuel">${number(c.fuel)}</b> kg</span><span>${icon('thermometer')}<b data-live="temp">${number(c.tyreTemperature)}</b>°C</span></div><div data-live="wear">${wearMeter(c.tyreWear)}</div>
     ${q?`<form data-form="qualSend"><input name="id" value="${h(id)}" type="hidden">${tyreField('出场配方','compound',allowedQualTyres(s,c)[0],{compact:true})}<div class="inline-form">${select('fresh',[['new','使用新胎'],['reuse','复用本段轮胎']],'new','aria-label="选择新胎或复用轮胎"')}<button class="btn primary" type="submit" data-q-send>驶出车库</button></div></form><div class="qual-commands">${button('出场圈后 → 飞行圈','qualCommand',{id,command:'fly'},{class:'small'})}${button('出场圈后 → 回 Pit','qualCommand',{id,command:'return'},{class:'small'})}${button('放弃飞行圈 → 回 Pit','qualCommand',{id,command:'abort'},{class:'small danger'})}${button('完成后 → 回场圈','qualCommand',{id,command:'return'},{class:'small'})}${button('完成后 → 再推一圈','qualCommand',{id,command:'repeat'},{class:'small'})}${button('自动出场：'+(c.autoQual?'开':'关'),'qualCommand',{id,command:'auto'},{class:'small'})}</div><p class="command-intent" data-live="intent"></p>`:
     `<label class="field"><span>驾驶指令</span>${select('mode',Object.entries(MODES).map(([k,v])=>[k,v.name]),c.mode,`data-live-command="mode" data-driver="${h(id)}"`)}</label><label class="field"><span>引擎模式</span>${select('engine',Object.entries(ENGINES).map(([k,v])=>[k,v.name]),c.engine,`data-live-command="engine" data-driver="${h(id)}"`)}</label><form data-form="pit"><input name="id" value="${h(id)}" type="hidden">${tyreField('下一次过线进站','value','H',{compact:true})}<div class="actions"><button class="btn primary small" type="submit">${icon('pit')}确认进站</button>${button('取消','command',{id,command:'cancelPit'},{class:'small'})}</div></form><p class="command-intent" data-live="intent"></p>`}
     <div data-live="inventory">${tyreInventory(s.calendar.weekend.tyres[id])}</div></article>`;
@@ -3715,23 +3797,26 @@ export function patchLive(s){
   for(const btn of document.querySelectorAll('.gap-controls button')){const selected=JSON.parse(btn.dataset.payload).value===(s.settings.timingGap||'leader');btn.classList.toggle('selected',selected);btn.setAttribute('aria-pressed',String(selected));}
   for(const c of r.cars){
     const row=cells.get(c.driverId);for(const [k,v]of Object.entries(timingCells(s,c))){
-      if(k==='gap'&&!refreshGaps)continue;
-      setHtml(row?.querySelector(`[data-cell="${k}"]`),v);
+      const cell=row?.querySelector(`[data-cell="${k}"]`),inPit=!r.qualifying&&!c.retired&&c.phase==='PIT';
+      // PIT is a status change: show/clear it immediately, without waiting for the gap sample.
+      if(k==='gap'&&!refreshGaps&&cell?._inPit===inPit)continue;
+      setHtml(cell,v);if(k==='gap'&&cell)cell._inPit=inPit;
     }
     if(row){row.classList.toggle('retired-row',c.retired);row.classList.toggle('focused-row',c.driverId===focused(s).driverId);const expected=body.children[c.position-1];if(expected!==row)body.insertBefore(row,expected||null);}
     const dot=document.querySelector(`[data-dot="${c.driverId}"]`);if(dot){
       const hidden=['GARAGE','ELIMINATED','GRID'].includes(c.phase)||c.retired;
       dot.style.display=hidden?'none':'';
-      const p=trackPoint(track.id,c.progress);if(c.phase==='PIT'){p[0]+=25;p[1]+=25;}
+      const p=r.qualifying?trackPoint(track.id,c.progress):raceMapPoint(track.id,c,r.time);
       dot.setAttribute('transform',`translate(${p[0].toFixed(2)} ${p[1].toFixed(2)})`);
       const showLabel=!hidden&&(s.settings.mapLabels!=='team'||c.teamId===s.player.teamId||c.driverId===focused(s).driverId);
       dot.classList.toggle('hide-label',!showLabel);if(showLabel)markers.push({id:c.driverId,x:p[0],y:p[1]});
       dot.setAttribute('aria-pressed',String(c.driverId===focused(s).driverId));
       dot.classList.toggle('selected-dot',c.driverId===focused(s).driverId);dot.classList.toggle('slow-dot',['OUT','IN','ABORT','PIT'].includes(c.phase));
+      dot.classList.toggle('servicing-dot',!r.qualifying&&c.phase==='PIT'&&pitCarState(track.id,c,r.time).stage==='SERVICE');
       setText(dot.querySelector('.dot-label'),driverOf(s,c.driverId).code);
     }
     const ctrl=document.querySelector(`[data-command-car="${c.driverId}"]`);if(ctrl){
-      setText(ctrl.querySelector('[data-live="fuel"]'),number(c.fuel));setText(ctrl.querySelector('[data-live="temp"]'),number(c.tyreTemperature));setHtml(ctrl.querySelector('[data-live="phase"]'),badge(phase(c),phaseTone(c)));setHtml(ctrl.querySelector('[data-live="wear"]'),wearMeter(c.tyreWear));setHtml(ctrl.querySelector('[data-live="inventory"]'),tyreInventory(s.calendar.weekend.tyres[c.driverId]));
+      setText(ctrl.querySelector('[data-live="fuel"]'),number(c.fuel));setText(ctrl.querySelector('[data-live="temp"]'),number(c.tyreTemperature));setHtml(ctrl.querySelector('[data-live="phase"]'),badge(livePhase(s,c),phaseTone(c)));setHtml(ctrl.querySelector('[data-live="wear"]'),wearMeter(c.tyreWear));setHtml(ctrl.querySelector('[data-live="inventory"]'),tyreInventory(s.calendar.weekend.tyres[c.driverId]));
       const inactive=c.retired||c.finished||c.phase==='ELIMINATED';
       for(const el of ctrl.querySelectorAll('select,input,button'))el.disabled=inactive;
       if(r.qualifying){
@@ -3743,17 +3828,18 @@ export function patchLive(s){
           if(p.command==='auto')setText(btn,'自动出场：'+(c.autoQual?'开':'关'));
         }
         setText(ctrl.querySelector('[data-live="intent"]'),c.phase==='OUT'?'圈末计划：'+(c.outChoice==='PIT'?'返回 Pit':'开始飞行圈'):c.phase==='FLY'?'完成后：'+(c.afterLap==='FLY'?'再推一个飞行圈':'进入回场圈'):c.phase==='ABORT'?'本圈无效，圈末返回 Pit':c.phase==='IN'?'完成回场圈后返回车库':c.phase==='GARAGE'?'等待出场指令':'本段已淘汰');
-      }else setText(ctrl.querySelector('[data-live="intent"]'),c.pitRequest?'已预约：本圈末进站换 '+c.pitRequest+' 胎':c.phase==='PIT'?'正在维修区，出站后恢复比赛':'按当前策略行驶 · 停站 '+c.stops+' 次');
+      }else setText(ctrl.querySelector('[data-live="intent"]'),c.pitRequest?'已预约：本圈末进站换 '+c.pitRequest+' 胎':c.phase==='PIT'?livePhase(s,c):'按当前策略行驶 · 停站 '+c.stops+' 次');
     }
   }
   const svg=document.querySelector('#track-map');
   if(svg){const previous=svg._labelOffsets||{};const priority=markers.sort((a,b)=>Number(b.id===focused(s).driverId)-Number(a.id===focused(s).driverId)||a.id.localeCompare(b.id));
-    const offsets={};for(const label of layoutMapLabels(priority,previous)){const dot=svg.querySelector(`[data-dot="${label.id}"]`);dot.querySelector('.dot-label-wrap').setAttribute('transform',`translate(${label.dx} ${label.dy})`);const line=dot.querySelector('.dot-connector');line.setAttribute('x2',label.dx+38);line.setAttribute('y2',label.dy+18);offsets[label.id]=[label.dx,label.dy];}svg._labelOffsets=offsets;
+    const lane=pitLaneGeometry(track.id),box=svg.querySelector('[data-pit-box]');box?.classList.toggle('pit-box-active',!r.qualifying&&r.cars.some(c=>c.phase==='PIT'&&pitCarState(track.id,c,r.time).stage==='SERVICE'));
+    const offsets={};for(const label of layoutMapLabels(priority,previous,[{x:lane.box[0]-17,y:lane.box[1]-33,width:34,height:47}])){const dot=svg.querySelector(`[data-dot="${label.id}"]`);dot.querySelector('.dot-label-wrap').setAttribute('transform',`translate(${label.dx} ${label.dy})`);const line=dot.querySelector('.dot-connector');line.setAttribute('x2',label.dx+38);line.setAttribute('y2',label.dy+18);offsets[label.id]=[label.dx,label.dy];}svg._labelOffsets=offsets;
   }
   const c=focused(s),d=driverOf(s,c.driverId),t=teamOf(s,c.teamId),focus=document.querySelector('#map-telemetry');if(focus){
     focus.dataset.focusedDriver=c.driverId;focus.style.setProperty('--team',t.color);
     for(const [key,value]of Object.entries({code:d.code,name:d.name,team:t.name}))setText(focus.querySelector(`[data-focus="${key}"]`),value);
-    for(const [k,v]of Object.entries({phase:phase(c),lap:time(c.currentLap),speed:number(c.speed),last:time(c.lastLap),best:time(r.qualifying?c.stageBest:c.best),completed:c.lap}))setText(focus.querySelector(`[data-focus="${k}"]`),v);
+    for(const [k,v]of Object.entries({phase:livePhase(s,c),lap:time(c.currentLap),speed:number(c.speed),last:time(c.lastLap),best:time(r.qualifying?c.stageBest:c.best),completed:c.lap}))setText(focus.querySelector(`[data-focus="${k}"]`),v);
     setHtml(focus.querySelector('[data-focus="tyre"]'),tyre(c.compound));
     for(let i=0;i<3;i++){
       const box=focus.querySelector(`[data-sector="${i}"]`);box.className='sector-box tone-'+(sectorTone(c,i));const active=c.sector===i&&['RACE','OUT','FLY','IN','ABORT'].includes(c.phase);
@@ -3772,7 +3858,7 @@ function detailCells(s,c){
     last:c.lastLap>0?lapDisplay(c.lastLap,{fastest:c.lastLap===s.race.fastest.time}):'—',
     best:lapDisplay(best,{fastest:s.race.fastest.driverId===c.driverId}),
     sectors:`<div class="detail-sectors">${[0,1,2].map(i=>`<span class="tone-${sectorTone(c,i)}"><small>S${i+1}</small>${sectorValue(c,i)>0?time(sectorValue(c,i)):'—'}</span>`).join('')}</div>`,
-    age:`${c.tyreAge} 圈`,wear:wearMeter(c.tyreWear),fuel:number(c.fuel)+' kg',stops:c.stops,status:badge(phase(c),phaseTone(c))
+    age:`${c.tyreAge} 圈`,wear:wearMeter(c.tyreWear),fuel:number(c.fuel)+' kg',stops:c.stops,status:badge(livePhase(s,c),phaseTone(c))
   };
 }
 function pitHistory(s){
@@ -6767,7 +6853,7 @@ function geometry(id){
   if(cache.has(id))return cache.get(id);
   const points=TRACK_LAYOUTS[id],lengths=[0];
   for(let i=1;i<points.length;i++)lengths.push(lengths.at(-1)+Math.hypot(points[i][0]-points[i-1][0],points[i][1]-points[i-1][1]));
-  const total=lengths.at(-1),fractions=lengths.map(v=>v/total),value={points,fractions,profiles:[],sectorWeights:[]};cache.set(id,value);
+  const total=lengths.at(-1),fractions=lengths.map(v=>v/total),value={points,fractions,totalLength:total,profiles:[],sectorWeights:[]};cache.set(id,value);
   // Equal-distance samples estimate bend intensity, rather than using the density
   // of GeoJSON vertices. The resulting travel-time profile is deterministic.
   for(let sector=0;sector<3;sector++){
@@ -6797,6 +6883,69 @@ function sectorMotion(id,sector,f){
 return {SECTOR_ENDS, geometry, trackPoint, sectorMotion};
 }());
 
+// ===== 文件: js/core/pitMotion.js =====
+modules['js/core/pitMotion.js'] = (function () {
+// Deterministic schematic pit lane. Timing comes from the actual recorded stop.
+const { geometry, trackPoint, SECTOR_ENDS } = modules['js/core/trackGeometry.js'];
+const lanes=new Map();
+const PIT_EXIT_PROGRESS=.035;
+const clamp01=x=>Math.max(0,Math.min(1,x));
+function cubic(points,t){
+  const u=1-t;
+  return [0,1].map(i=>u*u*u*points[0][i]+3*u*u*t*points[1][i]+3*u*t*t*points[2][i]+t*t*t*points[3][i]);
+}
+function tangent(id,p){const a=trackPoint(id,p-.001),b=trackPoint(id,p+.001),length=Math.hypot(b[0]-a[0],b[1]-a[1])||1;return [(b[0]-a[0])/length,(b[1]-a[1])/length];}
+function pitLaneGeometry(id){
+  if(lanes.has(id))return lanes.get(id);
+  const entry=trackPoint(id,0),exit=trackPoint(id,PIT_EXIT_PROGRESS),a=tangent(id,0),b=tangent(id,PIT_EXIT_PROGRESS);
+  const midpoint=[(entry[0]+exit[0])/2,(entry[1]+exit[1])/2],normal=[-a[1],a[0]];
+  // Pick the side with more space inside the map, then keep the box in bounds.
+  const space=sign=>Math.min(midpoint[0]+normal[0]*sign*65,800-midpoint[0]-normal[0]*sign*65,midpoint[1]+normal[1]*sign*65,740-midpoint[1]-normal[1]*sign*65);
+  const sign=space(1)>=space(-1)?1:-1,box=midpoint.map((x,i)=>Math.max(24,Math.min(i?716:776,x+normal[i]*sign*65)));
+  const distance=Math.hypot(exit[0]-entry[0],exit[1]-entry[1])||1,along=[(exit[0]-entry[0])/distance,(exit[1]-entry[1])/distance];
+  const inward=[entry,entry.map((x,i)=>x+a[i]*22),box.map((x,i)=>x-along[i]*24),box];
+  const outward=[box,box.map((x,i)=>x+along[i]*24),exit.map((x,i)=>x-b[i]*22),exit];
+  const lane={entry,exit,box,inward,outward,path:`M${entry.join(',')} C${inward.slice(1).map(p=>p.join(',')).join(' ')} C${outward.slice(1).map(p=>p.join(',')).join(' ')}`};
+  lanes.set(id,lane);return lane;
+}
+function beginPitTransit(c,entered,release,stop=0,driveThrough=false){
+  const stationary=driveThrough?0:Math.max(0,Math.min(stop,release-entered)),travel=(release-entered-stationary)/2;
+  c.pitTransit={entered,stopStart:entered+travel,stopEnd:entered+travel+stationary,release,lap:c.lap,driveThrough};
+  return c.pitTransit;
+}
+function pitTimeline(c){
+  if(c.pitTransit)return c.pitTransit;
+  // Older saves may already be in PIT, with no separate animation timeline.
+  const log=c.pitLog?.at(-1),entered=c.lapStart,release=c.pitUntil;
+  const stop=log&&log.lap===c.lap&&Math.abs((log.at??entered)-entered)<.01?Math.min(log.stop,release-entered):0;
+  const travel=(release-entered-stop)/2;
+  return {entered,stopStart:entered+travel,stopEnd:entered+travel+stop,release,lap:c.lap,driveThrough:stop===0};
+}
+function pitCarState(id,c,time){
+  const lane=pitLaneGeometry(id),timeline=pitTimeline(c),{entered,stopStart,stopEnd,release}=timeline;
+  let segment,f,rate,stage;
+  if(time<stopStart){
+    const duration=stopStart-entered||1;f=clamp01((time-entered)/duration);rate=timeline.driveThrough?1/duration:2*(1-f)/duration;f=timeline.driveThrough?f:2*f-f*f;segment=lane.inward;stage='ENTRY';
+  }else if(time<stopEnd){return {point:lane.box.slice(),speed:0,stage:'SERVICE',remaining:Math.max(0,stopEnd-time)};}
+  else{
+    const duration=release-stopEnd||1;f=clamp01((time-stopEnd)/duration);rate=timeline.driveThrough?1/duration:2*f/duration;f=timeline.driveThrough?f:f*f;segment=lane.outward;stage='EXIT';
+  }
+  const point=cubic(segment,f),u=1-f,velocity=[0,1].map(i=>3*u*u*(segment[1][i]-segment[0][i])+6*u*f*(segment[2][i]-segment[1][i])+3*f*f*(segment[3][i]-segment[2][i]));
+  return {point,speed:Math.hypot(...velocity)*rate,stage,remaining:0};
+}
+function raceMapPoint(id,c,time){
+  if(c.phase==='PIT')return pitCarState(id,c,time).point;
+  let progress=c.progress;
+  // Rejoin at the drawn exit, then merge continuously into the normal S1 path.
+  // This display interpolation does not alter lap timing or race classification.
+  if(c.phase==='RACE'&&c.pitTransit?.lap===c.lap&&c.sector===0&&time>=c.pitTransit.release)
+    progress=PIT_EXIT_PROGRESS+(SECTOR_ENDS[0]-PIT_EXIT_PROGRESS)*clamp01(progress/SECTOR_ENDS[0]);
+  return trackPoint(id,progress);
+}
+
+return {PIT_EXIT_PROGRESS, pitLaneGeometry, beginPitTransit, pitTimeline, pitCarState, raceMapPoint};
+}());
+
 // ===== 文件: js/core/realtime.js =====
 modules['js/core/realtime.js'] = (function () {
 // Continuous, serializable discrete-event simulation. All event times are seconds.
@@ -6809,6 +6958,7 @@ const { eliminationSize, trackLimits } = modules['js/core/rules.js'];
 const { aiRaceDecision } = modules['js/core/ai.js'];
 const { startRace, finishRace, event, useTyre, pit, retire, reliability, controlEvents, resumeRed } = modules['js/core/race.js'];
 const { SECTOR_ENDS, geometry, sectorMotion } = modules['js/core/trackGeometry.js'];
+const { beginPitTransit, pitTimeline, pitCarState } = modules['js/core/pitMotion.js'];
 const NEVER=1e12,EPS=1e-7;
 const PHASE_NAMES={GARAGE:'车库',OUT:'出场圈',FLY:'飞行圈',ABORT:'已放弃',IN:'回场圈',RACE:'比赛中',GRID:'等待出发',PIT:'维修区',FINISHED:'已冲线',ELIMINATED:'已淘汰'};
 function initCar(c,time=0){
@@ -6847,7 +6997,7 @@ function refreshPositions(s){
       const f=clamp((r.time-c.segmentStart)/(c.segmentDuration||1),0,1),start=SECTOR_ENDS[c.sector-1]||0,width=SECTOR_ENDS[c.sector]-start;
       const motion=sectorMotion(track.id,c.sector,f);c.progress=start+width*motion.distance;c.speed=track.length*width/c.segmentDuration*3600*motion.rate;
       c.currentLap=Math.max(0,r.time-c.lapStart);c.totalDistance=c.lap+c.progress;
-    }else{c.speed=0;if(c.phase==='PIT')c.currentLap=r.time-c.lapStart;}
+    }else{c.speed=0;if(c.phase==='PIT'&&!c.retired){c.currentLap=r.time-c.lapStart;c.speed=Math.min(80,pitCarState(track.id,c,r.time).speed/geometry(track.id).totalLength*track.length*3600);}}
   }
   if(r.qualifying)r.cars.sort((a,b)=>Number(a.phase==='ELIMINATED')-Number(b.phase==='ELIMINATED')||a.stageBest-b.stageBest||a.bestAt-b.bestAt||a.grid-b.grid);
   else r.cars.sort((a,b)=>Number(a.retired)-Number(b.retired)||(a.finished&&b.finished?b.lap-a.lap||a.time-b.time:b.totalDistance-a.totalDistance)||a.grid-b.grid);
@@ -6902,10 +7052,10 @@ function completeSector(s,c){
   if(c.fuel<=0)retire(s,c,'燃油耗尽');
   reliability(s,c,track);if(c.retired){c.segmentEnd=NEVER;return;}
   prepareRaceLap(s,c);
-  if(c.driveThrough&&r.control==='GREEN'){c.driveThrough=false;c.lapStart=r.time;c.phase='PIT';c.pitUntil=r.time+track.pitLoss;c.segmentEnd=NEVER;c.sectors=[];c.sectorTones=[];event(s,`${c.name} 执行穿越维修区罚则`,'penalty');return;}
+  if(c.driveThrough&&r.control==='GREEN'){c.driveThrough=false;c.lapStart=r.time;c.phase='PIT';c.pitUntil=r.time+track.pitLoss;beginPitTransit(c,r.time,c.pitUntil,0,true);c.segmentEnd=NEVER;c.sectors=[];c.sectorTones=[];event(s,`${c.name} 执行穿越维修区罚则`,'penalty');return;}
   if(c.pitRequest){
     c.lapStart=r.time;const before=c.time;pit(s,c,track);const delay=c.time-before;c.time=before;
-    if(delay>0){c.sectors=[];c.sectorSpeeds=[];c.sectorTones=[];c.phase='PIT';c.pitUntil=r.time+delay;c.segmentEnd=NEVER;c.usedWet=c.usedWet||['I','W'].includes(c.compound);return;}
+    if(delay>0){c.sectors=[];c.sectorSpeeds=[];c.sectorTones=[];c.phase='PIT';c.pitUntil=r.time+delay;beginPitTransit(c,r.time,c.pitUntil,c.pitLog.at(-1).stop);c.segmentEnd=NEVER;c.usedWet=c.usedWet||['I','W'].includes(c.compound);return;}
   }
   c.sector=0;c.sectors=[];c.sectorSpeeds=[];c.sectorTones=[];c.lapStart=r.time;c.lapValid=true;startSegment(s,c);
   if(c.pendingDelay){c.segmentDuration+=c.pendingDelay;c.segmentEnd+=c.pendingDelay;c.pendingDelay=0;}
@@ -7036,7 +7186,7 @@ function advanceRealtime(s,seconds,force=false){
           if(type)sendQual(s,c,type,stock[type]>0);
         }}else{c.phase='RACE';c.lapStart=r.time;prepareRaceLap(s,c);startSegment(s,c);}
       }
-      if(c.phase==='PIT'&&c.pitUntil<=r.time+EPS){c.phase='RACE';c.sector=0;c.sectors=[];c.sectorSpeeds=[];c.sectorTones=[];startSegment(s,c);c.sectorStart=c.lapStart;}
+      if(c.phase==='PIT'&&c.pitUntil<=r.time+EPS){if(!c.pitTransit)c.pitTransit=pitTimeline(c);c.phase='RACE';c.sector=0;c.sectors=[];c.sectorSpeeds=[];c.sectorTones=[];startSegment(s,c);c.sectorStart=c.lapStart;}
       if(c.segmentEnd<=r.time+EPS&&['RACE','OUT','FLY','IN','ABORT'].includes(c.phase))completeSector(s,c);
     }
     if(r.qualifying){
@@ -7513,6 +7663,7 @@ function validate(raw) {
   if(s.race?.realtime){
     const r=s.race;requireCondition(Number.isFinite(r.time)&&r.time>=0&&r.cars.every(c=>Number.isFinite(c.segmentEnd)&&Number.isFinite(c.segmentDuration)&&Number.isFinite(c.progress)&&c.progress>=0&&c.progress<=1&&Number.isInteger(c.sector)&&c.sector>=0&&c.sector<=2),'实时计时数据损坏');
     requireCondition(r.cars.every(c=>['GRID','RACE','PIT','GARAGE','OUT','FLY','IN','ABORT','ELIMINATED','FINISHED'].includes(c.phase)&&['segmentStart','segmentEnd','segmentDuration','sectorStart','lapStart','currentLap','speed','progress','totalDistance','nextRelease','pitUntil'].every(k=>Number.isFinite(c[k]))&&c.segmentDuration>=0),'实时赛车状态损坏');
+    requireCondition(r.cars.every(c=>!c.pitTransit||(['entered','stopStart','stopEnd','release','lap'].every(k=>Number.isFinite(c.pitTransit[k]))&&c.pitTransit.entered<=c.pitTransit.stopStart&&c.pitTransit.stopStart<=c.pitTransit.stopEnd&&c.pitTransit.stopEnd<=c.pitTransit.release&&typeof c.pitTransit.driveThrough==='boolean')),'维修区动画时间线损坏');
     if(r.qualifying){requireCondition(r.q&&[1,2,3].includes(r.q.stage)&&['RUNNING','BREAK','DONE'].includes(r.q.status),'排位阶段损坏');s.calendar.weekend.qualifying=r.q;}
   }
   requireCondition(s.drivers.every(d=>/^[A-Z]{3}$/.test(d.code))&&new Set(s.drivers.map(d=>d.code)).size===s.drivers.length,'车手缩写数据损坏');
@@ -8095,6 +8246,7 @@ modules['js/ui/liveData.js'] = (function () {
 function timingGap(s,c,baseTime){
   const r=s.race;
   if(c.retired)return 'OUT';
+  if(!r.qualifying&&c.phase==='PIT')return 'IN PIT';
   if(r.qualifying)return c.stageBest>=9999?'NO TIME':r.fastest.time===c.stageBest?'LEADER':'+'+(c.stageBest-r.fastest.time).toFixed(3);
   const active=r.cars.filter(x=>!x.retired).slice().sort((a,b)=>a.position-b.position),index=active.findIndex(x=>x.driverId===c.driverId);
   if(index<=0)return s.settings.timingGap==='interval'?'INTERVAL':'LEADER';
@@ -8138,11 +8290,19 @@ const { teamOf, driverOf } = modules['js/core/helpers.js'];
 const { currentTrack } = modules['js/core/calendar.js'];
 const { PHASE_NAMES, allowedQualTyres } = modules['js/core/realtime.js'];
 const { geometry, trackPoint, SECTOR_ENDS } = modules['js/core/trackGeometry.js'];
+const { pitLaneGeometry, pitCarState, raceMapPoint } = modules['js/core/pitMotion.js'];
 const { MODES, ENGINES } = modules['js/data/parts.js'];
 const { SESSION_NAMES } = modules['js/data/i18n.js'];
 const { h, header, panel, badge, button, icon, time, number, tyre, tyreInventory, tyreField, select, lapDisplay, flagState, fastestSummary, eventItem, wearMeter, table } = modules['js/ui/uiKit.js'];
 function clock(seconds,countdown=true){const n=Math.max(0,countdown?Math.ceil(seconds):Math.floor(seconds));return `${Math.floor(n/60).toString().padStart(2,'0')}:${(n%60).toString().padStart(2,'0')}`;}
 function phase(c){return c.retired?'退赛':PHASE_NAMES[c.phase]||c.phase;}
+function livePhase(s,c){
+  if(!s.race.qualifying&&!c.retired&&c.phase==='PIT'){
+    const motion=pitCarState(currentTrack(s).id,c,s.race.time);
+    return motion.stage==='SERVICE'?'换胎中 · '+motion.remaining.toFixed(1)+'s':motion.stage==='ENTRY'?'驶入维修区':'驶出维修区';
+  }
+  return phase(c);
+}
 function phaseTone(c){return c.retired?'danger':c.phase==='FLY'?'success':c.phase==='OUT'?'info':['PIT','IN','ABORT'].includes(c.phase)?'warning':'neutral';}
 function focused(s){return s.race.cars.find(c=>c.driverId===(s.settings.focusDriver||teamOf(s).drivers[0]))||s.race.cars.find(c=>c.driverId===teamOf(s).drivers[0])||s.race.cars[0];}
 function sectorTone(c,i){return c.phase==='ABORT'?'neutral':c.sectorTones[i]||c.lastSectorTones?.[i]||'neutral';}
@@ -8151,8 +8311,8 @@ function sectorSpeed(c,i){return c.sectorSpeeds[i]||c.lastSectorSpeeds[i]||0;}
 function timingCells(s,c){
   const r=s.race,d=driverOf(s,c.driverId),t=teamOf(s,c.teamId);
   const code=`<div class="tower-driver"><span class="tower-position" aria-label="第 ${c.position} 名">${c.position}</span><button class="driver-code" data-action="focusDriver" data-payload="${h(JSON.stringify({id:c.driverId}))}" style="--team:${h(t.color)}" title="${h(d.name)}" aria-label="聚焦 ${h(d.code+' '+d.name)}">${h(d.code)}</button></div>`;
-  if(!r.qualifying)return {driver:code,gap:`<span class="tower-gap ${c.retired?'tone-danger':''}">${timingGap(s,c,currentTrack(s).baseTime)}</span>`,tyre:tyre(c.compound)};
-  return {driver:code+`<small class="phase-label tone-${phaseTone(c)}">${h(phase(c))}</small>`,best:lapDisplay(c.stageBest,{fastest:r.fastest.driverId===c.driverId}),gap:`<span class="tower-gap">${timingGap(s,c,currentTrack(s).baseTime)}</span>`,tyre:tyre(c.compound)};
+  if(!r.qualifying)return {driver:code,gap:`<span class="tower-gap ${c.retired?'tone-danger':c.phase==='PIT'?'gap-in-pit':''}">${timingGap(s,c,currentTrack(s).baseTime)}</span>`,tyre:tyre(c.compound)};
+  return {driver:code+`<small class="phase-label tone-${phaseTone(c)}">${h(livePhase(s,c))}</small>`,best:lapDisplay(c.stageBest,{fastest:r.fastest.driverId===c.driverId}),gap:`<span class="tower-gap">${timingGap(s,c,currentTrack(s).baseTime)}</span>`,tyre:tyre(c.compound)};
 }
 function timingRow(s,c){return `<tr data-car="${h(c.driverId)}" data-action="focusDriver" data-payload="${h(JSON.stringify({id:c.driverId}))}" class="${c.teamId===s.player.teamId?'player-row':''}">${Object.entries(timingCells(s,c)).map(([k,v])=>`<td data-cell="${k}">${v}</td>`).join('')}</tr>`;}
 function gapControls(s){return `<div class="gap-controls" role="group" aria-label="时间差显示模式">${['leader','interval'].map(value=>`<button class="btn small ${((s.settings.timingGap||'leader')===value)?'selected':''}" data-action="timingGap" data-payload="${h(JSON.stringify({value}))}" aria-pressed="${(s.settings.timingGap||'leader')===value}" title="${value==='leader'?'相对第一名的差距':'相对前一名的差距'}">${value.toUpperCase()}</button>`).join('')}</div>`;}
@@ -8168,19 +8328,19 @@ function controlBanner(s){
   return `<div class="tower-control control-${h(code)}" role="status" aria-live="polite"><span class="control-symbol">${icon('flag')}</span><div><strong>${title}</strong><span>${description}</span></div></div>`;
 }
 function trackSvg(s){
-  const track=currentTrack(s),g=geometry(track.id),start=trackPoint(track.id,0),end=trackPoint(track.id,.98),out=trackPoint(track.id,.02);
+  const track=currentTrack(s),g=geometry(track.id),start=trackPoint(track.id,0),lane=pitLaneGeometry(track.id);
   return `<svg id="track-map" viewBox="0 0 800 740" aria-label="${h(track.name)}赛道实时位置，点击三字母缩写查看车手" role="group"><defs><pattern id="map-grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#91a7bb" stroke-opacity=".035"/></pattern></defs><rect width="800" height="740" fill="url(#map-grid)"/><polyline points="${g.points.map(p=>p.join(',')).join(' ')}" class="circuit-shadow"/><polyline points="${g.points.map(p=>p.join(',')).join(' ')}" class="circuit-line"/>
-    <path class="pit-lane" d="M${end.join(',')} Q${start[0]+40},${start[1]+40} ${out.join(',')}"/><text x="${start[0]+27}" y="${start[1]+48}" class="map-small">PIT</text><g transform="translate(${start.join(',')})"><rect x="-7" y="-9" width="14" height="18" fill="#e8eef6"/><path d="M-7-9H0V0H7V9H0V0H-7Z" fill="#121a25"/><text x="12" y="-13" class="map-small">START / FINISH</text></g>
+    <path class="pit-lane" d="${lane.path}"/><g class="pit-box" data-pit-box transform="translate(${lane.box.join(',')})"><rect x="-12" y="-9" width="24" height="18" rx="3"/><text x="0" y="-17" text-anchor="middle">PIT</text></g><g transform="translate(${start.join(',')})"><rect x="-7" y="-9" width="14" height="18" fill="#e8eef6"/><path d="M-7-9H0V0H7V9H0V0H-7Z" fill="#121a25"/><text x="12" y="-13" class="map-small">START / FINISH</text></g>
     ${[.32,.68].map((f,i)=>{const p=trackPoint(track.id,f);return `<g transform="translate(${p.join(',')})"><circle r="7" fill="${i?'#67b9ff':'#d1a0ff'}"/><text x="12" y="-12" class="sector-label">S${i+1} / S${i+2}</text></g>`;}).join('')}
     ${s.race.cars.map(c=>{const d=driverOf(s,c.driverId),t=teamOf(s,c.teamId);return `<a data-dot="${h(c.driverId)}" data-action="focusDriver" data-payload="${h(JSON.stringify({id:c.driverId}))}" tabindex="0" role="button" aria-label="${h(d.code+' '+d.name)}"><title>${h(d.name+' · '+t.name)}</title><circle class="dot-hit" r="18" fill="transparent"/><circle class="dot-halo" r="16"/><circle class="driver-dot" r="8" fill="${c.slot?'#101925':t.color}" stroke="${t.color}" stroke-width="${c.slot?4:2}"/><line class="dot-connector" stroke="${t.color}"/><g class="dot-label-wrap"><rect class="dot-label-bg" width="76" height="36" rx="5"/><text class="dot-label" x="38" y="18" text-anchor="middle" dominant-baseline="central" fill="${t.color}">${h(d.code)}</text></g></a>`;}).join('')}</svg>`;
 }
 function telemetry(s,c){
   const d=driverOf(s,c.driverId),t=teamOf(s,c.teamId);
-  return `<div class="map-telemetry" id="map-telemetry" data-focused-driver="${h(c.driverId)}" style="--team:${t.color}"><div class="telemetry-title"><strong data-focus="code">${h(d.code)}</strong><div><b data-focus="name">${h(d.name)}</b><small><span data-focus="team">${h(t.name)}</span> · <span data-focus="phase">${phase(c)}</span></small></div><span data-focus="tyre">${tyre(c.compound)}</span></div><div class="live-numbers"><div><small>当前圈计时</small><b data-focus="lap">${time(c.currentLap)}</b></div><div><small>模拟实时速度</small><b><span data-focus="speed">${number(c.speed)}</span><em> km/h</em></b></div></div><div class="sector-grid">${[0,1,2].map(i=>`<div data-sector="${i}" class="sector-box tone-${sectorTone(c,i)}"><small>S${i+1}<span data-sector-current="${i}"></span></small><b data-sector-time="${i}">${sectorValue(c,i)>0?time(sectorValue(c,i)):'—'}</b><span><strong data-sector-speed="${i}">${number(sectorSpeed(c,i))}</strong> km/h 均速</span></div>`).join('')}</div><div class="telemetry-foot"><span>上圈 <b data-focus="last">${time(c.lastLap)}</b></span><span>最佳 <b data-focus="best">${time(c.best)}</b></span><span>已完成 <b data-focus="completed">${c.lap}</b> 圈</span></div></div>`;
+  return `<div class="map-telemetry" id="map-telemetry" data-focused-driver="${h(c.driverId)}" style="--team:${t.color}"><div class="telemetry-title"><strong data-focus="code">${h(d.code)}</strong><div><b data-focus="name">${h(d.name)}</b><small><span data-focus="team">${h(t.name)}</span> · <span data-focus="phase">${livePhase(s,c)}</span></small></div><span data-focus="tyre">${tyre(c.compound)}</span></div><div class="live-numbers"><div><small>当前圈计时</small><b data-focus="lap">${time(c.currentLap)}</b></div><div><small>模拟实时速度</small><b><span data-focus="speed">${number(c.speed)}</span><em> km/h</em></b></div></div><div class="sector-grid">${[0,1,2].map(i=>`<div data-sector="${i}" class="sector-box tone-${sectorTone(c,i)}"><small>S${i+1}<span data-sector-current="${i}"></span></small><b data-sector-time="${i}">${sectorValue(c,i)>0?time(sectorValue(c,i)):'—'}</b><span><strong data-sector-speed="${i}">${number(sectorSpeed(c,i))}</strong> km/h 均速</span></div>`).join('')}</div><div class="telemetry-foot"><span>上圈 <b data-focus="last">${time(c.lastLap)}</b></span><span>最佳 <b data-focus="best">${time(c.best)}</b></span><span>已完成 <b data-focus="completed">${c.lap}</b> 圈</span></div></div>`;
 }
 function command(s,c){
   const r=s.race,d=driverOf(s,c.driverId),q=r.qualifying,id=c.driverId;
-  return `<article class="live-command" data-command-car="${h(id)}"><div class="split"><h3><span class="driver-chip">${h(d.code)}</span> ${h(d.name)}</h3><span data-live="phase">${badge(phase(c),phaseTone(c))}</span></div><div class="car-health"><span>${icon('fuel')}<b data-live="fuel">${number(c.fuel)}</b> kg</span><span>${icon('thermometer')}<b data-live="temp">${number(c.tyreTemperature)}</b>°C</span></div><div data-live="wear">${wearMeter(c.tyreWear)}</div>
+  return `<article class="live-command" data-command-car="${h(id)}"><div class="split"><h3><span class="driver-chip">${h(d.code)}</span> ${h(d.name)}</h3><span data-live="phase">${badge(livePhase(s,c),phaseTone(c))}</span></div><div class="car-health"><span>${icon('fuel')}<b data-live="fuel">${number(c.fuel)}</b> kg</span><span>${icon('thermometer')}<b data-live="temp">${number(c.tyreTemperature)}</b>°C</span></div><div data-live="wear">${wearMeter(c.tyreWear)}</div>
     ${q?`<form data-form="qualSend"><input name="id" value="${h(id)}" type="hidden">${tyreField('出场配方','compound',allowedQualTyres(s,c)[0],{compact:true})}<div class="inline-form">${select('fresh',[['new','使用新胎'],['reuse','复用本段轮胎']],'new','aria-label="选择新胎或复用轮胎"')}<button class="btn primary" type="submit" data-q-send>驶出车库</button></div></form><div class="qual-commands">${button('出场圈后 → 飞行圈','qualCommand',{id,command:'fly'},{class:'small'})}${button('出场圈后 → 回 Pit','qualCommand',{id,command:'return'},{class:'small'})}${button('放弃飞行圈 → 回 Pit','qualCommand',{id,command:'abort'},{class:'small danger'})}${button('完成后 → 回场圈','qualCommand',{id,command:'return'},{class:'small'})}${button('完成后 → 再推一圈','qualCommand',{id,command:'repeat'},{class:'small'})}${button('自动出场：'+(c.autoQual?'开':'关'),'qualCommand',{id,command:'auto'},{class:'small'})}</div><p class="command-intent" data-live="intent"></p>`:
     `<label class="field"><span>驾驶指令</span>${select('mode',Object.entries(MODES).map(([k,v])=>[k,v.name]),c.mode,`data-live-command="mode" data-driver="${h(id)}"`)}</label><label class="field"><span>引擎模式</span>${select('engine',Object.entries(ENGINES).map(([k,v])=>[k,v.name]),c.engine,`data-live-command="engine" data-driver="${h(id)}"`)}</label><form data-form="pit"><input name="id" value="${h(id)}" type="hidden">${tyreField('下一次过线进站','value','H',{compact:true})}<div class="actions"><button class="btn primary small" type="submit">${icon('pit')}确认进站</button>${button('取消','command',{id,command:'cancelPit'},{class:'small'})}</div></form><p class="command-intent" data-live="intent"></p>`}
     <div data-live="inventory">${tyreInventory(s.calendar.weekend.tyres[id])}</div></article>`;
@@ -8213,23 +8373,26 @@ function patchLive(s){
   for(const btn of document.querySelectorAll('.gap-controls button')){const selected=JSON.parse(btn.dataset.payload).value===(s.settings.timingGap||'leader');btn.classList.toggle('selected',selected);btn.setAttribute('aria-pressed',String(selected));}
   for(const c of r.cars){
     const row=cells.get(c.driverId);for(const [k,v]of Object.entries(timingCells(s,c))){
-      if(k==='gap'&&!refreshGaps)continue;
-      setHtml(row?.querySelector(`[data-cell="${k}"]`),v);
+      const cell=row?.querySelector(`[data-cell="${k}"]`),inPit=!r.qualifying&&!c.retired&&c.phase==='PIT';
+      // PIT is a status change: show/clear it immediately, without waiting for the gap sample.
+      if(k==='gap'&&!refreshGaps&&cell?._inPit===inPit)continue;
+      setHtml(cell,v);if(k==='gap'&&cell)cell._inPit=inPit;
     }
     if(row){row.classList.toggle('retired-row',c.retired);row.classList.toggle('focused-row',c.driverId===focused(s).driverId);const expected=body.children[c.position-1];if(expected!==row)body.insertBefore(row,expected||null);}
     const dot=document.querySelector(`[data-dot="${c.driverId}"]`);if(dot){
       const hidden=['GARAGE','ELIMINATED','GRID'].includes(c.phase)||c.retired;
       dot.style.display=hidden?'none':'';
-      const p=trackPoint(track.id,c.progress);if(c.phase==='PIT'){p[0]+=25;p[1]+=25;}
+      const p=r.qualifying?trackPoint(track.id,c.progress):raceMapPoint(track.id,c,r.time);
       dot.setAttribute('transform',`translate(${p[0].toFixed(2)} ${p[1].toFixed(2)})`);
       const showLabel=!hidden&&(s.settings.mapLabels!=='team'||c.teamId===s.player.teamId||c.driverId===focused(s).driverId);
       dot.classList.toggle('hide-label',!showLabel);if(showLabel)markers.push({id:c.driverId,x:p[0],y:p[1]});
       dot.setAttribute('aria-pressed',String(c.driverId===focused(s).driverId));
       dot.classList.toggle('selected-dot',c.driverId===focused(s).driverId);dot.classList.toggle('slow-dot',['OUT','IN','ABORT','PIT'].includes(c.phase));
+      dot.classList.toggle('servicing-dot',!r.qualifying&&c.phase==='PIT'&&pitCarState(track.id,c,r.time).stage==='SERVICE');
       setText(dot.querySelector('.dot-label'),driverOf(s,c.driverId).code);
     }
     const ctrl=document.querySelector(`[data-command-car="${c.driverId}"]`);if(ctrl){
-      setText(ctrl.querySelector('[data-live="fuel"]'),number(c.fuel));setText(ctrl.querySelector('[data-live="temp"]'),number(c.tyreTemperature));setHtml(ctrl.querySelector('[data-live="phase"]'),badge(phase(c),phaseTone(c)));setHtml(ctrl.querySelector('[data-live="wear"]'),wearMeter(c.tyreWear));setHtml(ctrl.querySelector('[data-live="inventory"]'),tyreInventory(s.calendar.weekend.tyres[c.driverId]));
+      setText(ctrl.querySelector('[data-live="fuel"]'),number(c.fuel));setText(ctrl.querySelector('[data-live="temp"]'),number(c.tyreTemperature));setHtml(ctrl.querySelector('[data-live="phase"]'),badge(livePhase(s,c),phaseTone(c)));setHtml(ctrl.querySelector('[data-live="wear"]'),wearMeter(c.tyreWear));setHtml(ctrl.querySelector('[data-live="inventory"]'),tyreInventory(s.calendar.weekend.tyres[c.driverId]));
       const inactive=c.retired||c.finished||c.phase==='ELIMINATED';
       for(const el of ctrl.querySelectorAll('select,input,button'))el.disabled=inactive;
       if(r.qualifying){
@@ -8241,17 +8404,18 @@ function patchLive(s){
           if(p.command==='auto')setText(btn,'自动出场：'+(c.autoQual?'开':'关'));
         }
         setText(ctrl.querySelector('[data-live="intent"]'),c.phase==='OUT'?'圈末计划：'+(c.outChoice==='PIT'?'返回 Pit':'开始飞行圈'):c.phase==='FLY'?'完成后：'+(c.afterLap==='FLY'?'再推一个飞行圈':'进入回场圈'):c.phase==='ABORT'?'本圈无效，圈末返回 Pit':c.phase==='IN'?'完成回场圈后返回车库':c.phase==='GARAGE'?'等待出场指令':'本段已淘汰');
-      }else setText(ctrl.querySelector('[data-live="intent"]'),c.pitRequest?'已预约：本圈末进站换 '+c.pitRequest+' 胎':c.phase==='PIT'?'正在维修区，出站后恢复比赛':'按当前策略行驶 · 停站 '+c.stops+' 次');
+      }else setText(ctrl.querySelector('[data-live="intent"]'),c.pitRequest?'已预约：本圈末进站换 '+c.pitRequest+' 胎':c.phase==='PIT'?livePhase(s,c):'按当前策略行驶 · 停站 '+c.stops+' 次');
     }
   }
   const svg=document.querySelector('#track-map');
   if(svg){const previous=svg._labelOffsets||{};const priority=markers.sort((a,b)=>Number(b.id===focused(s).driverId)-Number(a.id===focused(s).driverId)||a.id.localeCompare(b.id));
-    const offsets={};for(const label of layoutMapLabels(priority,previous)){const dot=svg.querySelector(`[data-dot="${label.id}"]`);dot.querySelector('.dot-label-wrap').setAttribute('transform',`translate(${label.dx} ${label.dy})`);const line=dot.querySelector('.dot-connector');line.setAttribute('x2',label.dx+38);line.setAttribute('y2',label.dy+18);offsets[label.id]=[label.dx,label.dy];}svg._labelOffsets=offsets;
+    const lane=pitLaneGeometry(track.id),box=svg.querySelector('[data-pit-box]');box?.classList.toggle('pit-box-active',!r.qualifying&&r.cars.some(c=>c.phase==='PIT'&&pitCarState(track.id,c,r.time).stage==='SERVICE'));
+    const offsets={};for(const label of layoutMapLabels(priority,previous,[{x:lane.box[0]-17,y:lane.box[1]-33,width:34,height:47}])){const dot=svg.querySelector(`[data-dot="${label.id}"]`);dot.querySelector('.dot-label-wrap').setAttribute('transform',`translate(${label.dx} ${label.dy})`);const line=dot.querySelector('.dot-connector');line.setAttribute('x2',label.dx+38);line.setAttribute('y2',label.dy+18);offsets[label.id]=[label.dx,label.dy];}svg._labelOffsets=offsets;
   }
   const c=focused(s),d=driverOf(s,c.driverId),t=teamOf(s,c.teamId),focus=document.querySelector('#map-telemetry');if(focus){
     focus.dataset.focusedDriver=c.driverId;focus.style.setProperty('--team',t.color);
     for(const [key,value]of Object.entries({code:d.code,name:d.name,team:t.name}))setText(focus.querySelector(`[data-focus="${key}"]`),value);
-    for(const [k,v]of Object.entries({phase:phase(c),lap:time(c.currentLap),speed:number(c.speed),last:time(c.lastLap),best:time(r.qualifying?c.stageBest:c.best),completed:c.lap}))setText(focus.querySelector(`[data-focus="${k}"]`),v);
+    for(const [k,v]of Object.entries({phase:livePhase(s,c),lap:time(c.currentLap),speed:number(c.speed),last:time(c.lastLap),best:time(r.qualifying?c.stageBest:c.best),completed:c.lap}))setText(focus.querySelector(`[data-focus="${k}"]`),v);
     setHtml(focus.querySelector('[data-focus="tyre"]'),tyre(c.compound));
     for(let i=0;i<3;i++){
       const box=focus.querySelector(`[data-sector="${i}"]`);box.className='sector-box tone-'+(sectorTone(c,i));const active=c.sector===i&&['RACE','OUT','FLY','IN','ABORT'].includes(c.phase);
@@ -8270,7 +8434,7 @@ function detailCells(s,c){
     last:c.lastLap>0?lapDisplay(c.lastLap,{fastest:c.lastLap===s.race.fastest.time}):'—',
     best:lapDisplay(best,{fastest:s.race.fastest.driverId===c.driverId}),
     sectors:`<div class="detail-sectors">${[0,1,2].map(i=>`<span class="tone-${sectorTone(c,i)}"><small>S${i+1}</small>${sectorValue(c,i)>0?time(sectorValue(c,i)):'—'}</span>`).join('')}</div>`,
-    age:`${c.tyreAge} 圈`,wear:wearMeter(c.tyreWear),fuel:number(c.fuel)+' kg',stops:c.stops,status:badge(phase(c),phaseTone(c))
+    age:`${c.tyreAge} 圈`,wear:wearMeter(c.tyreWear),fuel:number(c.fuel)+' kg',stops:c.stops,status:badge(livePhase(s,c),phaseTone(c))
   };
 }
 function pitHistory(s){
@@ -8996,7 +9160,7 @@ return {};
 // ===== 文件: package.json =====
 {
   "name": "pitwall-f1-manager",
-  "version": "2.2.1",
+  "version": "2.3.0",
   "private": true,
   "type": "module",
   "description": "纯静态、零依赖 F1 车队经营模拟",
@@ -9062,6 +9226,8 @@ python -m http.server 8000
 - 正赛 / 冲刺赛时间差每 0.5 秒刷新一次（现实时间，不受倍速影响），切换 LEADER / INTERVAL 时立即刷新。
 - 时间差按秒保留三位小数，例如 `+1.237`。LEADER 对比领跑者，INTERVAL 对比前车；榜首显示当前模式名称，退赛显示 OUT，套圈显示圈数。
 - 本队车手以浅绿色行背景和左侧色条高亮，覆盖赛时 / 赛后排名、底部详细数据与进站记录、积分榜；切换排序不会丢失高亮。当前聚焦车手另有右侧浅色标记。
+- 正赛 / 冲刺赛进站时，排名时间差位置显示青色 `IN PIT`，出站立即恢复差距。地图沿示意维修通道连续驶入，在维修位按本次实际停站秒数静止，再驶出并平滑衔接主赛道。遥测显示进站阶段及换胎剩余时间。
+- 进站动画跟随比赛暂停与倍速；保存 / 载入可继续原进站阶段，旧版 PIT 存档也可继续使用。
 - 字体保留原版系统字体，不需要安装或下载字体。
 
 ## 核心玩法
@@ -9196,6 +9362,7 @@ python -m http.server 8000
 | `js/core/ai.js` / `season.js` | AI 研发 / 装车 / 策略 / 转会、赛季结算与新规 |
 | `js/core/save.js` | 结构验证、v1 / v2 → v3、实时场次恢复、存档槽、JSON 导入导出 |
 | `js/core/realtime.js` | 连续事件引擎、排位状态机、独立车手计时、进站与方格旗 |
+| `js/core/pitMotion.js` | 维修区示意曲线、驶入 / 停车 / 驶出时间线与平滑出站衔接 |
 | `js/core/trackGeometry.js` / `js/data/track-layouts.js` | 真实地理轮廓、弯道速度分布、地图位置计算 |
 | `js/core/driverCodes.js` | 三字母缩写生成、去重与修改 |
 | `js/ui/liveView.js` / `css/live.css` | 中央地图、计时塔、车手遥测与排位控制 |
@@ -9350,7 +9517,7 @@ node tests/live-display.test.js
 
 - 25 条赛道中心线来自 [bacinger/f1-circuits](https://github.com/bacinger/f1-circuits)，已投影并内置在 `js/data/track-layouts.js`；无需运行时请求。MIT 作者署名与许可全文见 `THIRD_PARTY_NOTICES.md`。
 - 数据是上游当前地理轮廓，**不保证重现每个历史年份的所有改线**。2022 西班牙 / 新加坡仍使用对应年份长度、圈数与圈速参数，但地图轮廓为现有数据版本。
-- 计时线在赛道距离 32% / 68% 处分段，**不是官方计时环线坐标**。维修区支线为示意，进站损失按赛道参数真正占用连续时间；地图以维修区停留表示这一过程，不复刻维修区每米行驶。
+- 计时线在赛道距离 32% / 68% 处分段，**不是官方计时环线坐标**。维修区支线为示意，进站损失按赛道参数真正占用连续时间；地图以连续驶入、静止换胎和连续驶出表示这一过程，不复刻维修区每米行驶。换胎静止时长等于该次真实模拟停站记录；维修区进出各分配剩余通行时间的一半。地图出站后在 S1 内平滑衔接正常赛道位置，这一显示插值不改变圈时、比赛距离或分类。维修区车速为示意值，上限 80 km/h。
 - 每段时长根据地理轮廓的弯曲程度分配。等距离采样生成确定的行驶时间曲线，弯道慢、直道快，再按赛车与车手模型缩放。该曲线为策略游戏模型，不是官方 GPS 遥测或完整车辆动力学。
 - Sector 平均速度 = 本段模拟距离 ÷ 本车实际用时 × 3600；当前车速由行驶曲线的距离 / 时间导数计算。上圈时间是实际两次过线之差。维修区损失计入下一圈 S1 和单圈时间。
 - 普通排位 18 / 15 / 12 分钟；冲刺排位 12 / 10 / 8 分钟。各段独立计时、淘汰；普通节间 7 / 8 分钟，冲刺节间各 7 分钟。先做出相同时间者优先；无圈速按是否开始飞行圈、是否出场及前一节排名排序。
@@ -9362,7 +9529,7 @@ node tests/live-display.test.js
 
 ## 显示语义
 
-轮胎颜色：S 红、M 黄、H 白、I 绿、W 蓝。圈速 / 赛段：紫色表示全场最快，绿色表示个人提升，黄色表示未提升，灰色表示无效或非计时圈。维修区蓝色、一般提醒琥珀色、故障 / 处罚红色；图标与文字同时保留，避免只靠颜色识别。三字母缩写与全名一同存档，可在车手页修改。
+轮胎颜色：S 红、M 黄、H 白、I 绿、W 蓝。圈速 / 赛段：紫色表示全场最快，绿色表示个人提升，黄色表示未提升，灰色表示无效或非计时圈。维修区 IN PIT 青色、一般提醒琥珀色、故障 / 处罚红色；图标与文字同时保留，避免只靠颜色识别。三字母缩写与全名一同存档，可在车手页修改。
 
 ## 经营模型与简化
 
@@ -9462,10 +9629,19 @@ node tests/live-display.test.js
 - 浏览器检查冲刺赛正常推进后暂停，切换 LEADER / INTERVAL 即时显示正确榜首与三位小数差距。
 - 新增检查只控制排名时间差 DOM 的更新，不修改模拟计时、赛道位置或保存数据。
 
+## 2.3.0 进站动画验证
+
+- 自动检查普通正赛与冲刺赛：连续入站、停车前移动、按记录中的停站秒数静止、重新移动、出站端点连续，并平滑衔接 S1。
+- 自动检查全部 25 条赛道的维修路径：端点一致、停车前后无坐标跳变、路径坐标处于地图范围内。
+- 自动检查进站中保存 / 载入和旧版 PIT 存档恢复、穿越维修区不停车；既有全赛季与不同时间步长回归继续通过。
+- 自动检查 IN PIT 的进入 / 退出立即刷新及青色样式，兼容原有 500ms 时间差刷新节奏。
+- 浏览器实际操作手动预约进站：显示驶入 / 驶出阶段，IN PIT 颜色为 rgb(76, 228, 237)，出站后恢复三位小数差距，地图显示维修支线和维修位。
+- 经典脚本入口 offline.html 实测恢复相同聚焦车手与比赛进度，维修路径 / 坑位显示正常。
+
 ## 自动回归结果
 
 - `node tests/engine.test.js`：原有 19 项经营 / 兼容引擎测试通过。
-- `node tests/realtime.test.js`：新增 25 项实时引擎测试通过。
+- `node tests/realtime.test.js`：28 项实时引擎测试通过。
 - 新版 action 入口全程完成 2025：24 个周末、30 场比赛，每六站序列化 / 恢复一次并完成季末。
 - `node tests/live-display.test.js`：9 项显示 / 进站修复检查通过。
 - 回归测试与静态资源检查均通过；完整输出保存于 `tests/last-run.txt`，结构化结果保存于 `tests/last-run.json`。
@@ -9498,6 +9674,15 @@ node tests/live-display.test.js
 
 ```md
 <!-- ===== 文件: CHANGELOG.md ===== -->
+# 2.3.0 · 连续进站动画
+
+- 正赛 / 冲刺赛改用连续的维修区路径：减速驶入、在维修位静止换胎、加速驶出，然后平滑衔接主赛道。
+- 停车阶段严格使用该次停站记录的实际秒数，慢停站会停得更久；总进站损失与原有圈速结算保持一致。
+- 维修位在换胎时亮起，地图车手显示青色停站光环，遥测显示驶入 / 换胎剩余秒数 / 驶出。
+- 进站期间排名时间差改为青色 IN PIT；进入和退出维修区立即更新，其余时间差维持每 0.5 秒刷新。
+- 进站动画随比赛时钟、暂停和倍速推进，保存后继续保持相同进站进度；兼容旧版已处于 PIT 的存档。
+- 穿越维修区使用连续通过动画，不添加换胎停车时间。
+
 # 2.2.1 · 时间差刷新频率
 
 - 正赛 / 冲刺赛 LEADER、INTERVAL 时间差改为每 0.5 秒刷新一次，按现实时间计，不随倍速加快。
@@ -10416,7 +10601,7 @@ console.log(JSON.stringify({tests:results},null,2));
     },
     {
       "name": "500圈实测",
-      "milliseconds": 109.51736700000015,
+      "milliseconds": 698.7990480000008,
       "totalLaps": 500
     },
     {
@@ -10481,6 +10666,18 @@ console.log(JSON.stringify({tests:results},null,2));
     },
     {
       "name": "进站损失实际占用比赛时间，坑位期间赛车停止，圈速包含该损失",
+      "status": "PASS"
+    },
+    {
+      "name": "正赛与冲刺进站：连续驶入、实际秒数静止换胎、连续驶出，损失不变",
+      "status": "PASS"
+    },
+    {
+      "name": "全部25条赛道：维修路径端点正确、停车边界连续、坐标在地图内",
+      "status": "PASS"
+    },
+    {
+      "name": "维修区中途存档可恢复动画，旧版PIT存档兼容；穿越维修区不停车换胎",
       "status": "PASS"
     },
     {
@@ -10588,7 +10785,7 @@ PASS 车手签入、续约、解约与员工合同
 PASS 完整 2025 → 2026 赛季结算、转会窗与新规
 PASS SC、雨地、红旗恢复、进站、赛道限制与 DRS 距离
 PASS 预算帽升级处罚保持积分明细与总积分一致
-  benchmark: 109.52 ms / 500 laps
+  benchmark: 698.80 ms / 500 laps
 PASS 500 圈模拟性能：十场 50 圈总计少于 1000 ms（不含 DOM 与存档）
 {
   "tests": [
@@ -10666,7 +10863,7 @@ PASS 500 圈模拟性能：十场 50 圈总计少于 1000 ms（不含 DOM 与存
     },
     {
       "name": "500圈实测",
-      "milliseconds": 109.51736700000015,
+      "milliseconds": 698.7990480000008,
       "totalLaps": 500
     },
     {
@@ -10692,6 +10889,9 @@ PASS 同一时间与指令：大步推进与逐秒推进事件 / RNG / 圈速相
 PASS 实时场次中途保存加载，排位与正赛后续逐字段一致
 PASS 暂停不推进时钟，手动快进一圈可用且保持暂停
 PASS 进站损失实际占用比赛时间，坑位期间赛车停止，圈速包含该损失
+PASS 正赛与冲刺进站：连续驶入、实际秒数静止换胎、连续驶出，损失不变
+PASS 全部25条赛道：维修路径端点正确、停车边界连续、坐标在地图内
+PASS 维修区中途存档可恢复动画，旧版PIT存档兼容；穿越维修区不停车换胎
 PASS 方格旗按各车下一次过线结算，套圈车不补跑完整距离
 PASS 四季实时冲刺 / 排位 / 正赛可完整结算，积分守恒
 PASS 正赛跨不同时间步长推进：RNG、事件与位置逐字段一致
@@ -10765,6 +10965,18 @@ PASS 新版 action 全程推进 2025：24 站、30 场比赛、中途存档恢�
       "status": "PASS"
     },
     {
+      "name": "正赛与冲刺进站：连续驶入、实际秒数静止换胎、连续驶出，损失不变",
+      "status": "PASS"
+    },
+    {
+      "name": "全部25条赛道：维修路径端点正确、停车边界连续、坐标在地图内",
+      "status": "PASS"
+    },
+    {
+      "name": "维修区中途存档可恢复动画，旧版PIT存档兼容；穿越维修区不停车换胎",
+      "status": "PASS"
+    },
+    {
       "name": "方格旗按各车下一次过线结算，套圈车不补跑完整距离",
       "status": "PASS"
     },
@@ -10816,6 +11028,7 @@ PASS 聚焦身份取明确车手ID，排序变化后仍保留选择；红旗与S
 PASS 修复旧存档中的第0圈二停误请求，同时保留手动进站指令
 PASS 排名模式与聚焦选择经过保存后仍保留，界面计算不消耗RNG
 PASS 本队高亮绑定车手所属车队，覆盖实时排名、详细表、积分榜与车队分站明细
+PASS 时间差按现实时间每500ms刷新，模式切换立即刷新，排位不节流
 {
   "tests": [
     {
@@ -10849,18 +11062,13 @@ PASS 本队高亮绑定车手所属车队，覆盖实时排名、详细表、积
     {
       "name": "本队高亮绑定车手所属车队，覆盖实时排名、详细表、积分榜与车队分站明细",
       "status": "PASS"
+    },
+    {
+      "name": "时间差按现实时间每500ms刷新，模式切换立即刷新，排位不节流",
+      "status": "PASS"
     }
   ]
 }
-
-$ python3 tests/static.test.py
-PASS 所有引用相对、资源齐全、无外部 API、无 Math.random、核心无 DOM
-
-2.2.1 定向回归（2026-10-22）
-node tests/live-display.test.js：9 项全部通过，包含新检查：时间差按现实时间每500ms刷新，模式切换立即刷新，排位不节流
-$ node --check js/ui/liveView.js
-
-$ node --check js/offline.js
 
 $ python3 tests/static.test.py
 PASS 所有引用相对、资源齐全、无外部 API、无 Math.random、核心无 DOM
@@ -10930,7 +11138,7 @@ test('时间差按现实时间每500ms刷新，模式切换立即刷新，排位
   s.settings.speed=64;s.race.time+=64;c.totalDistance-=.001;now=999;patchLive(s);assert.equal(gap.innerHTML,sampled);
   now=1000;patchLive(s);assert.notEqual(gap.innerHTML,sampled);
   s.settings.timingGap='interval';now=1001;patchLive(s);assert.ok(cells.get(s.race.cars[0].driverId).gap.innerHTML.includes('INTERVAL'));
-  c.retired=true;now=1501;patchLive(s);assert.ok(gap.innerHTML.includes('OUT'));
+  c.phase='PIT';now=1002;patchLive(s);assert.ok(gap.innerHTML.includes('IN PIT'));assert.ok(gap.innerHTML.includes('gap-in-pit'));c.phase='RACE';now=1003;patchLive(s);assert.ok(!gap.innerHTML.includes('IN PIT'));c.retired=true;now=1501;patchLive(s);assert.ok(gap.innerHTML.includes('OUT'));
   s.race.qualifying=true;s.race.q={stage:1,status:'RUNNING',remaining:100};s.race.kind='Q';c.retired=false;c.stageBest=90;s.race.fastest.time=89;now=1502;patchLive(s);const qualifying=gap.innerHTML;
   c.stageBest=89.5;now=1503;patchLive(s);assert.notEqual(gap.innerHTML,qualifying);
  }finally{
@@ -10953,6 +11161,7 @@ import { startQualifying, startRealtimeRace, advanceRealtime, fastForwardLap, fi
 import { exportText, importText } from '../js/core/save.js';
 import { teamOf, copy } from '../js/core/helpers.js';
 import { geometry, trackPoint } from '../js/core/trackGeometry.js';
+import { pitLaneGeometry, pitCarState, raceMapPoint, PIT_EXIT_PROGRESS } from '../js/core/pitMotion.js';
 import { TRACKS } from '../js/data/tracks.js';
 import { assignDriverCodes, setDriverCode } from '../js/core/driverCodes.js';
 const results=[];
@@ -11008,6 +11217,34 @@ test('实时场次中途保存加载，排位与正赛后续逐字段一致',()=
 test('暂停不推进时钟，手动快进一圈可用且保持暂停',()=>{const s=rgame();s.race.running=false;advanceRealtime(s,30);assert.equal(s.race.time,0);fastForwardLap(s);assert.equal(s.race.lap,1);assert.equal(s.race.running,false);});
 test('进站损失实际占用比赛时间，坑位期间赛车停止，圈速包含该损失',()=>{
  const s=rgame(),c=own(s);c.plan.auto=false;c.plan.pitLap=1;c.plan.secondLap=0;cross(s,c);assert.equal(c.phase,'PIT');assert.equal(c.stops,1);const time=s.race.time,delay=c.pitUntil-time;assert.ok(delay>15);advanceRealtime(s,delay/2,true);assert.equal(c.phase,'PIT');assert.equal(c.speed,0);advanceRealtime(s,c.pitUntil-s.race.time,true);assert.equal(c.phase,'RACE');cross(s,c);assert.ok(c.lastLap>80+delay*.8);assert.ok(c.usedDry.includes('H'));
+});
+test('正赛与冲刺进站：连续驶入、实际秒数静止换胎、连续驶出，损失不变',()=>{
+ for(const sprint of [false,true]){
+  const s=rgame({sprint}),c=own(s),track=TRACKS[s.calendar.events[s.calendar.round].track];c.plan.auto=false;c.plan.pitLap=1;c.plan.secondLap=0;cross(s,c);
+  const t=c.pitTransit,lane=pitLaneGeometry(track.id),log=c.pitLog.at(-1);
+  assert.equal(c.phase,'PIT');assert.ok(Math.abs(t.stopEnd-t.stopStart-log.stop)<1e-7);assert.ok(Math.abs(t.release-t.entered-log.loss)<1e-7);
+  assert.deepEqual(raceMapPoint(track.id,c,t.entered),trackPoint(track.id,0));
+  advanceRealtime(s,t.entered+(t.stopStart-t.entered)*.5-s.race.time,true);assert.ok(c.speed>0&&c.speed<=80);assert.notDeepEqual(raceMapPoint(track.id,c,s.race.time),lane.entry);
+  advanceRealtime(s,t.stopStart+.1-s.race.time,true);const parked=raceMapPoint(track.id,c,s.race.time);assert.equal(c.speed,0);assert.deepEqual(parked,lane.box);
+  advanceRealtime(s,t.stopEnd-.1-s.race.time,true);assert.equal(c.speed,0);assert.deepEqual(raceMapPoint(track.id,c,s.race.time),parked);
+  advanceRealtime(s,t.stopEnd+.2-s.race.time,true);assert.ok(c.speed>0);assert.notDeepEqual(raceMapPoint(track.id,c,s.race.time),parked);
+  const exit=pitCarState(track.id,c,t.release).point;advanceRealtime(s,t.release-s.race.time,true);assert.equal(c.phase,'RACE');assert.deepEqual(raceMapPoint(track.id,c,s.race.time),exit);assert.deepEqual(exit,trackPoint(track.id,PIT_EXIT_PROGRESS));
+  const before=raceMapPoint(track.id,c,s.race.time);advanceRealtime(s,.001,true);const after=raceMapPoint(track.id,c,s.race.time);assert.ok(Math.hypot(after[0]-before[0],after[1]-before[1])<.2);
+  advanceRealtime(s,c.segmentEnd-s.race.time,true);assert.equal(c.sector,1);assert.deepEqual(raceMapPoint(track.id,c,s.race.time),trackPoint(track.id,.32));assert.equal(c.stops,1);
+ }
+});
+test('全部25条赛道：维修路径端点正确、停车边界连续、坐标在地图内',()=>{
+ for(const id of Object.keys(TRACKS)){
+  const c={phase:'PIT',lap:1,pitTransit:{entered:0,stopStart:11,stopEnd:13.5,release:24.5,lap:1,driveThrough:false}},lane=pitLaneGeometry(id);let previous=pitCarState(id,c,0).point;
+  for(let i=1;i<=2450;i++){const state=pitCarState(id,c,i/100),p=state.point;assert.ok(p.every(Number.isFinite));assert.ok(p[0]>=0&&p[0]<=800&&p[1]>=0&&p[1]<=740);assert.ok(Math.hypot(p[0]-previous[0],p[1]-previous[1])<2);previous=p;}
+  assert.deepEqual(pitCarState(id,c,11).point,lane.box);assert.deepEqual(pitCarState(id,c,13).point,lane.box);
+ }
+});
+test('维修区中途存档可恢复动画，旧版PIT存档兼容；穿越维修区不停车换胎',()=>{
+ const s=rgame(),c=own(s);c.plan.auto=false;c.plan.pitLap=1;c.plan.secondLap=0;cross(s,c);advanceRealtime(s,3,true);const loaded=importText(exportText(s)),other=own(loaded),id=s.calendar.events[s.calendar.round].track;
+ assert.deepEqual(raceMapPoint(id,c,s.race.time),raceMapPoint(id,other,loaded.race.time));delete other.pitTransit;const legacy=importText(exportText(loaded));assert.deepEqual(raceMapPoint(id,c,s.race.time),raceMapPoint(id,own(legacy),legacy.race.time));
+ for(const state of [s,legacy])advanceRealtime(state,own(state).pitUntil-state.race.time+.1,true);assert.deepEqual(raceMapPoint(id,own(s),s.race.time),raceMapPoint(id,own(legacy),legacy.race.time));
+ const through=rgame(),d=own(through);d.plan.auto=false;d.pitRequest=null;d.driveThrough=true;cross(through,d);assert.equal(d.phase,'PIT');assert.equal(d.pitTransit.driveThrough,true);assert.equal(d.stops,0);advanceRealtime(through,(d.pitUntil-through.race.time)/2,true);assert.ok(d.speed>0);assert.equal(pitCarState(id,d,through.race.time).stage,'EXIT');
 });
 test('方格旗按各车下一次过线结算，套圈车不补跑完整距离',()=>{
  const s=rgame(),slow=s.race.cars.at(-1);s.race.totalLaps=5;advanceRealtime(s,10);for(const c of s.race.cars){c.fuel=100;c.plan.auto=true;}slow.segmentEnd+=200;slow.segmentDuration+=200;finishRealtime(s);assert.equal(s.race.finished,true);const row=s.race.result.rows.find(c=>c.driverId===slow.driverId);assert.ok(row.lap<5);assert.ok(s.race.result.rows.every(c=>c.lap<=5));assert.equal(s.race.result.rows.length,20);
